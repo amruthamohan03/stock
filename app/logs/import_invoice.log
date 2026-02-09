@@ -1,0 +1,1202 @@
+[2025-11-26 14:29:43] INSERT Invoice - POST data received
+[2025-11-26 14:29:43] Executing INSERT with 48 parameters
+[2025-11-26 14:29:43] Insert completed. ID: 6
+[2025-11-26 14:40:01] INSERT Invoice - POST data received
+[2025-11-26 14:40:01] Executing INSERT with 48 parameters
+[2025-11-26 14:40:01] Insert completed. ID: 7
+[2025-11-30 14:49:06] INSERT Invoice - POST data received
+[2025-11-30 14:49:06] Executing INSERT with 48 parameters
+[2025-11-30 14:49:06] Insert completed. ID: 7
+[2025-11-30 15:35:23] import_invoice_items_t table created successfully
+[2025-11-30 15:35:33] INSERT Invoice - POST data received
+[2025-11-30 15:35:33] Executing INSERT with 52 parameters
+[2025-11-30 15:35:33] Insert completed. ID: 0
+[2025-11-30 15:35:50] INSERT Invoice - POST data received
+[2025-11-30 15:35:50] Executing INSERT with 52 parameters
+[2025-11-30 15:35:50] Insert completed. ID: 0
+[2025-11-30 15:40:56] === INSERT INVOICE START ===
+[2025-11-30 15:40:56] POST Data: {"invoice_id":"","action":"insert","kind_id":"1","type_of_goods_id":"","transport_mode_id":"1","quotation_items":"[{\"id\":46,\"quotation_id\":1,\"category_id\":1,\"item_id\":1,\"quantity\":\"1.00\",\"unit_id\":4,\"unit_text\":null,\"taux_usd\":\"0.00\",\"cost_usd\":\"0.00\",\"subtotal_usd\":\"0.00\",\"has_tva\":0,\"tva_usd\":\"0.00\",\"total_usd\":\"0.00\",\"currency_id\":1,\"item_name\":\"DGDA Import Duties \/ Droit de Douane a l Import (DDI)\",\"category_name\":\"CUSTOMS CLEARANCE FEES\",\"category_header\":\"CUSTOMS CLEARANCE FEES \/ FRAIS DEDOUANEMENT\",\"display_order\":1,\"unit_name\":\"CIF\",\"currency_short_name\":\"USD\"},{\"id\":47,\"quotation_id\":1,\"category_id\":1,\"item_id\":2,\"quantity\":\"1.00\",\"unit_id\":4,\"unit_text\":null,\"taux_usd\":\"0.00\",\"cost_usd\":\"0.00\",\"subtotal_usd\":\"0.00\",\"has_tva\":0,\"tva_usd\":\"0.00\",\"total_usd\":\"0.00\",\"currency_id\":1,\"item_name\":\"DGDA Import Duties \/ Droit de Douane a l Import (DDI) 1\",\"category_name\":\"CUSTOMS CLEARANCE FEES\",\"category_header\":\"CUSTOMS CLEARANCE FEES \/ FRAIS DEDOUANEMENT\",\"display_order\":1,\"unit_name\":\"CIF\",\"currency_short_name\":\"USD\"},{\"id\":48,\"quotation_id\":1,\"category_id\":1,\"item_id\":3,\"quantity\":\"1.00\",\"unit_id\":4,\"unit_text\":null,\"taux_usd\":\"0.00\",\"cost_usd\":\"0.00\",\"subtotal_usd\":\"0.00\",\"has_tva\":0,\"tva_usd\":\"0.00\",\"total_usd\":\"0.00\",\"currency_id\":1,\"item_name\":\"DGDA Import Duties \/ Droit de Douane a l Import (DDI) 3\",\"category_name\":\"CUSTOMS CLEARANCE FEES\",\"category_header\":\"CUSTOMS CLEARANCE FEES \/ FRAIS DEDOUANEMENT\",\"display_order\":1,\"unit_name\":\"CIF\",\"currency_short_name\":\"USD\"},{\"id\":49,\"quotation_id\":1,\"category_id\":1,\"item_id\":4,\"quantity\":\"1.00\",\"unit_id\":4,\"unit_text\":null,\"taux_usd\":\"0.00\",\"cost_usd\":\"0.00\",\"subtotal_usd\":\"0.00\",\"has_tva\":0,\"tva_usd\":\"0.00\",\"total_usd\":\"0.00\",\"currency_id\":1,\"item_name\":\"DGDA Import Duties \/ Droit de Douane a l Import (DDI) 4\",\"category_name\":\"CUSTOMS CLEARANCE FEES\",\"category_header\":\"CUSTOMS CLEARANCE FEES \/ FRAIS DEDOUANEMENT\",\"display_order\":1,\"unit_name\":\"CIF\",\"currency_short_name\":\"USD\"},{\"id\":50,\"quotation_id\":1,\"category_id\":1,\"item_id\":5,\"quantity\":\"1.00\",\"unit_id\":4,\"unit_text\":null,\"taux_usd\":\"0.00\",\"cost_usd\":\"0.00\",\"subtotal_usd\":\"0.00\",\"has_tva\":0,\"tva_usd\":\"0.00\",\"total_usd\":\"0.00\",\"currency_id\":1,\"item_name\":\"Taxe Promotion de l entreprise (TPI)\",\"category_name\":\"CUSTOMS CLEARANCE FEES\",\"category_header\":\"CUSTOMS CLEARANCE FEES \/ FRAIS DEDOUANEMENT\",\"display_order\":1,\"unit_name\":\"CIF\",\"currency_short_name\":\"USD\"},{\"id\":51,\"quotation_id\":1,\"category_id\":1,\"item_id\":6,\"quantity\":\"1.00\",\"unit_id\":null,\"unit_text\":null,\"taux_usd\":\"0.00\",\"cost_usd\":\"0.00\",\"subtotal_usd\":\"0.00\",\"has_tva\":0,\"tva_usd\":\"0.00\",\"total_usd\":\"0.00\",\"currency_id\":1,\"item_name\":\"Redevance Remuneratoire Informatique a l Import (RII)\",\"category_name\":\"CUSTOMS CLEARANCE FEES\",\"category_header\":\"CUSTOMS CLEARANCE FEES \/ FRAIS DEDOUANEMENT\",\"display_order\":1,\"unit_name\":null,\"currency_short_name\":\"USD\"},{\"id\":52,\"quotation_id\":1,\"category_id\":1,\"item_id\":7,\"quantity\":\"1.00\",\"unit_id\":4,\"unit_text\":null,\"taux_usd\":\"0.00\",\"cost_usd\":\"0.00\",\"subtotal_usd\":\"0.00\",\"has_tva\":0,\"tva_usd\":\"0.00\",\"total_usd\":\"0.00\",\"currency_id\":1,\"item_name\":\"Commission OGEFREM (COG)\",\"category_name\":\"CUSTOMS CLEARANCE FEES\",\"category_header\":\"CUSTOMS CLEARANCE FEES \/ FRAIS DEDOUANEMENT\",\"display_order\":1,\"unit_name\":\"CIF\",\"currency_short_name\":\"USD\"},{\"id\":53,\"quotation_id\":1,\"category_id\":1,\"item_id\":8,\"quantity\":\"1.00\",\"unit_id\":4,\"unit_text\":null,\"taux_usd\":\"0.00\",\"cost_usd\":\"0.00\",\"subtotal_usd\":\"0.00\",\"has_tva\":0,\"tva_usd\":\"0.00\",\"total_usd\":\"0.00\",\"currency_id\":1,\"item_name\":\"REDEVANCE LOGISTIQUE TERRESTRE SNCC (RLS)\",\"category_name\":\"CUSTOMS CLEARANCE FEES\",\"category_header\":\"CUSTOMS CLEARANCE FEES \/ FRAIS DEDOUANEMENT\",\"display_order\":1,\"unit_name\":\"CIF\",\"currency_short_name\":\"USD\"},{\"id\":54,\"quotation_id\":1,\"category_id\":1,\"item_id\":15,\"quantity\":\"1.00\",\"unit_id\":4,\"unit_text\":null,\"taux_usd\":\"0.00\",\"cost_usd\":\"0.00\",\"subtotal_usd\":\"0.00\",\"has_tva\":0,\"tva_usd\":\"0.00\",\"total_usd\":\"0.00\",\"currency_id\":1,\"item_name\":\"Autres taxes\/Ref Liquidation\",\"category_name\":\"CUSTOMS CLEARANCE FEES\",\"category_header\":\"CUSTOMS CLEARANCE FEES \/ FRAIS DEDOUANEMENT\",\"display_order\":1,\"unit_name\":\"CIF\",\"currency_short_name\":\"USD\"},{\"id\":55,\"quotation_id\":1,\"category_id\":2,\"item_id\":20,\"quantity\":\"1.00\",\"unit_id\":6,\"unit_text\":null,\"taux_usd\":\"120.00\",\"cost_usd\":\"0.00\",\"subtotal_usd\":\"0.00\",\"has_tva\":0,\"tva_usd\":\"0.00\",\"total_usd\":\"120.00\",\"currency_id\":1,\"item_name\":\"Frais Seguce\",\"category_name\":\"OTHER CHARGES\",\"category_header\":\"OTHER CHARGES \/ AUTRES FRAIS\",\"display_order\":2,\"unit_name\":\"Per Declaration\",\"currency_short_name\":\"USD\"},{\"id\":56,\"quotation_id\":1,\"category_id\":2,\"item_id\":21,\"quantity\":\"1.00\",\"unit_id\":6,\"unit_text\":null,\"taux_usd\":\"35.00\",\"cost_usd\":\"0.00\",\"subtotal_usd\":\"0.00\",\"has_tva\":0,\"tva_usd\":\"0.00\",\"total_usd\":\"35.00\",\"currency_id\":1,\"item_name\":\"Scelles Electroniques\",\"category_name\":\"OTHER CHARGES\",\"category_header\":\"OTHER CHARGES \/ AUTRES FRAIS\",\"display_order\":2,\"unit_name\":\"Per Declaration\",\"currency_short_name\":\"USD\"},{\"id\":57,\"quotation_id\":1,\"category_id\":2,\"item_id\":22,\"quantity\":\"1.00\",\"unit_id\":6,\"unit_text\":null,\"taux_usd\":\"75.00\",\"cost_usd\":\"0.00\",\"subtotal_usd\":\"0.00\",\"has_tva\":0,\"tva_usd\":\"0.00\",\"total_usd\":\"75.00\",\"currency_id\":1,\"item_name\":\"Frais de transite (TR8\/TR1-Declarations)\",\"category_name\":\"OTHER CHARGES\",\"category_header\":\"OTHER CHARGES \/ AUTRES FRAIS\",\"display_order\":2,\"unit_name\":\"Per Declaration\",\"currency_short_name\":\"USD\"},{\"id\":58,\"quotation_id\":1,\"category_id\":3,\"item_id\":18,\"quantity\":\"1.00\",\"unit_id\":6,\"unit_text\":null,\"taux_usd\":\"280.00\",\"cost_usd\":\"0.00\",\"subtotal_usd\":\"0.00\",\"has_tva\":0,\"tva_usd\":\"0.00\",\"total_usd\":\"280.00\",\"currency_id\":1,\"item_name\":\"Operation Cost\",\"category_name\":\"OPERATIONAL COSTS\",\"category_header\":\"OPERATIONAL COSTS \/ COUT OPERATIONNEL\",\"display_order\":3,\"unit_name\":\"Per Declaration\",\"currency_short_name\":\"USD\"},{\"id\":59,\"quotation_id\":1,\"category_id\":3,\"item_id\":19,\"quantity\":\"1.00\",\"unit_id\":6,\"unit_text\":null,\"taux_usd\":\"75.00\",\"cost_usd\":\"0.00\",\"subtotal_usd\":\"0.00\",\"has_tva\":0,\"tva_usd\":\"0.00\",\"total_usd\":\"75.00\",\"currency_id\":1,\"item_name\":\"Application License\",\"category_name\":\"OPERATIONAL COSTS\",\"category_header\":\"OPERATIONAL COSTS \/ COUT OPERATIONNEL\",\"display_order\":3,\"unit_name\":\"Per Declaration\",\"currency_short_name\":\"USD\"},{\"id\":60,\"quotation_id\":1,\"category_id\":4,\"item_id\":16,\"quantity\":\"1.00\",\"unit_id\":6,\"unit_text\":null,\"taux_usd\":\"150.00\",\"cost_usd\":\"0.00\",\"subtotal_usd\":\"0.00\",\"has_tva\":1,\"tva_usd\":\"24.00\",\"total_usd\":\"174.00\",\"currency_id\":1,\"item_name\":\"Frais d Agence\",\"category_name\":\"SERVICE FEE\",\"category_header\":\"SERVICE FEE \/ SERVICES\",\"display_order\":4,\"unit_name\":\"Per Declaration\",\"currency_short_name\":\"USD\"}]","subscriber_id":"5","license_id":"9","mca_id":"1","invoice_ref":"2025-CCR-0004","tax_duty_part":"Include","kind":"IMPORT DEFINITVE","type_of_goods":"CONSUMABLE","transport_mode":"ROAD","invoice_template":"","arsp":"Disabled","fob_currency_id":"","fob_usd":"100.00","fret_currency_id":"","fret_usd":"","assurance_currency_id":"","assurance_usd":"","autres_charges_currency_id":"","autres_charges_usd":"","rate_cdf_inv":"2500.00","rate_cdf_usd_bcc":"2500.00","cif_usd":"100.00","cif_cdf":"250000.00","total_duty_cdf":"25000","poids_kg":"500.00","tariff_code_client":"","horse":"","trailer_1":"","trailer_2":"","container":"","wagon":"","horse_rail":"","trailer_1_rail":"","trailer_2_rail":"","container_rail":"","airway_bill":"","airway_bill_weight":"","container_air":"","facture_pfi_no":"wrwarw","po_ref":"","bivac_inspection":"COD 2024 236032\/0001","produit":"1","exoneration_code":"","declaration_no":"","declaration_date":"","liquidation_no":"","liquidation_date":"","quittance_no":"","quittance_date":"","dispatch_deliver_date":"","bank_id":"1","csrf_token":"0f6082d59913ac9929fce2e0f1501357232f7fbd5ceb54aea3f2eef1a4dc65fc"}
+[2025-11-30 15:40:56] Prepared 52 parameters
+[2025-11-30 15:40:56] Executing INSERT query...
+[2025-11-30 15:40:56] INSERT executed successfully
+[2025-11-30 15:40:56] Last Insert ID: 0
+[2025-11-30 15:40:56] LAST_INSERT_ID returned 0, checking manually...
+[2025-11-30 15:40:56] ERROR: Invoice insert failed completely
+[2025-11-30 15:55:38] ========== INSERT INVOICE START ==========
+[2025-11-30 15:55:38] Parameter count: 52
+[2025-11-30 15:55:38] Executing INSERT...
+[2025-11-30 15:55:38] Last Insert ID: 1
+[2025-11-30 15:55:38] Saving invoice items...
+[2025-11-30 15:55:38] Deleted old items for invoice ID: 1
+[2025-11-30 15:55:38] Successfully saved 15 items for invoice ID: 1
+[2025-11-30 15:55:38] ========== INSERT SUCCESS ========== ID: 1
+[2025-11-30 15:55:40] Retrieved 15 items for invoice ID: 1
+[2025-11-30 15:56:02] Retrieved 15 items for invoice ID: 1
+[2025-11-30 16:09:02] Retrieved 15 items for invoice ID: 1
+[2025-11-30 16:26:53] ========== INSERT INVOICE START ==========
+[2025-11-30 16:26:53] Executing INSERT...
+[2025-11-30 16:26:53] Last Insert ID: 2
+[2025-11-30 16:26:53] Saving invoice items...
+[2025-11-30 16:26:53] Deleted old items for invoice ID: 2
+[2025-11-30 16:26:53] Successfully saved 15 items for invoice ID: 2
+[2025-11-30 16:26:53] ========== INSERT SUCCESS ========== ID: 2
+[2025-11-30 16:26:55] Retrieved 15 items for invoice ID: 2
+[2025-11-30 16:36:58] Retrieved 15 items for invoice ID: 2
+[2025-11-30 16:40:56] Retrieved 15 items for invoice ID: 2
+[2025-11-30 16:42:12] Retrieved 15 items for invoice ID: 2
+[2025-11-30 16:50:41] Retrieved 15 items for invoice ID: 2
+[2025-11-30 16:51:08] Retrieved 15 items for invoice ID: 2
+[2025-11-30 17:12:55] Retrieved 15 items for invoice ID: 2
+[2025-12-22 15:17:37] Retrieved 16 items for invoice ID: 7
+[2025-12-22 15:17:37] ========== PDF TOTALS DEBUG (Page 1) ==========
+[2025-12-22 15:17:37] Total items count: 16
+[2025-12-22 15:17:37] Hidden categories: []
+[2025-12-22 15:17:37] Rate CDF/BCC: 2500
+[2025-12-22 15:17:37] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:17:37]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:17:37] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:17:37]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:17:37] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:17:37]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:17:37] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:17:37]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:17:37] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:17:37]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:17:37] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:17:37]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:17:37] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:17:37]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:17:37] Item: REDEVANCE LOGISTIQUE TERRESTRE SNCC (RLS) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:17:37]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:17:37] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:17:37]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:17:37] Item: Frais Bancaires | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 1 | TVA: 0 | Total: 1
+[2025-12-22 15:17:37]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=1, TVA=0
+[2025-12-22 15:17:37] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-22 15:17:37]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-22 15:17:37] Item: Scelles Electroniques | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 35 | TVA: 0 | Total: 35
+[2025-12-22 15:17:37]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=35, TVA=0
+[2025-12-22 15:17:37] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 100 | TVA: 0 | Total: 100
+[2025-12-22 15:17:37]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=100, TVA=0
+[2025-12-22 15:17:37] Item: Enlevement d urgence | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 150 | TVA: 0 | Total: 150
+[2025-12-22 15:17:37]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=150, TVA=0
+[2025-12-22 15:17:37] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 522 | TVA: 72 | Total: 522
+[2025-12-22 15:17:37]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=522, TVA=72
+[2025-12-22 15:17:37] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 290 | TVA: 40 | Total: 290
+[2025-12-22 15:17:37]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=290, TVA=40
+[2025-12-22 15:17:37] ========================================
+[2025-12-22 15:17:37] PAGE 1 TOTALS:
+[2025-12-22 15:17:37]   Subtotal (Cat 1+2): 406.00 USD
+[2025-12-22 15:17:37]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 15:17:37]   Grand Total: 406.00 USD
+[2025-12-22 15:17:37]   Grand Total CDF (x 2500): 1,015,000.00 CDF
+[2025-12-22 15:17:37] ----------------------------------------
+[2025-12-22 15:17:37] PAGE 2 TOTALS:
+[2025-12-22 15:17:37]   Subtotal (Cat 3+4): 812.00 USD
+[2025-12-22 15:17:37]   TVA (Cat 3+4): 112.00 USD
+[2025-12-22 15:17:37]   Grand Total: 924.00 USD
+[2025-12-22 15:17:37] ========================================
+[2025-12-22 15:23:35] Retrieved 16 items for invoice ID: 7
+[2025-12-22 15:23:35] ========== PDF TOTALS DEBUG (Page 1) ==========
+[2025-12-22 15:23:35] Total items count: 16
+[2025-12-22 15:23:35] Hidden categories: []
+[2025-12-22 15:23:35] Rate CDF/BCC: 2500
+[2025-12-22 15:23:35] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:23:35]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:23:35] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:23:35]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:23:35] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:23:35]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:23:35] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:23:35]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:23:35] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:23:35]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:23:35] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:23:35]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:23:35] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:23:35]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:23:35] Item: REDEVANCE LOGISTIQUE TERRESTRE SNCC (RLS) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:23:35]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:23:35] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:23:35]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:23:35] Item: Frais Bancaires | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 1 | TVA: 0 | Total: 1
+[2025-12-22 15:23:35]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=1, TVA=0
+[2025-12-22 15:23:35] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-22 15:23:35]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-22 15:23:35] Item: Scelles Electroniques | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 35 | TVA: 0 | Total: 35
+[2025-12-22 15:23:35]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=35, TVA=0
+[2025-12-22 15:23:35] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 100 | TVA: 0 | Total: 100
+[2025-12-22 15:23:35]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=100, TVA=0
+[2025-12-22 15:23:35] Item: Enlevement d urgence | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 150 | TVA: 0 | Total: 150
+[2025-12-22 15:23:35]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=150, TVA=0
+[2025-12-22 15:23:35] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 522 | TVA: 72 | Total: 522
+[2025-12-22 15:23:35]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=522, TVA=72
+[2025-12-22 15:23:35] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 290 | TVA: 40 | Total: 290
+[2025-12-22 15:23:35]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=290, TVA=40
+[2025-12-22 15:23:35] ========================================
+[2025-12-22 15:23:35] PAGE 1 TOTALS:
+[2025-12-22 15:23:35]   Subtotal (Cat 1+2): 406.00 USD
+[2025-12-22 15:23:35]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 15:23:35]   Grand Total: 406.00 USD
+[2025-12-22 15:23:35]   Grand Total CDF (x 2500): 1,015,000.00 CDF
+[2025-12-22 15:23:35] ----------------------------------------
+[2025-12-22 15:23:35] PAGE 2 TOTALS:
+[2025-12-22 15:23:35]   Subtotal (Cat 3+4): 812.00 USD
+[2025-12-22 15:23:35]   TVA (Cat 3+4): 112.00 USD
+[2025-12-22 15:23:35]   Grand Total: 924.00 USD
+[2025-12-22 15:23:35] ========================================
+[2025-12-22 15:25:25] Retrieved 16 items for invoice ID: 7
+[2025-12-22 15:25:25] ========== PDF TOTALS DEBUG (Page 2) ==========
+[2025-12-22 15:25:25] Total items count: 16
+[2025-12-22 15:25:25] Hidden categories: []
+[2025-12-22 15:25:25] Rate CDF/BCC: 2500
+[2025-12-22 15:25:25] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:25:25]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:25:25] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:25:25]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:25:25] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:25:25]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:25:25] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:25:25]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:25:25] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:25:25]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:25:25] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:25:25]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:25:25] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:25:25]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:25:25] Item: REDEVANCE LOGISTIQUE TERRESTRE SNCC (RLS) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:25:25]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:25:25] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:25:25]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:25:25] Item: Frais Bancaires | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 1 | TVA: 0 | Total: 1
+[2025-12-22 15:25:25]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=1, TVA=0
+[2025-12-22 15:25:25] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-22 15:25:25]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-22 15:25:25] Item: Scelles Electroniques | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 35 | TVA: 0 | Total: 35
+[2025-12-22 15:25:25]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=35, TVA=0
+[2025-12-22 15:25:25] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 100 | TVA: 0 | Total: 100
+[2025-12-22 15:25:25]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=100, TVA=0
+[2025-12-22 15:25:25] Item: Enlevement d urgence | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 150 | TVA: 0 | Total: 150
+[2025-12-22 15:25:25]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=150, TVA=0
+[2025-12-22 15:25:25] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 522 | TVA: 72 | Total: 522
+[2025-12-22 15:25:25]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=522, TVA=72
+[2025-12-22 15:25:25] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 290 | TVA: 40 | Total: 290
+[2025-12-22 15:25:25]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=290, TVA=40
+[2025-12-22 15:25:25] ========================================
+[2025-12-22 15:25:25] PAGE 1 TOTALS:
+[2025-12-22 15:25:25]   Subtotal (Cat 1+2): 406.00 USD
+[2025-12-22 15:25:25]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 15:25:25]   Grand Total: 406.00 USD
+[2025-12-22 15:25:25]   Grand Total CDF (x 2500): 1,015,000.00 CDF
+[2025-12-22 15:25:25] ----------------------------------------
+[2025-12-22 15:25:25] PAGE 2 TOTALS:
+[2025-12-22 15:25:25]   Subtotal (Cat 3+4): 812.00 USD
+[2025-12-22 15:25:25]   TVA (Cat 3+4): 112.00 USD
+[2025-12-22 15:25:25]   Grand Total: 924.00 USD
+[2025-12-22 15:25:25] ========================================
+[2025-12-22 15:44:31] Retrieved 13 items for invoice ID: 10
+[2025-12-22 15:44:31] ========== PDF TOTALS DEBUG (Page 1) ==========
+[2025-12-22 15:44:31] Total items count: 13
+[2025-12-22 15:44:31] Hidden categories: []
+[2025-12-22 15:44:31] Rate CDF/BCC: 2500
+[2025-12-22 15:44:31] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:44:31]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:44:31] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:44:31]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:44:31] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:44:31]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:44:31] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:44:31]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:44:31] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:44:31]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:44:31] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:44:31]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:44:31] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:44:31]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:44:31] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:44:31]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:44:31] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-22 15:44:31]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-22 15:44:31] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 55 | TVA: 0 | Total: 55
+[2025-12-22 15:44:31]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=55, TVA=0
+[2025-12-22 15:44:31] Item: Frais Entreposage | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:44:31]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=0, TVA=0
+[2025-12-22 15:44:31] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 285 | TVA: 0 | Total: 285
+[2025-12-22 15:44:31]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=285, TVA=0
+[2025-12-22 15:44:31] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 232 | TVA: 32 | Total: 232
+[2025-12-22 15:44:31]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=232, TVA=32
+[2025-12-22 15:44:31] ========================================
+[2025-12-22 15:44:31] PAGE 1 TOTALS:
+[2025-12-22 15:44:31]   Subtotal (Cat 1+2): 175.00 USD
+[2025-12-22 15:44:31]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 15:44:31]   Grand Total: 175.00 USD
+[2025-12-22 15:44:31]   Grand Total CDF (x 2500): 437,500.00 CDF
+[2025-12-22 15:44:31] ----------------------------------------
+[2025-12-22 15:44:31] PAGE 2 TOTALS:
+[2025-12-22 15:44:31]   Subtotal (Cat 3+4): 517.00 USD
+[2025-12-22 15:44:31]   TVA (Cat 3+4): 32.00 USD
+[2025-12-22 15:44:31]   Grand Total: 549.00 USD
+[2025-12-22 15:44:31] ========================================
+[2025-12-22 15:45:23] Retrieved 13 items for invoice ID: 10
+[2025-12-22 15:45:23] ========== PDF TOTALS DEBUG (Page 2) ==========
+[2025-12-22 15:45:23] Total items count: 13
+[2025-12-22 15:45:23] Hidden categories: []
+[2025-12-22 15:45:23] Rate CDF/BCC: 2500
+[2025-12-22 15:45:23] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:45:23]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:45:23] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:45:23]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:45:23] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:45:23]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:45:23] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:45:23]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:45:23] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:45:23]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:45:23] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:45:23]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:45:23] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:45:23]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:45:23] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:45:23]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 15:45:23] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-22 15:45:23]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-22 15:45:23] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 55 | TVA: 0 | Total: 55
+[2025-12-22 15:45:23]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=55, TVA=0
+[2025-12-22 15:45:23] Item: Frais Entreposage | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 15:45:23]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=0, TVA=0
+[2025-12-22 15:45:23] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 285 | TVA: 0 | Total: 285
+[2025-12-22 15:45:23]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=285, TVA=0
+[2025-12-22 15:45:23] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 232 | TVA: 32 | Total: 232
+[2025-12-22 15:45:23]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=232, TVA=32
+[2025-12-22 15:45:23] ========================================
+[2025-12-22 15:45:23] PAGE 1 TOTALS:
+[2025-12-22 15:45:23]   Subtotal (Cat 1+2): 175.00 USD
+[2025-12-22 15:45:23]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 15:45:23]   Grand Total: 175.00 USD
+[2025-12-22 15:45:23]   Grand Total CDF (x 2500): 437,500.00 CDF
+[2025-12-22 15:45:23] ----------------------------------------
+[2025-12-22 15:45:23] PAGE 2 TOTALS:
+[2025-12-22 15:45:23]   Subtotal (Cat 3+4): 517.00 USD
+[2025-12-22 15:45:23]   TVA (Cat 3+4): 32.00 USD
+[2025-12-22 15:45:23]   Grand Total: 549.00 USD
+[2025-12-22 15:45:23] ========================================
+[2025-12-22 16:08:35] Retrieved 13 items for invoice ID: 10
+[2025-12-22 16:08:35] ========== PDF TOTALS DEBUG (Page 1) ==========
+[2025-12-22 16:08:35] Total items count: 13
+[2025-12-22 16:08:35] Hidden categories: []
+[2025-12-22 16:08:35] Rate CDF/BCC: 2500
+[2025-12-22 16:08:35] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 16:08:35]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 16:08:35] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 16:08:35]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 16:08:35] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 16:08:35]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 16:08:35] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 16:08:35]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 16:08:35] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 16:08:35]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 16:08:35] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 16:08:35]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 16:08:35] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 16:08:35]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 16:08:35] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 16:08:35]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 16:08:35] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-22 16:08:35]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-22 16:08:35] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 55 | TVA: 0 | Total: 55
+[2025-12-22 16:08:35]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=55, TVA=0
+[2025-12-22 16:08:35] Item: Frais Entreposage | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 16:08:35]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=0, TVA=0
+[2025-12-22 16:08:35] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 285 | TVA: 0 | Total: 285
+[2025-12-22 16:08:35]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=285, TVA=0
+[2025-12-22 16:08:35] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 232 | TVA: 32 | Total: 232
+[2025-12-22 16:08:35]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=232, TVA=32
+[2025-12-22 16:08:35] ========================================
+[2025-12-22 16:08:35] PAGE 1 TOTALS:
+[2025-12-22 16:08:35]   Subtotal (Cat 1+2): 175.00 USD
+[2025-12-22 16:08:35]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 16:08:35]   Grand Total: 175.00 USD
+[2025-12-22 16:08:35]   Grand Total CDF (x 2500): 437,500.00 CDF
+[2025-12-22 16:08:35] ----------------------------------------
+[2025-12-22 16:08:35] PAGE 2 TOTALS:
+[2025-12-22 16:08:35]   Subtotal (Cat 3+4): 517.00 USD
+[2025-12-22 16:08:35]   TVA (Cat 3+4): 32.00 USD
+[2025-12-22 16:08:35]   Grand Total: 549.00 USD
+[2025-12-22 16:08:35] ========================================
+[2025-12-22 17:45:06] Retrieved 13 items for invoice ID: 10
+[2025-12-22 17:45:06] ========== PDF TOTALS DEBUG (Page 1) ==========
+[2025-12-22 17:45:06] Total items count: 13
+[2025-12-22 17:45:06] Hidden categories: []
+[2025-12-22 17:45:06] Rate CDF/BCC: 2500
+[2025-12-22 17:45:06] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 17:45:06]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 17:45:06] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 17:45:06]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 17:45:06] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 17:45:06]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 17:45:06] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 17:45:06]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 17:45:06] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 17:45:06]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 17:45:06] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 17:45:06]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 17:45:06] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 17:45:06]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 17:45:06] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 17:45:06]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 17:45:06] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-22 17:45:06]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-22 17:45:06] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 55 | TVA: 0 | Total: 55
+[2025-12-22 17:45:06]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=55, TVA=0
+[2025-12-22 17:45:06] Item: Frais Entreposage | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 17:45:06]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=0, TVA=0
+[2025-12-22 17:45:06] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 285 | TVA: 0 | Total: 285
+[2025-12-22 17:45:06]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=285, TVA=0
+[2025-12-22 17:45:06] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 232 | TVA: 32 | Total: 232
+[2025-12-22 17:45:06]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=232, TVA=32
+[2025-12-22 17:45:06] ========================================
+[2025-12-22 17:45:06] PAGE 1 TOTALS:
+[2025-12-22 17:45:06]   Subtotal (Cat 1+2): 175.00 USD
+[2025-12-22 17:45:06]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 17:45:06]   Grand Total: 175.00 USD
+[2025-12-22 17:45:06]   Grand Total CDF (x 2500): 437,500.00 CDF
+[2025-12-22 17:45:06] ----------------------------------------
+[2025-12-22 17:45:06] PAGE 2 TOTALS:
+[2025-12-22 17:45:06]   Subtotal (Cat 3+4): 517.00 USD
+[2025-12-22 17:45:06]   TVA (Cat 3+4): 32.00 USD
+[2025-12-22 17:45:06]   Grand Total: 549.00 USD
+[2025-12-22 17:45:06] ========================================
+[2025-12-22 17:45:06] PDF Page 1 Exception: Cannot write to an undeclared property Mpdf\Mpdf::$watermark_text_color
+[2025-12-22 19:21:41] Retrieved 13 items for invoice ID: 10
+[2025-12-22 19:21:41] ========== PDF TOTALS DEBUG (Page 1) ==========
+[2025-12-22 19:21:41] Total items count: 13
+[2025-12-22 19:21:41] Hidden categories: []
+[2025-12-22 19:21:41] Rate CDF/BCC: 2500
+[2025-12-22 19:21:41] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 19:21:41]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 19:21:41] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 19:21:41]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 19:21:41] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 19:21:41]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 19:21:41] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 19:21:41]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 19:21:41] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 19:21:41]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 19:21:41] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 19:21:41]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 19:21:41] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 19:21:41]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 19:21:41] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 19:21:41]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 19:21:41] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-22 19:21:41]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-22 19:21:41] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 55 | TVA: 0 | Total: 55
+[2025-12-22 19:21:41]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=55, TVA=0
+[2025-12-22 19:21:41] Item: Frais Entreposage | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 19:21:41]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=0, TVA=0
+[2025-12-22 19:21:41] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 285 | TVA: 0 | Total: 285
+[2025-12-22 19:21:41]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=285, TVA=0
+[2025-12-22 19:21:41] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 232 | TVA: 32 | Total: 232
+[2025-12-22 19:21:41]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=232, TVA=32
+[2025-12-22 19:21:41] ========================================
+[2025-12-22 19:21:41] PAGE 1 TOTALS:
+[2025-12-22 19:21:41]   Subtotal (Cat 1+2): 175.00 USD
+[2025-12-22 19:21:41]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 19:21:41]   Grand Total: 175.00 USD
+[2025-12-22 19:21:41]   Grand Total CDF (x 2500): 437,500.00 CDF
+[2025-12-22 19:21:41] ----------------------------------------
+[2025-12-22 19:21:41] PAGE 2 TOTALS:
+[2025-12-22 19:21:41]   Subtotal (Cat 3+4): 517.00 USD
+[2025-12-22 19:21:41]   TVA (Cat 3+4): 32.00 USD
+[2025-12-22 19:21:41]   Grand Total: 549.00 USD
+[2025-12-22 19:21:41] ========================================
+[2025-12-22 19:21:41] PDF Page 1 Exception: Cannot write to an undeclared property Mpdf\Mpdf::$watermark_text_color
+[2025-12-22 19:28:05] Retrieved 13 items for invoice ID: 10
+[2025-12-22 19:28:05] ========== PDF TOTALS DEBUG (Page 2) ==========
+[2025-12-22 19:28:05] Total items count: 13
+[2025-12-22 19:28:05] Hidden categories: []
+[2025-12-22 19:28:05] Rate CDF/BCC: 2500
+[2025-12-22 19:28:05] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 19:28:05]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 19:28:05] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 19:28:05]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 19:28:05] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 19:28:05]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 19:28:05] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 19:28:05]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 19:28:05] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 19:28:05]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 19:28:05] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 19:28:05]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 19:28:05] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 19:28:05]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 19:28:05] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 19:28:05]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 19:28:05] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-22 19:28:05]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-22 19:28:05] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 55 | TVA: 0 | Total: 55
+[2025-12-22 19:28:05]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=55, TVA=0
+[2025-12-22 19:28:05] Item: Frais Entreposage | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 19:28:05]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=0, TVA=0
+[2025-12-22 19:28:05] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 285 | TVA: 0 | Total: 285
+[2025-12-22 19:28:05]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=285, TVA=0
+[2025-12-22 19:28:05] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 232 | TVA: 32 | Total: 232
+[2025-12-22 19:28:05]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=232, TVA=32
+[2025-12-22 19:28:05] ========================================
+[2025-12-22 19:28:05] PAGE 1 TOTALS:
+[2025-12-22 19:28:05]   Subtotal (Cat 1+2): 175.00 USD
+[2025-12-22 19:28:05]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 19:28:05]   Grand Total: 175.00 USD
+[2025-12-22 19:28:05]   Grand Total CDF (x 2500): 437,500.00 CDF
+[2025-12-22 19:28:05] ----------------------------------------
+[2025-12-22 19:28:05] PAGE 2 TOTALS:
+[2025-12-22 19:28:05]   Subtotal (Cat 3+4): 517.00 USD
+[2025-12-22 19:28:05]   TVA (Cat 3+4): 32.00 USD
+[2025-12-22 19:28:05]   Grand Total: 549.00 USD
+[2025-12-22 19:28:05] ========================================
+[2025-12-22 19:28:05] PDF Page 2 Exception: Cannot write to an undeclared property Mpdf\Mpdf::$watermark_text_color
+[2025-12-22 20:55:34] Retrieved 13 items for invoice ID: 10
+[2025-12-22 20:55:34] ========== PDF TOTALS DEBUG (Page 1) ==========
+[2025-12-22 20:55:34] Total items count: 13
+[2025-12-22 20:55:34] Hidden categories: []
+[2025-12-22 20:55:34] Rate CDF/BCC: 2500
+[2025-12-22 20:55:34] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 20:55:34]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 20:55:34] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 20:55:34]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 20:55:34] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 20:55:34]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 20:55:34] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 20:55:34]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 20:55:34] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 20:55:34]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 20:55:34] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 20:55:34]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 20:55:34] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 20:55:34]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 20:55:34] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 20:55:34]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 20:55:34] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-22 20:55:34]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-22 20:55:34] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 55 | TVA: 0 | Total: 55
+[2025-12-22 20:55:34]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=55, TVA=0
+[2025-12-22 20:55:34] Item: Frais Entreposage | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 20:55:34]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=0, TVA=0
+[2025-12-22 20:55:34] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 285 | TVA: 0 | Total: 285
+[2025-12-22 20:55:34]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=285, TVA=0
+[2025-12-22 20:55:34] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 232 | TVA: 32 | Total: 232
+[2025-12-22 20:55:34]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=232, TVA=32
+[2025-12-22 20:55:34] ========================================
+[2025-12-22 20:55:34] PAGE 1 TOTALS:
+[2025-12-22 20:55:34]   Subtotal (Cat 1+2): 175.00 USD
+[2025-12-22 20:55:34]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 20:55:34]   Grand Total: 175.00 USD
+[2025-12-22 20:55:34]   Grand Total CDF (x 2500): 437,500.00 CDF
+[2025-12-22 20:55:34] ----------------------------------------
+[2025-12-22 20:55:34] PAGE 2 TOTALS:
+[2025-12-22 20:55:34]   Subtotal (Cat 3+4): 517.00 USD
+[2025-12-22 20:55:34]   TVA (Cat 3+4): 32.00 USD
+[2025-12-22 20:55:34]   Grand Total: 549.00 USD
+[2025-12-22 20:55:34] ========================================
+[2025-12-22 20:55:34] PDF Page 1 Exception: Cannot write to an undeclared property Mpdf\Mpdf::$watermark_text_color
+[2025-12-22 22:02:21] Retrieved 13 items for invoice ID: 10
+[2025-12-22 22:02:21] ========== PDF TOTALS DEBUG (Page 1) ==========
+[2025-12-22 22:02:21] Total items count: 13
+[2025-12-22 22:02:21] Hidden categories: []
+[2025-12-22 22:02:21] Rate CDF/BCC: 2500
+[2025-12-22 22:02:21] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:02:21]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:02:21] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:02:21]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:02:21] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:02:21]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:02:21] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:02:21]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:02:21] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:02:21]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:02:21] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:02:21]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:02:21] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:02:21]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:02:21] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:02:21]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:02:21] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-22 22:02:21]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-22 22:02:21] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 55 | TVA: 0 | Total: 55
+[2025-12-22 22:02:21]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=55, TVA=0
+[2025-12-22 22:02:21] Item: Frais Entreposage | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:02:21]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=0, TVA=0
+[2025-12-22 22:02:21] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 285 | TVA: 0 | Total: 285
+[2025-12-22 22:02:21]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=285, TVA=0
+[2025-12-22 22:02:21] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 232 | TVA: 32 | Total: 232
+[2025-12-22 22:02:21]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=232, TVA=32
+[2025-12-22 22:02:21] ========================================
+[2025-12-22 22:02:21] PAGE 1 TOTALS:
+[2025-12-22 22:02:21]   Subtotal (Cat 1+2): 175.00 USD
+[2025-12-22 22:02:21]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 22:02:21]   Grand Total: 175.00 USD
+[2025-12-22 22:02:21]   Grand Total CDF (x 2500): 437,500.00 CDF
+[2025-12-22 22:02:21] ----------------------------------------
+[2025-12-22 22:02:21] PAGE 2 TOTALS:
+[2025-12-22 22:02:21]   Subtotal (Cat 3+4): 517.00 USD
+[2025-12-22 22:02:21]   TVA (Cat 3+4): 32.00 USD
+[2025-12-22 22:02:21]   Grand Total: 549.00 USD
+[2025-12-22 22:02:21] ========================================
+[2025-12-22 22:02:21] PDF Page 1 Exception: Cannot write to an undeclared property Mpdf\Mpdf::$watermark_text_color
+[2025-12-22 22:03:04] Retrieved 13 items for invoice ID: 10
+[2025-12-22 22:03:04] ========== PDF TOTALS DEBUG (Page 2) ==========
+[2025-12-22 22:03:04] Total items count: 13
+[2025-12-22 22:03:04] Hidden categories: []
+[2025-12-22 22:03:04] Rate CDF/BCC: 2500
+[2025-12-22 22:03:04] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:04]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:04] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:04]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:04] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:04]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:04] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:04]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:04] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:04]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:04] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:04]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:04] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:04]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:04] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:04]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:04] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-22 22:03:04]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-22 22:03:04] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 55 | TVA: 0 | Total: 55
+[2025-12-22 22:03:04]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=55, TVA=0
+[2025-12-22 22:03:04] Item: Frais Entreposage | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:04]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=0, TVA=0
+[2025-12-22 22:03:04] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 285 | TVA: 0 | Total: 285
+[2025-12-22 22:03:04]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=285, TVA=0
+[2025-12-22 22:03:04] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 232 | TVA: 32 | Total: 232
+[2025-12-22 22:03:04]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=232, TVA=32
+[2025-12-22 22:03:04] ========================================
+[2025-12-22 22:03:04] PAGE 1 TOTALS:
+[2025-12-22 22:03:04]   Subtotal (Cat 1+2): 175.00 USD
+[2025-12-22 22:03:04]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 22:03:04]   Grand Total: 175.00 USD
+[2025-12-22 22:03:04]   Grand Total CDF (x 2500): 437,500.00 CDF
+[2025-12-22 22:03:04] ----------------------------------------
+[2025-12-22 22:03:04] PAGE 2 TOTALS:
+[2025-12-22 22:03:04]   Subtotal (Cat 3+4): 517.00 USD
+[2025-12-22 22:03:04]   TVA (Cat 3+4): 32.00 USD
+[2025-12-22 22:03:04]   Grand Total: 549.00 USD
+[2025-12-22 22:03:04] ========================================
+[2025-12-22 22:03:04] PDF Page 2 Exception: Cannot write to an undeclared property Mpdf\Mpdf::$watermark_text_color
+[2025-12-22 22:03:15] Retrieved 15 items for invoice ID: 9
+[2025-12-22 22:03:15] ========== PDF TOTALS DEBUG (Page 2) ==========
+[2025-12-22 22:03:15] Total items count: 15
+[2025-12-22 22:03:15] Hidden categories: []
+[2025-12-22 22:03:15] Rate CDF/BCC: 2500
+[2025-12-22 22:03:15] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:15]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:15] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:15]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:15] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:15]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:15] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:15]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:15] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:15]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:15] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:15]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:15] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:15]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:15] Item: REDEVANCE LOGISTIQUE TERRESTRE SNCC (RLS) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:15]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:15] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:15]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:15] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 500 | TVA: 0 | Total: 500
+[2025-12-22 22:03:15]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=500, TVA=0
+[2025-12-22 22:03:15] Item: Scelles Electroniques | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 35 | TVA: 0 | Total: 35
+[2025-12-22 22:03:15]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=35, TVA=0
+[2025-12-22 22:03:15] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 70 | TVA: 0 | Total: 70
+[2025-12-22 22:03:15]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=70, TVA=0
+[2025-12-22 22:03:15] Item: Operation Cost | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 300 | TVA: 0 | Total: 300
+[2025-12-22 22:03:15]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=300, TVA=0
+[2025-12-22 22:03:15] Item: Application License | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 75 | TVA: 0 | Total: 75
+[2025-12-22 22:03:15]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=75, TVA=0
+[2025-12-22 22:03:15] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 174 | TVA: 24 | Total: 174
+[2025-12-22 22:03:15]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=174, TVA=24
+[2025-12-22 22:03:15] ========================================
+[2025-12-22 22:03:15] PAGE 1 TOTALS:
+[2025-12-22 22:03:15]   Subtotal (Cat 1+2): 605.00 USD
+[2025-12-22 22:03:15]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 22:03:15]   Grand Total: 605.00 USD
+[2025-12-22 22:03:15]   Grand Total CDF (x 2500): 1,512,500.00 CDF
+[2025-12-22 22:03:15] ----------------------------------------
+[2025-12-22 22:03:15] PAGE 2 TOTALS:
+[2025-12-22 22:03:15]   Subtotal (Cat 3+4): 549.00 USD
+[2025-12-22 22:03:15]   TVA (Cat 3+4): 24.00 USD
+[2025-12-22 22:03:15]   Grand Total: 573.00 USD
+[2025-12-22 22:03:15] ========================================
+[2025-12-22 22:03:22] Retrieved 15 items for invoice ID: 9
+[2025-12-22 22:03:22] ========== PDF TOTALS DEBUG (Page 1) ==========
+[2025-12-22 22:03:22] Total items count: 15
+[2025-12-22 22:03:22] Hidden categories: []
+[2025-12-22 22:03:22] Rate CDF/BCC: 2500
+[2025-12-22 22:03:22] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:22]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:22] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:22]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:22] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:22]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:22] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:22]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:22] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:22]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:22] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:22]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:22] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:22]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:22] Item: REDEVANCE LOGISTIQUE TERRESTRE SNCC (RLS) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:22]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:22] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:03:22]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:03:22] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 500 | TVA: 0 | Total: 500
+[2025-12-22 22:03:22]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=500, TVA=0
+[2025-12-22 22:03:22] Item: Scelles Electroniques | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 35 | TVA: 0 | Total: 35
+[2025-12-22 22:03:22]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=35, TVA=0
+[2025-12-22 22:03:22] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 70 | TVA: 0 | Total: 70
+[2025-12-22 22:03:22]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=70, TVA=0
+[2025-12-22 22:03:22] Item: Operation Cost | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 300 | TVA: 0 | Total: 300
+[2025-12-22 22:03:22]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=300, TVA=0
+[2025-12-22 22:03:22] Item: Application License | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 75 | TVA: 0 | Total: 75
+[2025-12-22 22:03:22]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=75, TVA=0
+[2025-12-22 22:03:22] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 174 | TVA: 24 | Total: 174
+[2025-12-22 22:03:22]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=174, TVA=24
+[2025-12-22 22:03:22] ========================================
+[2025-12-22 22:03:22] PAGE 1 TOTALS:
+[2025-12-22 22:03:22]   Subtotal (Cat 1+2): 605.00 USD
+[2025-12-22 22:03:22]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 22:03:22]   Grand Total: 605.00 USD
+[2025-12-22 22:03:22]   Grand Total CDF (x 2500): 1,512,500.00 CDF
+[2025-12-22 22:03:22] ----------------------------------------
+[2025-12-22 22:03:22] PAGE 2 TOTALS:
+[2025-12-22 22:03:22]   Subtotal (Cat 3+4): 549.00 USD
+[2025-12-22 22:03:22]   TVA (Cat 3+4): 24.00 USD
+[2025-12-22 22:03:22]   Grand Total: 573.00 USD
+[2025-12-22 22:03:23] ========================================
+[2025-12-22 22:04:01] Retrieved 13 items for invoice ID: 10
+[2025-12-22 22:04:01] ========== PDF TOTALS DEBUG (Page 1) ==========
+[2025-12-22 22:04:01] Total items count: 13
+[2025-12-22 22:04:01] Hidden categories: []
+[2025-12-22 22:04:01] Rate CDF/BCC: 2500
+[2025-12-22 22:04:01] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:04:01]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:04:01] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:04:01]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:04:01] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:04:01]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:04:01] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:04:01]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:04:01] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:04:01]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:04:01] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:04:01]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:04:01] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:04:01]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:04:01] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:04:01]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:04:01] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-22 22:04:01]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-22 22:04:01] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 55 | TVA: 0 | Total: 55
+[2025-12-22 22:04:01]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=55, TVA=0
+[2025-12-22 22:04:01] Item: Frais Entreposage | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:04:01]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=0, TVA=0
+[2025-12-22 22:04:01] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 285 | TVA: 0 | Total: 285
+[2025-12-22 22:04:01]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=285, TVA=0
+[2025-12-22 22:04:01] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 232 | TVA: 32 | Total: 232
+[2025-12-22 22:04:01]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=232, TVA=32
+[2025-12-22 22:04:01] ========================================
+[2025-12-22 22:04:01] PAGE 1 TOTALS:
+[2025-12-22 22:04:01]   Subtotal (Cat 1+2): 175.00 USD
+[2025-12-22 22:04:01]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 22:04:01]   Grand Total: 175.00 USD
+[2025-12-22 22:04:01]   Grand Total CDF (x 2500): 437,500.00 CDF
+[2025-12-22 22:04:01] ----------------------------------------
+[2025-12-22 22:04:01] PAGE 2 TOTALS:
+[2025-12-22 22:04:01]   Subtotal (Cat 3+4): 517.00 USD
+[2025-12-22 22:04:01]   TVA (Cat 3+4): 32.00 USD
+[2025-12-22 22:04:01]   Grand Total: 549.00 USD
+[2025-12-22 22:04:01] ========================================
+[2025-12-22 22:04:01] PDF Page 1 Exception: Cannot write to an undeclared property Mpdf\Mpdf::$watermark_text_color
+[2025-12-22 22:04:09] Retrieved 13 items for invoice ID: 10
+[2025-12-22 22:04:09] ========== PDF TOTALS DEBUG (Page 2) ==========
+[2025-12-22 22:04:09] Total items count: 13
+[2025-12-22 22:04:09] Hidden categories: []
+[2025-12-22 22:04:09] Rate CDF/BCC: 2500
+[2025-12-22 22:04:09] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:04:09]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:04:09] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:04:09]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:04:09] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:04:09]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:04:09] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:04:09]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:04:09] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:04:09]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:04:09] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:04:09]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:04:09] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:04:09]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:04:09] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:04:09]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:04:09] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-22 22:04:09]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-22 22:04:09] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 55 | TVA: 0 | Total: 55
+[2025-12-22 22:04:09]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=55, TVA=0
+[2025-12-22 22:04:09] Item: Frais Entreposage | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:04:09]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=0, TVA=0
+[2025-12-22 22:04:09] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 285 | TVA: 0 | Total: 285
+[2025-12-22 22:04:09]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=285, TVA=0
+[2025-12-22 22:04:09] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 232 | TVA: 32 | Total: 232
+[2025-12-22 22:04:09]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=232, TVA=32
+[2025-12-22 22:04:09] ========================================
+[2025-12-22 22:04:09] PAGE 1 TOTALS:
+[2025-12-22 22:04:09]   Subtotal (Cat 1+2): 175.00 USD
+[2025-12-22 22:04:09]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 22:04:09]   Grand Total: 175.00 USD
+[2025-12-22 22:04:09]   Grand Total CDF (x 2500): 437,500.00 CDF
+[2025-12-22 22:04:09] ----------------------------------------
+[2025-12-22 22:04:09] PAGE 2 TOTALS:
+[2025-12-22 22:04:09]   Subtotal (Cat 3+4): 517.00 USD
+[2025-12-22 22:04:09]   TVA (Cat 3+4): 32.00 USD
+[2025-12-22 22:04:09]   Grand Total: 549.00 USD
+[2025-12-22 22:04:09] ========================================
+[2025-12-22 22:04:09] PDF Page 2 Exception: Cannot write to an undeclared property Mpdf\Mpdf::$watermark_text_color
+[2025-12-22 22:06:42] Retrieved 13 items for invoice ID: 10
+[2025-12-22 22:06:42] ========== PDF TOTALS DEBUG (Page 1) ==========
+[2025-12-22 22:06:42] Total items count: 13
+[2025-12-22 22:06:42] Hidden categories: []
+[2025-12-22 22:06:42] Rate CDF/BCC: 2500
+[2025-12-22 22:06:42] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:06:42]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:06:42] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:06:42]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:06:42] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:06:42]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:06:42] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:06:42]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:06:42] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:06:42]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:06:42] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:06:42]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:06:42] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:06:42]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:06:42] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:06:42]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:06:42] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-22 22:06:42]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-22 22:06:42] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 55 | TVA: 0 | Total: 55
+[2025-12-22 22:06:42]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=55, TVA=0
+[2025-12-22 22:06:42] Item: Frais Entreposage | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:06:42]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=0, TVA=0
+[2025-12-22 22:06:42] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 285 | TVA: 0 | Total: 285
+[2025-12-22 22:06:42]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=285, TVA=0
+[2025-12-22 22:06:42] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 232 | TVA: 32 | Total: 232
+[2025-12-22 22:06:42]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=232, TVA=32
+[2025-12-22 22:06:42] ========================================
+[2025-12-22 22:06:42] PAGE 1 TOTALS:
+[2025-12-22 22:06:42]   Subtotal (Cat 1+2): 175.00 USD
+[2025-12-22 22:06:42]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 22:06:42]   Grand Total: 175.00 USD
+[2025-12-22 22:06:42]   Grand Total CDF (x 2500): 437,500.00 CDF
+[2025-12-22 22:06:42] ----------------------------------------
+[2025-12-22 22:06:42] PAGE 2 TOTALS:
+[2025-12-22 22:06:42]   Subtotal (Cat 3+4): 517.00 USD
+[2025-12-22 22:06:42]   TVA (Cat 3+4): 32.00 USD
+[2025-12-22 22:06:42]   Grand Total: 549.00 USD
+[2025-12-22 22:06:42] ========================================
+[2025-12-22 22:06:42] PDF Page 1 Exception: Cannot write to an undeclared property Mpdf\Mpdf::$watermark_text_color
+[2025-12-22 22:07:41] Retrieved 13 items for invoice ID: 10
+[2025-12-22 22:07:41] ========== PDF TOTALS DEBUG (Page 1) ==========
+[2025-12-22 22:07:41] Total items count: 13
+[2025-12-22 22:07:41] Hidden categories: []
+[2025-12-22 22:07:41] Rate CDF/BCC: 2500
+[2025-12-22 22:07:41] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:07:41]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:07:41] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:07:41]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:07:41] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:07:41]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:07:41] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:07:41]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:07:41] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:07:41]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:07:41] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:07:41]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:07:41] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:07:41]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:07:41] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:07:41]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:07:41] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-22 22:07:41]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-22 22:07:41] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 55 | TVA: 0 | Total: 55
+[2025-12-22 22:07:41]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=55, TVA=0
+[2025-12-22 22:07:41] Item: Frais Entreposage | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:07:41]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=0, TVA=0
+[2025-12-22 22:07:41] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 285 | TVA: 0 | Total: 285
+[2025-12-22 22:07:41]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=285, TVA=0
+[2025-12-22 22:07:41] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 232 | TVA: 32 | Total: 232
+[2025-12-22 22:07:41]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=232, TVA=32
+[2025-12-22 22:07:41] ========================================
+[2025-12-22 22:07:41] PAGE 1 TOTALS:
+[2025-12-22 22:07:41]   Subtotal (Cat 1+2): 175.00 USD
+[2025-12-22 22:07:41]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 22:07:41]   Grand Total: 175.00 USD
+[2025-12-22 22:07:41]   Grand Total CDF (x 2500): 437,500.00 CDF
+[2025-12-22 22:07:41] ----------------------------------------
+[2025-12-22 22:07:41] PAGE 2 TOTALS:
+[2025-12-22 22:07:41]   Subtotal (Cat 3+4): 517.00 USD
+[2025-12-22 22:07:41]   TVA (Cat 3+4): 32.00 USD
+[2025-12-22 22:07:41]   Grand Total: 549.00 USD
+[2025-12-22 22:07:41] ========================================
+[2025-12-22 22:07:51] Retrieved 13 items for invoice ID: 10
+[2025-12-22 22:07:51] ========== PDF TOTALS DEBUG (Page 2) ==========
+[2025-12-22 22:07:51] Total items count: 13
+[2025-12-22 22:07:51] Hidden categories: []
+[2025-12-22 22:07:51] Rate CDF/BCC: 2500
+[2025-12-22 22:07:51] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:07:51]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:07:51] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:07:51]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:07:51] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:07:51]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:07:51] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:07:51]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:07:51] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:07:51]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:07:51] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:07:51]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:07:51] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:07:51]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:07:51] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:07:51]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:07:51] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-22 22:07:51]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-22 22:07:51] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 55 | TVA: 0 | Total: 55
+[2025-12-22 22:07:51]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=55, TVA=0
+[2025-12-22 22:07:51] Item: Frais Entreposage | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:07:51]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=0, TVA=0
+[2025-12-22 22:07:51] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 285 | TVA: 0 | Total: 285
+[2025-12-22 22:07:51]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=285, TVA=0
+[2025-12-22 22:07:51] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 232 | TVA: 32 | Total: 232
+[2025-12-22 22:07:51]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=232, TVA=32
+[2025-12-22 22:07:51] ========================================
+[2025-12-22 22:07:51] PAGE 1 TOTALS:
+[2025-12-22 22:07:51]   Subtotal (Cat 1+2): 175.00 USD
+[2025-12-22 22:07:51]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 22:07:51]   Grand Total: 175.00 USD
+[2025-12-22 22:07:51]   Grand Total CDF (x 2500): 437,500.00 CDF
+[2025-12-22 22:07:51] ----------------------------------------
+[2025-12-22 22:07:51] PAGE 2 TOTALS:
+[2025-12-22 22:07:51]   Subtotal (Cat 3+4): 517.00 USD
+[2025-12-22 22:07:51]   TVA (Cat 3+4): 32.00 USD
+[2025-12-22 22:07:51]   Grand Total: 549.00 USD
+[2025-12-22 22:07:51] ========================================
+[2025-12-22 22:15:20] Retrieved 13 items for invoice ID: 10
+[2025-12-22 22:15:20] ========== PDF TOTALS DEBUG (Page 1) ==========
+[2025-12-22 22:15:20] Total items count: 13
+[2025-12-22 22:15:20] Hidden categories: []
+[2025-12-22 22:15:20] Rate CDF/BCC: 2500
+[2025-12-22 22:15:20] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:15:20]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:15:20] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:15:20]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:15:20] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:15:20]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:15:20] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:15:20]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:15:20] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:15:20]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:15:20] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:15:20]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:15:20] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:15:20]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:15:20] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:15:20]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:15:20] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-22 22:15:20]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-22 22:15:20] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 55 | TVA: 0 | Total: 55
+[2025-12-22 22:15:21]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=55, TVA=0
+[2025-12-22 22:15:21] Item: Frais Entreposage | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:15:21]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=0, TVA=0
+[2025-12-22 22:15:21] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 285 | TVA: 0 | Total: 285
+[2025-12-22 22:15:21]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=285, TVA=0
+[2025-12-22 22:15:21] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 232 | TVA: 32 | Total: 232
+[2025-12-22 22:15:21]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=232, TVA=32
+[2025-12-22 22:15:21] ========================================
+[2025-12-22 22:15:21] PAGE 1 TOTALS:
+[2025-12-22 22:15:21]   Subtotal (Cat 1+2): 175.00 USD
+[2025-12-22 22:15:21]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 22:15:21]   Grand Total: 175.00 USD
+[2025-12-22 22:15:21]   Grand Total CDF (x 2500): 437,500.00 CDF
+[2025-12-22 22:15:21] ----------------------------------------
+[2025-12-22 22:15:21] PAGE 2 TOTALS:
+[2025-12-22 22:15:21]   Subtotal (Cat 3+4): 517.00 USD
+[2025-12-22 22:15:21]   TVA (Cat 3+4): 32.00 USD
+[2025-12-22 22:15:21]   Grand Total: 549.00 USD
+[2025-12-22 22:15:21] ========================================
+[2025-12-22 22:15:25] Retrieved 13 items for invoice ID: 10
+[2025-12-22 22:15:25] ========== PDF TOTALS DEBUG (Page 2) ==========
+[2025-12-22 22:15:25] Total items count: 13
+[2025-12-22 22:15:25] Hidden categories: []
+[2025-12-22 22:15:25] Rate CDF/BCC: 2500
+[2025-12-22 22:15:25] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:15:25]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:15:25] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:15:25]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:15:25] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:15:25]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:15:25] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:15:25]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:15:25] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:15:25]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:15:25] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:15:25]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:15:25] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:15:25]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:15:25] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:15:25]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:15:25] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-22 22:15:25]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-22 22:15:25] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 55 | TVA: 0 | Total: 55
+[2025-12-22 22:15:25]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=55, TVA=0
+[2025-12-22 22:15:25] Item: Frais Entreposage | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:15:25]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=0, TVA=0
+[2025-12-22 22:15:25] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 285 | TVA: 0 | Total: 285
+[2025-12-22 22:15:25]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=285, TVA=0
+[2025-12-22 22:15:25] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 232 | TVA: 32 | Total: 232
+[2025-12-22 22:15:25]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=232, TVA=32
+[2025-12-22 22:15:25] ========================================
+[2025-12-22 22:15:25] PAGE 1 TOTALS:
+[2025-12-22 22:15:25]   Subtotal (Cat 1+2): 175.00 USD
+[2025-12-22 22:15:25]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 22:15:25]   Grand Total: 175.00 USD
+[2025-12-22 22:15:25]   Grand Total CDF (x 2500): 437,500.00 CDF
+[2025-12-22 22:15:25] ----------------------------------------
+[2025-12-22 22:15:25] PAGE 2 TOTALS:
+[2025-12-22 22:15:25]   Subtotal (Cat 3+4): 517.00 USD
+[2025-12-22 22:15:25]   TVA (Cat 3+4): 32.00 USD
+[2025-12-22 22:15:25]   Grand Total: 549.00 USD
+[2025-12-22 22:15:25] ========================================
+[2025-12-22 22:30:50] Retrieved 13 items for invoice ID: 10
+[2025-12-22 22:30:50] ========== PDF TOTALS DEBUG (Page 1) ==========
+[2025-12-22 22:30:50] Total items count: 13
+[2025-12-22 22:30:50] Hidden categories: []
+[2025-12-22 22:30:50] Rate CDF/BCC: 2500
+[2025-12-22 22:30:50] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:30:50]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:30:50] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:30:50]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:30:50] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:30:50]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:30:50] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:30:50]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:30:50] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:30:50]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:30:50] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:30:50]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:30:50] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:30:50]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:30:50] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:30:50]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 22:30:50] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-22 22:30:50]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-22 22:30:50] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 55 | TVA: 0 | Total: 55
+[2025-12-22 22:30:50]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=55, TVA=0
+[2025-12-22 22:30:50] Item: Frais Entreposage | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 22:30:50]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=0, TVA=0
+[2025-12-22 22:30:50] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 285 | TVA: 0 | Total: 285
+[2025-12-22 22:30:50]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=285, TVA=0
+[2025-12-22 22:30:50] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 232 | TVA: 32 | Total: 232
+[2025-12-22 22:30:50]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=232, TVA=32
+[2025-12-22 22:30:50] ========================================
+[2025-12-22 22:30:50] PAGE 1 TOTALS:
+[2025-12-22 22:30:50]   Subtotal (Cat 1+2): 175.00 USD
+[2025-12-22 22:30:50]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 22:30:50]   Grand Total: 175.00 USD
+[2025-12-22 22:30:50]   Grand Total CDF (x 2500): 437,500.00 CDF
+[2025-12-22 22:30:50] ----------------------------------------
+[2025-12-22 22:30:50] PAGE 2 TOTALS:
+[2025-12-22 22:30:50]   Subtotal (Cat 3+4): 517.00 USD
+[2025-12-22 22:30:50]   TVA (Cat 3+4): 32.00 USD
+[2025-12-22 22:30:50]   Grand Total: 549.00 USD
+[2025-12-22 22:30:50] ========================================
+[2025-12-22 23:17:12] Retrieved 13 items for invoice ID: 10
+[2025-12-22 23:17:12] ========== PDF TOTALS DEBUG (Page 2) ==========
+[2025-12-22 23:17:12] Total items count: 13
+[2025-12-22 23:17:12] Hidden categories: []
+[2025-12-22 23:17:12] Rate CDF/BCC: 2500
+[2025-12-22 23:17:12] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 23:17:12]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 23:17:12] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 23:17:12]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 23:17:12] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 23:17:12]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 23:17:12] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 23:17:12]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 23:17:12] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 23:17:12]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 23:17:12] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 23:17:12]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 23:17:12] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 23:17:12]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 23:17:12] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 23:17:12]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 23:17:12] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-22 23:17:12]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-22 23:17:12] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 55 | TVA: 0 | Total: 55
+[2025-12-22 23:17:12]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=55, TVA=0
+[2025-12-22 23:17:12] Item: Frais Entreposage | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 23:17:12]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=0, TVA=0
+[2025-12-22 23:17:12] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 285 | TVA: 0 | Total: 285
+[2025-12-22 23:17:12]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=285, TVA=0
+[2025-12-22 23:17:12] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 232 | TVA: 32 | Total: 232
+[2025-12-22 23:17:12]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=232, TVA=32
+[2025-12-22 23:17:12] ========================================
+[2025-12-22 23:17:12] PAGE 1 TOTALS:
+[2025-12-22 23:17:12]   Subtotal (Cat 1+2): 175.00 USD
+[2025-12-22 23:17:12]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 23:17:12]   Grand Total: 175.00 USD
+[2025-12-22 23:17:12]   Grand Total CDF (x 2500): 437,500.00 CDF
+[2025-12-22 23:17:12] ----------------------------------------
+[2025-12-22 23:17:12] PAGE 2 TOTALS:
+[2025-12-22 23:17:12]   Subtotal (Cat 3+4): 517.00 USD
+[2025-12-22 23:17:12]   TVA (Cat 3+4): 32.00 USD
+[2025-12-22 23:17:12]   Grand Total: 549.00 USD
+[2025-12-22 23:17:12] ========================================
+[2025-12-22 23:49:59] Retrieved 13 items for invoice ID: 10
+[2025-12-22 23:49:59] ========== PDF TOTALS DEBUG (Page 1) ==========
+[2025-12-22 23:49:59] Total items count: 13
+[2025-12-22 23:49:59] Hidden categories: []
+[2025-12-22 23:49:59] Rate CDF/BCC: 2500
+[2025-12-22 23:49:59] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 23:49:59]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 23:49:59] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 23:49:59]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 23:49:59] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 23:49:59]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 23:49:59] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 23:49:59]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 23:49:59] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 23:49:59]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 23:49:59] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 23:49:59]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 23:49:59] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 23:49:59]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 23:49:59] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 23:49:59]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-22 23:49:59] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-22 23:49:59]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-22 23:49:59] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 55 | TVA: 0 | Total: 55
+[2025-12-22 23:49:59]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=55, TVA=0
+[2025-12-22 23:49:59] Item: Frais Entreposage | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-22 23:49:59]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=0, TVA=0
+[2025-12-22 23:49:59] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 285 | TVA: 0 | Total: 285
+[2025-12-22 23:49:59]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=285, TVA=0
+[2025-12-22 23:49:59] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 232 | TVA: 32 | Total: 232
+[2025-12-22 23:49:59]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=232, TVA=32
+[2025-12-22 23:49:59] ========================================
+[2025-12-22 23:49:59] PAGE 1 TOTALS:
+[2025-12-22 23:49:59]   Subtotal (Cat 1+2): 175.00 USD
+[2025-12-22 23:49:59]   TVA (Cat 1+2): 0.00 USD
+[2025-12-22 23:49:59]   Grand Total: 175.00 USD
+[2025-12-22 23:49:59]   Grand Total CDF (x 2500): 437,500.00 CDF
+[2025-12-22 23:49:59] ----------------------------------------
+[2025-12-22 23:49:59] PAGE 2 TOTALS:
+[2025-12-22 23:49:59]   Subtotal (Cat 3+4): 517.00 USD
+[2025-12-22 23:49:59]   TVA (Cat 3+4): 32.00 USD
+[2025-12-22 23:49:59]   Grand Total: 549.00 USD
+[2025-12-22 23:49:59] ========================================
+[2025-12-23 12:59:44] Retrieved 13 items for invoice ID: 10
+[2025-12-23 12:59:44] ========== PDF TOTALS DEBUG (Page 2) ==========
+[2025-12-23 12:59:44] Total items count: 13
+[2025-12-23 12:59:44] Hidden categories: []
+[2025-12-23 12:59:44] Rate CDF/BCC: 2500
+[2025-12-23 12:59:44] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-23 12:59:44]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-23 12:59:44] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-23 12:59:44]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-23 12:59:44] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-23 12:59:44]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-23 12:59:44] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-23 12:59:44]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-23 12:59:44] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-23 12:59:44]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-23 12:59:44] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-23 12:59:44]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-23 12:59:44] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-23 12:59:44]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-23 12:59:44] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-23 12:59:44]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-23 12:59:44] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-23 12:59:44]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-23 12:59:44] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 55 | TVA: 0 | Total: 55
+[2025-12-23 12:59:44]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=55, TVA=0
+[2025-12-23 12:59:44] Item: Frais Entreposage | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-23 12:59:44]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=0, TVA=0
+[2025-12-23 12:59:44] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 285 | TVA: 0 | Total: 285
+[2025-12-23 12:59:44]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=285, TVA=0
+[2025-12-23 12:59:44] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 232 | TVA: 32 | Total: 232
+[2025-12-23 12:59:44]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=232, TVA=32
+[2025-12-23 12:59:44] ========================================
+[2025-12-23 12:59:44] PAGE 1 TOTALS:
+[2025-12-23 12:59:44]   Subtotal (Cat 1+2): 175.00 USD
+[2025-12-23 12:59:44]   TVA (Cat 1+2): 0.00 USD
+[2025-12-23 12:59:44]   Grand Total: 175.00 USD
+[2025-12-23 12:59:44]   Grand Total CDF (x 2500): 437,500.00 CDF
+[2025-12-23 12:59:44] ----------------------------------------
+[2025-12-23 12:59:44] PAGE 2 TOTALS:
+[2025-12-23 12:59:44]   Subtotal (Cat 3+4): 517.00 USD
+[2025-12-23 12:59:44]   TVA (Cat 3+4): 32.00 USD
+[2025-12-23 12:59:44]   Grand Total: 549.00 USD
+[2025-12-23 12:59:44] ========================================
+[2025-12-23 12:59:53] Retrieved 13 items for invoice ID: 10
+[2025-12-23 12:59:53] ========== PDF TOTALS DEBUG (Page 1) ==========
+[2025-12-23 12:59:53] Total items count: 13
+[2025-12-23 12:59:53] Hidden categories: []
+[2025-12-23 12:59:53] Rate CDF/BCC: 2500
+[2025-12-23 12:59:53] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-23 12:59:53]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-23 12:59:53] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 1 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-23 12:59:53]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-23 12:59:53] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 3 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-23 12:59:53]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-23 12:59:53] Item: DGDA Import Duties / Droit de Douane a l Import (DDI) 4 | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-23 12:59:53]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-23 12:59:53] Item: Redevance Remuneratoire Informatique a l Import (RII) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-23 12:59:53]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-23 12:59:53] Item: Commission OGEFREM (COG) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-23 12:59:53]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-23 12:59:53] Item: Taxe Promotion de l entreprise (TPI) | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-23 12:59:53]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-23 12:59:53] Item: Autres taxes/Ref Liquidation | Cat ID: 1 | Cat Name: CUSTOMS CLEARANCE FEES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-23 12:59:53]   -> ✓ ADDED to Page 1 (Cat 1): Subtotal=0, TVA=0
+[2025-12-23 12:59:53] Item: Frais Seguce | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 120 | TVA: 0 | Total: 120
+[2025-12-23 12:59:53]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=120, TVA=0
+[2025-12-23 12:59:53] Item: Frais de transite (TR8/TR1-Declarations) | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 55 | TVA: 0 | Total: 55
+[2025-12-23 12:59:53]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=55, TVA=0
+[2025-12-23 12:59:53] Item: Frais Entreposage | Cat ID: 2 | Cat Name: OTHER CHARGES | Subtotal: 0 | TVA: 0 | Total: 0
+[2025-12-23 12:59:53]   -> ✓ ADDED to Page 1 (Cat 2): Subtotal=0, TVA=0
+[2025-12-23 12:59:53] Item: Operation DGDA | Cat ID: 3 | Cat Name: OPERATIONAL COSTS | Subtotal: 285 | TVA: 0 | Total: 285
+[2025-12-23 12:59:53]   -> ✓ ADDED to Page 2 (Cat 3): Subtotal=285, TVA=0
+[2025-12-23 12:59:53] Item: Frais d Agence | Cat ID: 4 | Cat Name: SERVICE FEE | Subtotal: 232 | TVA: 32 | Total: 232
+[2025-12-23 12:59:53]   -> ✓ ADDED to Page 2 (Cat 4): Subtotal=232, TVA=32
+[2025-12-23 12:59:53] ========================================
+[2025-12-23 12:59:53] PAGE 1 TOTALS:
+[2025-12-23 12:59:53]   Subtotal (Cat 1+2): 175.00 USD
+[2025-12-23 12:59:53]   TVA (Cat 1+2): 0.00 USD
+[2025-12-23 12:59:53]   Grand Total: 175.00 USD
+[2025-12-23 12:59:53]   Grand Total CDF (x 2500): 437,500.00 CDF
+[2025-12-23 12:59:53] ----------------------------------------
+[2025-12-23 12:59:53] PAGE 2 TOTALS:
+[2025-12-23 12:59:53]   Subtotal (Cat 3+4): 517.00 USD
+[2025-12-23 12:59:53]   TVA (Cat 3+4): 32.00 USD
+[2025-12-23 12:59:53]   Grand Total: 549.00 USD
+[2025-12-23 12:59:53] ========================================
