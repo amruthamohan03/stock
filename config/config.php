@@ -6,9 +6,9 @@
 // Define paths first (needed by other configs)
 define('APP_ROOT', dirname(dirname(__FILE__)));
 define('PUBLIC_PATH', APP_ROOT . '/public');
-define('BASE_URL', 'http://localhost/malabar/public');
+define('BASE_URL', 'http://localhost/stock/public');
 define('VIEW_PATH', __DIR__ . '/../app/views/');
-define('APP_URL', 'http://localhost/malabar/');
+define('APP_URL', 'http://localhost/stock/');
 
 define('UPLOAD_URL', BASE_URL . '/uploads/');
 
@@ -19,14 +19,14 @@ $dbConfig = require_once APP_ROOT . '/config/database.php';
 define('DB_CONFIG', $dbConfig);
 
 // App Configuration
-define('APP_NAME', 'Malabar');
+define('APP_NAME', 'Stock');
 define('APP_VERSION', '1.0.0');
 define('APP_ENV', 'development'); // development, staging, production
 
 // URL Configuration
 // For localhost: '/my-mvc-app' or '' if using virtual host
 // For production: '' (empty string)
-define('URL_ROOT', '/malabar');
+define('URL_ROOT', '/stock');
 define('URL_SUBFOLDER', '');
 
 // Database Configuration (from database.php)

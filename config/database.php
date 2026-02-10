@@ -19,7 +19,7 @@ return [
             'driver'    => 'mysql',
             'host'      => 'localhost',
             'port'      => 3307,
-            'database'  => 'malabar_db',
+            'database'  => 'stock_db',
             'username'  => 'root',
             'password'  => '',
             'charset'   => 'utf8mb4',

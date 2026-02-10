@@ -19,17 +19,17 @@ class RoleController extends Controller
                 r.created_at,
                 r.updated_at,
                 d.department_name AS department_name,
-                m.main_location_name AS office_name,
+                m.college_name AS office_name,
                 pr.role_name AS parent_role_name
             FROM role_master_t r
             LEFT JOIN department_master_t d ON r.department_id = d.id
-            LEFT JOIN main_office_master_t m ON r.office_location_id = m.id
+            LEFT JOIN college_t m ON r.office_location_id = m.id
             LEFT JOIN role_master_t pr ON r.parent_role_id = pr.id
             ORDER BY r.id DESC
         ";
         $result = $db->customQuery($sql);
         $departments = $db->selectData('department_master_t', '*', []);
-        $offices = $db->selectData('main_office_master_t', '*', ['display' => 'Y']);
+        $offices = $db->selectData('college_t', '*', ['display' => 'Y']);
 
         $data = [
             'title' => 'Role Master',

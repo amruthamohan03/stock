@@ -39,7 +39,7 @@ class AuthController extends Controller {
     /**
      * Handle login POST request
      */
-    private function handleLogin() {
+    private function handleLogin() { 
         // Verify CSRF token
         if (!$this->verifyCsrfToken($this->getPost('csrf_token'))) {
             SessionManager::setFlash('login', 'Invalid request. Please try again.', 'alert alert-danger');

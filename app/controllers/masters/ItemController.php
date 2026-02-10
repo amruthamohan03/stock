@@ -52,8 +52,7 @@ class ItemController extends Controller
             $data = [
                 'item_name'           => s($_POST['item_name']),
                 'category_id'         => (int)($_POST['category_id'] ?? 0),
-                'tax_not_tax'         => s($_POST['tax_not_tax'] ?? 'A'),
-                'item_type'           => s($_POST['item_type']),
+                'tax_not_tax'         => s($_POST['tax_not_tax'] ?? 'N'),
                 'display'             => ($_POST['display'] ?? 'Y'),
                 'created_by'          => 1,
                 'updated_by'          => 1,
@@ -66,11 +65,6 @@ class ItemController extends Controller
 
             if ($data['category_id'] <= 0) {
                 echo json_encode(['success' => false, 'message' => '⚠ Please select a category.']);
-                exit;
-            }
-
-            if (!$data['item_type']) {
-                echo json_encode(['success' => false, 'message' => '⚠ Please select item type.']);
                 exit;
             }
 
@@ -99,8 +93,7 @@ class ItemController extends Controller
             $data = [
                 'item_name'           => s($_POST['item_name']),
                 'category_id'         => (int)($_POST['category_id'] ?? 0),
-                'tax_not_tax'         => s($_POST['tax_not_tax'] ?? 'A'),
-                'item_type'           => s($_POST['item_type']),
+                'tax_not_tax'         => s($_POST['tax_not_tax'] ?? 'N'),
                 'display'             => ($_POST['display'] ?? 'Y'),
                 'updated_by'          => 1,
                 'updated_at'          => date('Y-m-d H:i:s')

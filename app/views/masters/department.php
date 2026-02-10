@@ -97,7 +97,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="mb-2">
-                        <label>department Name</label>
+                        <label>Department Name</label>
                         <input type="text" name="department_name" id="edit_department_name" class="form-control" required>
                     </div>
                     <div class="mb-2">
