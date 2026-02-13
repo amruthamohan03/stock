@@ -36,7 +36,16 @@
 
                                 <div class="col-md-2 mb-3">
                                     <label for="indent_no" class="form-label">Indent No <span class="text-danger">*</span></label>
-                                    <input type="number" class="form-control" id="indent_no" name="indent_no" min="1" required>
+                                    <input type="text" class="form-control" id="indent_no" name="indent_no" required>
+                                </div>
+
+                                <div class="col-md-2 mb-3">
+                                    <label for="item_type" class="form-label">Item Type <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="item_type" name="item_type" required>
+                                        <option value="">-- Select Type --</option>
+                                        <option value="C">Consumable</option>
+                                        <option value="N">Non-Consumable</option>
+                                    </select>
                                 </div>
 
                                 <div class="col-md-3 mb-3">
@@ -107,6 +116,7 @@
                                     <th>ID</th>
                                     <th>Book No</th>
                                     <th>Indent No</th>
+                                    <th>Type</th>
                                     <th>Date</th>
                                     <th>Institution</th>
                                     <th>Status</th>
@@ -121,6 +131,13 @@
                                             <td><?= $row['id']; ?></td>
                                             <td><?= $row['book_no']; ?></td>
                                             <td><?= $row['indent_no']; ?></td>
+                                            <td>
+                                                <?php 
+                                                    $itemType = ($row['item_type']=='C')? 'Consumable':'Non-Consumable';
+                                                    $typeColor = ($row['item_type'] ?? '') == 'Consumable' ? 'success' : 'warning';
+                                                ?>
+                                                <span class="badge bg-<?= $typeColor ?>"><?= htmlspecialchars($itemType ?? 'N/A'); ?></span>
+                                            </td>
                                             <td><?= date('d-m-Y', strtotime($row['indent_date'])); ?></td>
                                             <td><?= htmlspecialchars($row['college_name'] ?? 'N/A'); ?></td>
                                             <td>
@@ -268,7 +285,7 @@ $(document).ready(function () {
             "pageLength": 10,
             "ordering": true,
             "searching": true,
-            "order": [[0, 'desc']]
+            "order": [[0, 'ASC']]
         });
     }
     

@@ -28,6 +28,10 @@
                             </div>
                             <div class="col-6 text-end">
                                 <strong>Indent No.</strong> <?= $indent['indent_no']; ?><br>
+                                <?php
+                                    $itemType = ($indent['item_type']=='C')? 'Consumable':'Non-Consumable';
+                                ?>
+                                <strong>Type:</strong> <span class="badge bg-info"><?= htmlspecialchars($itemType ?? 'N/A'); ?></span><br>
                                 <strong>Date:</strong> <?= date('d.m.Y', strtotime($indent['indent_date'])); ?>
                             </div>
                         </div>

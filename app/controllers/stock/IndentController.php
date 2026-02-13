@@ -10,7 +10,7 @@ class IndentController extends Controller{
         $institutions = $db->selectData('college_t', 'id, college_name', ['display' => 'Y']);
         
         // Get all items for dropdown
-        $items = $db->selectData('item_t', 'id, item_name', ['display' => 'Y']);
+        $items = $db->selectData('item_master_t', 'id, item_name', ['display' => 'Y']);
         
         // Get all makes for dropdown
         $makes = $db->selectData('make_t', 'id, make_name', ['display' => 'Y']);
@@ -30,7 +30,7 @@ class IndentController extends Controller{
                   LEFT JOIN users_t u4 ON im.issued_by = u4.id
                   LEFT JOIN users_t u5 ON im.received_by = u5.id
                   ORDER BY im.id DESC";
-        $result = $db->query($query);
+        $result = $db->customQuery($query);
         
         $data = [
             'title'        => 'Indent Book Management',
@@ -40,7 +40,7 @@ class IndentController extends Controller{
             'result'       => $result
         ];
         
-        $this->viewWithLayout('indent/indent', $data);
+        $this->viewWithLayout('stock/indent', $data);
     }
 
     public function create()
@@ -49,7 +49,7 @@ class IndentController extends Controller{
         
         // Get dropdowns data
         $institutions = $db->selectData('college_t', 'id, college_name', ['display' => 'Y']);
-        $items = $db->selectData('item_t', 'id, item_name', ['display' => 'Y']);
+        $items = $db->selectData('item_master_t', 'id, item_name', ['display' => 'Y']);
         $makes = $db->selectData('make_t', 'id, make_name', ['display' => 'Y']);
         
         $data = [
@@ -59,7 +59,7 @@ class IndentController extends Controller{
             'makes'        => $makes
         ];
         
-        $this->viewWithLayout('indent/create', $data);
+        $this->viewWithLayout('indent/indentView', $data);
     }
 
     public function crudData($action = 'insertion')
@@ -73,7 +73,8 @@ class IndentController extends Controller{
             // Validate main indent data
             $institution_id = isset($_POST['institution_id']) ? (int)$_POST['institution_id'] : 0;
             $book_no = isset($_POST['book_no']) ? (int)$_POST['book_no'] : 0;
-            $indent_no = isset($_POST['indent_no']) ? (int)$_POST['indent_no'] : 0;
+            $indent_no = isset($_POST['indent_no']) ? htmlspecialchars(trim($_POST['indent_no']), ENT_QUOTES) : '';
+            $item_type = isset($_POST['item_type']) ? htmlspecialchars(trim($_POST['item_type']), ENT_QUOTES) : '';
             $indent_date = isset($_POST['indent_date']) ? $_POST['indent_date'] : '';
             $purpose = isset($_POST['purpose']) ? htmlspecialchars(trim($_POST['purpose']), ENT_QUOTES) : '';
             
@@ -86,8 +87,12 @@ class IndentController extends Controller{
                 echo json_encode(['success' => false, 'message' => 'Book number is required']);
                 exit;
             }
-            if ($indent_no <= 0) {
+            if (empty($indent_no)) {
                 echo json_encode(['success' => false, 'message' => 'Indent number is required']);
+                exit;
+            }
+            if (empty($item_type)) {
+                echo json_encode(['success' => false, 'message' => 'Item type is required']);
                 exit;
             }
             if (empty($indent_date)) {
@@ -107,6 +112,7 @@ class IndentController extends Controller{
                 'institution_id' => $institution_id,
                 'book_no'        => $book_no,
                 'indent_no'      => $indent_no,
+                'item_type'      => $item_type,
                 'indent_date'    => $indent_date,
                 'purpose'        => $purpose,
                 'created_by'     => 1, // Replace with session user
@@ -159,7 +165,8 @@ class IndentController extends Controller{
             $indentData = [
                 'institution_id' => (int)$_POST['institution_id'],
                 'book_no'        => (int)$_POST['book_no'],
-                'indent_no'      => (int)$_POST['indent_no'],
+                'indent_no'      => htmlspecialchars(trim($_POST['indent_no']), ENT_QUOTES),
+                'item_type'      => htmlspecialchars(trim($_POST['item_type']), ENT_QUOTES),
                 'indent_date'    => $_POST['indent_date'],
                 'purpose'        => htmlspecialchars(trim($_POST['purpose']), ENT_QUOTES)
             ];
@@ -390,7 +397,7 @@ class IndentController extends Controller{
                   LEFT JOIN users_t u4 ON im.issued_by = u4.id
                   LEFT JOIN users_t u5 ON im.received_by = u5.id
                   WHERE im.id = " . (int)$id;
-        $indent = $db->query($query);
+        $indent = $db->customQuery($query);
         
         if (empty($indent)) {
             $this->redirect('indent');
@@ -403,12 +410,12 @@ class IndentController extends Controller{
                        mk.make_name,
                        md.model_name
                        FROM indent_item_t ii
-                       LEFT JOIN item_t i ON ii.item_id = i.id
+                       LEFT JOIN item_master_t i ON ii.item_id = i.id
                        LEFT JOIN make_t mk ON ii.make_id = mk.id
                        LEFT JOIN model_t md ON ii.model_id = md.id
                        WHERE ii.indent_id = " . (int)$id . "
                        ORDER BY ii.sl_no";
-        $items = $db->query($itemsQuery);
+        $items = $db->customQuery($itemsQuery);
         
         $data = [
             'title'  => 'View Indent - ' . $indent[0]['indent_no'],
@@ -416,6 +423,6 @@ class IndentController extends Controller{
             'items'  => $items
         ];
         
-        $this->viewWithLayout('indent/view', $data);
+        $this->viewWithLayout('stock/indentview', $data);
     }
 }
