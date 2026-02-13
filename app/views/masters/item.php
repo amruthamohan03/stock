@@ -31,26 +31,12 @@
 
                                 <!-- TAX NOT TAX DROPDOWN -->
                                 <div class="col-md-3 mb-3">
-                                    <label class="form-label">Taxable/ Non-taxable<span class="text-danger">*</span></label>
+                                    <label class="form-label">Consumable/ Non-consumable<span class="text-danger">*</span></label>
                                     <select class="form-select" name="tax_not_tax" required>
-                                        <option value="A">A</option>
-                                        <option value="B">B</option>
+                                        <option value="C">Consumable</option>
+                                        <option value="N">Non-Consumable</option>
                                     </select>
                                 </div>
-
-                                <!-- ITEM TYPE DROPDOWN -->
-                                <div class="col-md-3 mb-3">
-                                    <label class="form-label">Item Type <span class="text-danger">*</span></label>
-                                    <select class="form-select" name="item_type" required>
-                                        <option value="">-- Select Item Type --</option>
-                                        <?php if (!empty($transactionEnum)): ?>
-                                            <?php foreach ($transactionEnum as $key => $value): ?>
-                                                <option value="<?= $key ?>"><?= htmlspecialchars($value) ?></option>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </select>
-                                </div>
-
                                 <!-- DISPLAY -->
                                 <div class="col-md-3 mb-3">
                                     <label class="form-label">Display</label>
@@ -79,11 +65,7 @@
                                     <th>#</th>
                                     <th>Item Name</th>
                                     <th>Category</th>
-                                    <th>Taxable/ Non-taxable</th>
-                                    <th>Item Type</th>
-                                    <th>Display</th>
-                                    <th>Created At</th>
-                                    <th>Updated At</th>
+                                    <th>Consumable/ Non-consumable</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -107,35 +89,12 @@
 
                                             <!-- TAX NOT TAX -->
                                             <td>
-                                                <?php if ($row['tax_not_tax'] == 'A'): ?>
-                                                    <span class="badge bg-success">A</span>
+                                                <?php if ($row['tax_not_tax'] == 'C'): ?>
+                                                    <span class="badge bg-success">Consumable</span>
                                                 <?php else: ?>
-                                                    <span class="badge bg-warning">B</span>
+                                                    <span class="badge bg-warning">Non-consumable</span>
                                                 <?php endif; ?>
                                             </td>
-
-                                            <!-- ITEM TYPE -->
-                                            <td>
-                                                <?php 
-                                                    $itemTypeLabel = '';
-                                                    if(isset($transactionEnum[$row['item_type']])) {
-                                                        $itemTypeLabel = $transactionEnum[$row['item_type']];
-                                                    } else {
-                                                        $itemTypeLabel = $row['item_type'];
-                                                    }
-                                                ?>
-                                                <span class="badge bg-primary"><?= htmlspecialchars($itemTypeLabel) ?></span>
-                                            </td>
-
-                                            <td>
-                                                <?php if ($row['display'] == 'Y'): ?>
-                                                    <span class="badge bg-success">Yes</span>
-                                                <?php else: ?>
-                                                    <span class="badge bg-danger">No</span>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td><?= date('d-m-Y', strtotime($row['created_at'])) ?></td>
-                                            <td><?= date('d-m-Y', strtotime($row['updated_at'])) ?></td>
 
                                             <td>
                                                 <a href="#" class="btn btn-sm btn-primary editItemBtn" data-id="<?= $row['id'] ?>">

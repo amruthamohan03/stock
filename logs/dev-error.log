@@ -1,0 +1,87 @@
+[10-Feb-2026 08:41:10 Africa/Lubumbashi] User logged in: supadmin (ID: 1)
+[10-Feb-2026 08:41:15 Africa/Lubumbashi] User logged out: supadmin
+[10-Feb-2026 08:43:09 Africa/Lubumbashi] User logged in: supadmin (ID: 1)
+[10-Feb-2026 10:53:48 Africa/Lubumbashi] PHP Warning:  Undefined array key "item_type" in C:\wamp64\www\stock\app\controllers\masters\ItemController.php on line 56
+[10-Feb-2026 10:53:48 Africa/Lubumbashi] PHP Stack trace:
+[10-Feb-2026 10:53:48 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
+[10-Feb-2026 10:53:48 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
+[10-Feb-2026 10:53:48 Africa/Lubumbashi] PHP   3. ItemController->crudData($action = 'insertion') C:\wamp64\www\stock\app\core\App.php:131
+[10-Feb-2026 10:53:48 Africa/Lubumbashi] PHP Deprecated:  trim(): Passing null to parameter #1 ($string) of type string is deprecated in C:\wamp64\www\stock\app\controllers\masters\ItemController.php on line 45
+[10-Feb-2026 10:53:48 Africa/Lubumbashi] PHP Stack trace:
+[10-Feb-2026 10:53:48 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
+[10-Feb-2026 10:53:48 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
+[10-Feb-2026 10:53:48 Africa/Lubumbashi] PHP   3. ItemController->crudData($action = 'insertion') C:\wamp64\www\stock\app\core\App.php:131
+[10-Feb-2026 10:53:48 Africa/Lubumbashi] PHP   4. s($v = NULL) C:\wamp64\www\stock\app\controllers\masters\ItemController.php:56
+[10-Feb-2026 10:53:48 Africa/Lubumbashi] PHP   5. trim($string = NULL) C:\wamp64\www\stock\app\controllers\masters\ItemController.php:45
+[10-Feb-2026 10:53:49 Africa/Lubumbashi] PHP Warning:  Undefined array key "item_type" in C:\wamp64\www\stock\app\controllers\masters\ItemController.php on line 56
+[10-Feb-2026 10:53:49 Africa/Lubumbashi] PHP Stack trace:
+[10-Feb-2026 10:53:49 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
+[10-Feb-2026 10:53:49 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
+[10-Feb-2026 10:53:49 Africa/Lubumbashi] PHP   3. ItemController->crudData($action = 'insertion') C:\wamp64\www\stock\app\core\App.php:131
+[10-Feb-2026 10:53:49 Africa/Lubumbashi] PHP Deprecated:  trim(): Passing null to parameter #1 ($string) of type string is deprecated in C:\wamp64\www\stock\app\controllers\masters\ItemController.php on line 45
+[10-Feb-2026 10:53:49 Africa/Lubumbashi] PHP Stack trace:
+[10-Feb-2026 10:53:49 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
+[10-Feb-2026 10:53:49 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
+[10-Feb-2026 10:53:49 Africa/Lubumbashi] PHP   3. ItemController->crudData($action = 'insertion') C:\wamp64\www\stock\app\core\App.php:131
+[10-Feb-2026 10:53:49 Africa/Lubumbashi] PHP   4. s($v = NULL) C:\wamp64\www\stock\app\controllers\masters\ItemController.php:56
+[10-Feb-2026 10:53:49 Africa/Lubumbashi] PHP   5. trim($string = NULL) C:\wamp64\www\stock\app\controllers\masters\ItemController.php:45
+[10-Feb-2026 10:53:57 Africa/Lubumbashi] PHP Warning:  Undefined array key "item_type" in C:\wamp64\www\stock\app\controllers\masters\ItemController.php on line 56
+[10-Feb-2026 10:53:57 Africa/Lubumbashi] PHP Stack trace:
+[10-Feb-2026 10:53:57 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
+[10-Feb-2026 10:53:57 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
+[10-Feb-2026 10:53:57 Africa/Lubumbashi] PHP   3. ItemController->crudData($action = 'insertion') C:\wamp64\www\stock\app\core\App.php:131
+[10-Feb-2026 10:53:57 Africa/Lubumbashi] PHP Deprecated:  trim(): Passing null to parameter #1 ($string) of type string is deprecated in C:\wamp64\www\stock\app\controllers\masters\ItemController.php on line 45
+[10-Feb-2026 10:53:57 Africa/Lubumbashi] PHP Stack trace:
+[10-Feb-2026 10:53:57 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
+[10-Feb-2026 10:53:57 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
+[10-Feb-2026 10:53:57 Africa/Lubumbashi] PHP   3. ItemController->crudData($action = 'insertion') C:\wamp64\www\stock\app\core\App.php:131
+[10-Feb-2026 10:53:57 Africa/Lubumbashi] PHP   4. s($v = NULL) C:\wamp64\www\stock\app\controllers\masters\ItemController.php:56
+[10-Feb-2026 10:53:57 Africa/Lubumbashi] PHP   5. trim($string = NULL) C:\wamp64\www\stock\app\controllers\masters\ItemController.php:45
+[10-Feb-2026 10:57:11 Africa/Lubumbashi] PHP Warning:  Undefined array key "item_type" in C:\wamp64\www\stock\app\controllers\masters\ItemController.php on line 56
+[10-Feb-2026 10:57:11 Africa/Lubumbashi] PHP Stack trace:
+[10-Feb-2026 10:57:11 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
+[10-Feb-2026 10:57:11 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
+[10-Feb-2026 10:57:11 Africa/Lubumbashi] PHP   3. ItemController->crudData($action = 'insertion') C:\wamp64\www\stock\app\core\App.php:131
+[10-Feb-2026 10:57:11 Africa/Lubumbashi] PHP Deprecated:  trim(): Passing null to parameter #1 ($string) of type string is deprecated in C:\wamp64\www\stock\app\controllers\masters\ItemController.php on line 45
+[10-Feb-2026 10:57:11 Africa/Lubumbashi] PHP Stack trace:
+[10-Feb-2026 10:57:11 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
+[10-Feb-2026 10:57:11 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
+[10-Feb-2026 10:57:11 Africa/Lubumbashi] PHP   3. ItemController->crudData($action = 'insertion') C:\wamp64\www\stock\app\core\App.php:131
+[10-Feb-2026 10:57:11 Africa/Lubumbashi] PHP   4. s($v = NULL) C:\wamp64\www\stock\app\controllers\masters\ItemController.php:56
+[10-Feb-2026 10:57:11 Africa/Lubumbashi] PHP   5. trim($string = NULL) C:\wamp64\www\stock\app\controllers\masters\ItemController.php:45
+[10-Feb-2026 10:57:49 Africa/Lubumbashi] PHP Warning:  Undefined array key "item_type" in C:\wamp64\www\stock\app\controllers\masters\ItemController.php on line 71
+[10-Feb-2026 10:57:49 Africa/Lubumbashi] PHP Stack trace:
+[10-Feb-2026 10:57:49 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
+[10-Feb-2026 10:57:49 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
+[10-Feb-2026 10:57:49 Africa/Lubumbashi] PHP   3. ItemController->crudData($action = 'insertion') C:\wamp64\www\stock\app\core\App.php:131
+[10-Feb-2026 10:58:16 Africa/Lubumbashi] PHP Warning:  Undefined array key "item_type" in C:\wamp64\www\stock\app\views\masters\item.php on line 107
+[10-Feb-2026 10:58:16 Africa/Lubumbashi] PHP Stack trace:
+[10-Feb-2026 10:58:16 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
+[10-Feb-2026 10:58:16 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
+[10-Feb-2026 10:58:16 Africa/Lubumbashi] PHP   3. ItemController->index() C:\wamp64\www\stock\app\core\App.php:131
+[10-Feb-2026 10:58:16 Africa/Lubumbashi] PHP   4. Controller->viewWithLayout($view = 'masters/item', $data = ['title' => 'Item Master', 'result' => [0 => [...]], 'categories' => [0 => [...], 1 => [...]], 'transactionEnum' => ['I' => 'Import', 'E' => 'Export', 'U' => 'Under Value', 'IE' => 'Import, Export', 'IU' => 'Import, Under Value', 'EU' => 'Export, Under Value', 'IEU' => 'Import, Export, Under Value']], $layout = *uninitialized*) C:\wamp64\www\stock\app\controllers\masters\ItemController.php:37
+[10-Feb-2026 10:58:16 Africa/Lubumbashi] PHP   5. require_once() C:\wamp64\www\stock\app\core\Controller.php:77
+[10-Feb-2026 10:58:16 Africa/Lubumbashi] PHP Warning:  Undefined array key "item_type" in C:\wamp64\www\stock\app\views\masters\item.php on line 110
+[10-Feb-2026 10:58:16 Africa/Lubumbashi] PHP Stack trace:
+[10-Feb-2026 10:58:16 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
+[10-Feb-2026 10:58:16 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
+[10-Feb-2026 10:58:16 Africa/Lubumbashi] PHP   3. ItemController->index() C:\wamp64\www\stock\app\core\App.php:131
+[10-Feb-2026 10:58:16 Africa/Lubumbashi] PHP   4. Controller->viewWithLayout($view = 'masters/item', $data = ['title' => 'Item Master', 'result' => [0 => [...]], 'categories' => [0 => [...], 1 => [...]], 'transactionEnum' => ['I' => 'Import', 'E' => 'Export', 'U' => 'Under Value', 'IE' => 'Import, Export', 'IU' => 'Import, Under Value', 'EU' => 'Export, Under Value', 'IEU' => 'Import, Export, Under Value']], $layout = *uninitialized*) C:\wamp64\www\stock\app\controllers\masters\ItemController.php:37
+[10-Feb-2026 10:58:16 Africa/Lubumbashi] PHP   5. require_once() C:\wamp64\www\stock\app\core\Controller.php:77
+[10-Feb-2026 10:58:16 Africa/Lubumbashi] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\wamp64\www\stock\app\views\masters\item.php on line 113
+[10-Feb-2026 10:58:16 Africa/Lubumbashi] PHP Stack trace:
+[10-Feb-2026 10:58:16 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
+[10-Feb-2026 10:58:16 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
+[10-Feb-2026 10:58:16 Africa/Lubumbashi] PHP   3. ItemController->index() C:\wamp64\www\stock\app\core\App.php:131
+[10-Feb-2026 10:58:16 Africa/Lubumbashi] PHP   4. Controller->viewWithLayout($view = 'masters/item', $data = ['title' => 'Item Master', 'result' => [0 => [...]], 'categories' => [0 => [...], 1 => [...]], 'transactionEnum' => ['I' => 'Import', 'E' => 'Export', 'U' => 'Under Value', 'IE' => 'Import, Export', 'IU' => 'Import, Under Value', 'EU' => 'Export, Under Value', 'IEU' => 'Import, Export, Under Value']], $layout = *uninitialized*) C:\wamp64\www\stock\app\controllers\masters\ItemController.php:37
+[10-Feb-2026 10:58:16 Africa/Lubumbashi] PHP   5. require_once() C:\wamp64\www\stock\app\core\Controller.php:77
+[10-Feb-2026 10:58:16 Africa/Lubumbashi] PHP   6. htmlspecialchars($string = NULL) C:\wamp64\www\stock\app\views\masters\item.php:113
+[10-Feb-2026 12:07:33 Africa/Lubumbashi] PHP Warning:  require_once(../app/controllers/stock/AuthController.php): Failed to open stream: No such file or directory in C:\wamp64\www\stock\app\core\App.php on line 120
+[10-Feb-2026 12:07:33 Africa/Lubumbashi] PHP Stack trace:
+[10-Feb-2026 12:07:33 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
+[10-Feb-2026 12:07:33 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
+[10-Feb-2026 12:07:33 Africa/Lubumbashi] PHP Fatal error:  Uncaught Error: Failed opening required '../app/controllers/stock/AuthController.php' (include_path='.;C:\php\pear') in C:\wamp64\www\stock\app\core\App.php:120
+Stack trace:
+#0 C:\wamp64\www\stock\public\index.php(57): App->__construct()
+#1 {main}
+  thrown in C:\wamp64\www\stock\app\core\App.php on line 120

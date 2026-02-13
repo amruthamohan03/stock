@@ -3,7 +3,7 @@
     <div class="page-container">
         <div class="row">
             <div class="col-md-6 text-center text-md-start">
-                <script>document.write(new Date().getFullYear())</script> © Malabar Group <span class="fw-bold text-decoration-underline text-uppercase text-reset fs-12">Nexus</span>
+                <script>document.write(new Date().getFullYear())</script> © Department Of Computer Engineering <span class="fw-bold text-decoration-underline text-uppercase text-reset fs-12">GPTCN</span>
             </div>
             
         </div>

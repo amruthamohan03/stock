@@ -33,7 +33,7 @@
                                         <option value="">-- Select Office --</option>
                                         <?php foreach ($offices as $o): ?>
                                             <option value="<?= $o['id'] ?>">
-                                                <?= htmlspecialchars($o['main_location_name']) ?>
+                                                <?= htmlspecialchars($o['college_name']) ?>
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
@@ -185,7 +185,7 @@
                             class="form-select form-select-sm shadow-sm">
                             <option value="">-- Select Office --</option>
                             <?php foreach ($offices as $o): ?>
-                                <option value="<?= $o['id'] ?>"><?= htmlspecialchars($o['main_location_name']) ?></option>
+                                <option value="<?= $o['id'] ?>"><?= htmlspecialchars($o['college_name']) ?></option>
                             <?php endforeach; ?>
                         </select>
                     </div>
