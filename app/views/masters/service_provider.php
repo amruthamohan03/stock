@@ -17,7 +17,7 @@
                                 <!-- Provider Name -->
                                 <div class="col-md-3 mb-3">
                                     <label class="form-label">Provider Name <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" name="name" placeholder="e.g. ABC Pvt Ltd" required>
+                                    <input type="text" class="form-control" name="provider_name" placeholder="e.g. ABC Pvt Ltd" required>
                                 </div>
 
                                 <!-- Type -->
@@ -89,7 +89,7 @@
 
                                         <tr id="row_<?= $row['id'] ?>">
                                             <td><?= $i++ ?></td>
-                                            <td><?= htmlspecialchars($row['name']) ?></td>
+                                            <td><?= htmlspecialchars($row['provider_name']) ?></td>
 
                                             <!-- TYPE BADGE -->
                                             <td>
@@ -159,7 +159,7 @@
                         <!-- Provider Name -->
                         <div class="col-md-6 mb-3">
                             <label class="form-label">Provider Name <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="name" id="edit_name" required>
+                            <input type="text" class="form-control" name="provider_name" id="edit_name" required>
                         </div>
 
                         <!-- Type -->

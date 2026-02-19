@@ -34,7 +34,7 @@ class ProviderController extends Controller
         if ($action === 'insertion' && $_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $data = [
-                'name'       => s($_POST['name']    ?? ''),
+                'provider_name'=> s($_POST['provider_name']    ?? ''),
                 'type'       => s($_POST['type']    ?? ''),
                 'phone_no'   => s($_POST['phone_no'] ?? ''),
                 'email'      => s($_POST['email']   ?? ''),
@@ -44,7 +44,7 @@ class ProviderController extends Controller
                 'updated_by' => 1,
             ];
 
-            if (!$data['name']) {
+            if (!$data['provider_name']) {
                 echo json_encode(['success' => false, 'message' => '⚠ Provider name is required.']);
                 exit;
             }
@@ -95,7 +95,7 @@ class ProviderController extends Controller
             }
 
             $data = [
-                'name'       => s($_POST['name']    ?? ''),
+                'provider_name' => s($_POST['providername']    ?? ''),
                 'type'       => s($_POST['type']    ?? ''),
                 'phone_no'   => s($_POST['phone_no'] ?? ''),
                 'email'      => s($_POST['email']   ?? ''),
@@ -105,7 +105,7 @@ class ProviderController extends Controller
                 'updated_at' => date('Y-m-d H:i:s'),
             ];
 
-            if (!$data['name']) {
+            if (!$data['provider_name']) {
                 echo json_encode(['success' => false, 'message' => '⚠ Provider name is required.']);
                 exit;
             }
