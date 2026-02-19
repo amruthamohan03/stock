@@ -26,8 +26,11 @@ class App {
             'role'                  => 'masters/',
             'user'                  => 'masters/',
             'department'            => 'masters/',
+            'provider'              => 'masters/',
             'indent'                => 'stock/',
             'stock'                 => 'stock/',
+            'daybook'               => 'stock/',
+
 
             'banklist'              => 'masters/',
             'category'              => 'masters/',
