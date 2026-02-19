@@ -15,19 +15,6 @@
                         <form id="indentForm" method="post">
                             <!-- Header Information -->
                             <div class="row">
-                                <div class="col-md-3 mb-3">
-                                    <label for="institution_id" class="form-label">Institution <span class="text-danger">*</span></label>
-                                    <select class="form-select select2" id="institution_id" name="institution_id" required>
-                                        <option value="">-- Select Institution --</option>
-                                        <?php if (!empty($institutions)): ?>
-                                            <?php foreach ($institutions as $inst): ?>
-                                                <option value="<?= $inst['id'] ?>">
-                                                    <?= htmlspecialchars($inst['college_name']) ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </select>
-                                </div>
 
                                 <div class="col-md-2 mb-3">
                                     <label for="book_no" class="form-label">Book No <span class="text-danger">*</span></label>
@@ -118,7 +105,6 @@
                                     <th>Indent No</th>
                                     <th>Type</th>
                                     <th>Date</th>
-                                    <th>Institution</th>
                                     <th>Status</th>
                                     <th>Created By</th>
                                     <th>Action</th>
@@ -139,7 +125,6 @@
                                                 <span class="badge bg-<?= $typeColor ?>"><?= htmlspecialchars($itemType ?? 'N/A'); ?></span>
                                             </td>
                                             <td><?= date('d-m-Y', strtotime($row['indent_date'])); ?></td>
-                                            <td><?= htmlspecialchars($row['college_name'] ?? 'N/A'); ?></td>
                                             <td>
                                                 <?php
                                                 $statusColors = [
