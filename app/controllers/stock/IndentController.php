@@ -5,10 +5,7 @@ class IndentController extends Controller{
     public function index()
     {
         $db = new Database();
-        
-        // Get all institutions/colleges for dropdown
-        $institutions = $db->selectData('college_t', 'id, college_name', ['display' => 'Y']);
-        
+                
         // Get all items for dropdown
         $items = $db->selectData('item_master_t', 'id, item_name', ['display' => 'Y']);
         
@@ -34,7 +31,6 @@ class IndentController extends Controller{
         
         $data = [
             'title'        => 'Indent Book Management',
-            'institutions' => $institutions,
             'items'        => $items,
             'makes'        => $makes,
             'result'       => $result
@@ -71,18 +67,12 @@ class IndentController extends Controller{
             header('Content-Type: application/json');
             
             // Validate main indent data
-            $institution_id = isset($_POST['institution_id']) ? (int)$_POST['institution_id'] : 0;
             $book_no = isset($_POST['book_no']) ? (int)$_POST['book_no'] : 0;
             $indent_no = isset($_POST['indent_no']) ? htmlspecialchars(trim($_POST['indent_no']), ENT_QUOTES) : '';
             $item_type = isset($_POST['item_type']) ? htmlspecialchars(trim($_POST['item_type']), ENT_QUOTES) : '';
             $indent_date = isset($_POST['indent_date']) ? $_POST['indent_date'] : '';
             $purpose = isset($_POST['purpose']) ? htmlspecialchars(trim($_POST['purpose']), ENT_QUOTES) : '';
             
-            // Validate
-            if ($institution_id <= 0) {
-                echo json_encode(['success' => false, 'message' => 'Please select an institution']);
-                exit;
-            }
             if ($book_no <= 0) {
                 echo json_encode(['success' => false, 'message' => 'Book number is required']);
                 exit;
@@ -109,7 +99,6 @@ class IndentController extends Controller{
             
             // Insert indent master
             $indentData = [
-                'institution_id' => $institution_id,
                 'book_no'        => $book_no,
                 'indent_no'      => $indent_no,
                 'item_type'      => $item_type,
@@ -163,7 +152,6 @@ class IndentController extends Controller{
             }
             
             $indentData = [
-                'institution_id' => (int)$_POST['institution_id'],
                 'book_no'        => (int)$_POST['book_no'],
                 'indent_no'      => htmlspecialchars(trim($_POST['indent_no']), ENT_QUOTES),
                 'item_type'      => htmlspecialchars(trim($_POST['item_type']), ENT_QUOTES),

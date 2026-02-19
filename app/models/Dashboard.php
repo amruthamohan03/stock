@@ -78,17 +78,7 @@ class Dashboard
     {
         // Map card_key to table names and labels
         $cardDataMap = [
-            'total_users'       => ['table' => 'users_t',           'label' => 'Active Users'],
-            'total_clients'     => ['table' => 'clients_t',         'label' => 'Active Clients'],
-            'total_licenses'    => ['table' => 'licenses_t',        'label' => 'Active Licenses'],
-            'local_dashboard'   => ['table' => 'locals_t',          'label' => 'Active Locals'],
-            'import_dashboard'  => ['table' => 'imports_t',         'label' => 'Active Imports'],
-            'export_dashboard'  => ['table' => 'exports_t',         'label' => 'Active Exports'],
-            'export_logistics'  => ['table' => 'exports_t',         'label' => 'Definitive'],
-            'export_kpi'        => ['table' => 'exports_t',         'label' => 'Temporary'],
-            // 'fiche_de_calcul'   => ['table' => 'fiche_calcul_t',    'label' => 'Active'],
-            'import_invoices'   => ['table' => 'import_invoices_t', 'label' => 'Processed'],
-            'import_delay_kpi'  => ['table' => 'imports_t',         'label' => 'Delayed'],
+            'total_users'       => ['table' => 'users_t',           'label' => 'Active Users'],            
             'system_settings'   => ['table' => null,                'label' => 'Configuration'],
         ];
 
