@@ -274,3 +274,43 @@ Stack trace:
 #3 C:\wamp64\www\stock\public\index.php(57): App->__construct()
 #4 {main}
   thrown in C:\wamp64\www\stock\app\core\Database.php on line 467
+[18-Feb-2026 10:18:12 Africa/Lubumbashi] PHP Warning:  Undefined array key "name" in C:\wamp64\www\stock\app\views\masters\service_provider.php on line 92
+[18-Feb-2026 10:18:12 Africa/Lubumbashi] PHP Stack trace:
+[18-Feb-2026 10:18:12 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
+[18-Feb-2026 10:18:12 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
+[18-Feb-2026 10:18:12 Africa/Lubumbashi] PHP   3. ProviderController->index() C:\wamp64\www\stock\app\core\App.php:136
+[18-Feb-2026 10:18:12 Africa/Lubumbashi] PHP   4. Controller->viewWithLayout($view = 'masters/service_provider', $data = ['title' => 'Service Providers', 'result' => [0 => [...]]], $layout = *uninitialized*) C:\wamp64\www\stock\app\controllers\masters\ProviderController.php:21
+[18-Feb-2026 10:18:12 Africa/Lubumbashi] PHP   5. require_once() C:\wamp64\www\stock\app\core\Controller.php:77
+[18-Feb-2026 10:18:12 Africa/Lubumbashi] PHP Deprecated:  htmlspecialchars(): Passing null to parameter #1 ($string) of type string is deprecated in C:\wamp64\www\stock\app\views\masters\service_provider.php on line 92
+[18-Feb-2026 10:18:12 Africa/Lubumbashi] PHP Stack trace:
+[18-Feb-2026 10:18:12 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
+[18-Feb-2026 10:18:12 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
+[18-Feb-2026 10:18:12 Africa/Lubumbashi] PHP   3. ProviderController->index() C:\wamp64\www\stock\app\core\App.php:136
+[18-Feb-2026 10:18:12 Africa/Lubumbashi] PHP   4. Controller->viewWithLayout($view = 'masters/service_provider', $data = ['title' => 'Service Providers', 'result' => [0 => [...]]], $layout = *uninitialized*) C:\wamp64\www\stock\app\controllers\masters\ProviderController.php:21
+[18-Feb-2026 10:18:12 Africa/Lubumbashi] PHP   5. require_once() C:\wamp64\www\stock\app\core\Controller.php:77
+[18-Feb-2026 10:18:12 Africa/Lubumbashi] PHP   6. htmlspecialchars($string = NULL) C:\wamp64\www\stock\app\views\masters\service_provider.php:92
+[18-Feb-2026 10:38:54 Africa/Lubumbashi] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'display' in 'where clause' in C:\wamp64\www\stock\app\core\Database.php:384
+Stack trace:
+#0 C:\wamp64\www\stock\app\core\Database.php(384): PDO->prepare('SELECT * FROM d...')
+#1 C:\wamp64\www\stock\app\controllers\stock\DaybookController.php(216): Database->selectData('daybook_master_...', '*', Array)
+#2 C:\wamp64\www\stock\app\core\App.php(136): DaybookController->getDayBookById()
+#3 C:\wamp64\www\stock\public\index.php(57): App->__construct()
+#4 {main}
+  thrown in C:\wamp64\www\stock\app\core\Database.php on line 384
+[18-Feb-2026 12:02:43 Africa/Lubumbashi] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause' in C:\wamp64\www\stock\app\core\Database.php:384
+Stack trace:
+#0 C:\wamp64\www\stock\app\core\Database.php(384): PDO->prepare('SELECT id, user...')
+#1 C:\wamp64\www\stock\app\controllers\stock\DaybookController.php(17): Database->selectData('users_t', 'id, username', Array)
+#2 C:\wamp64\www\stock\app\core\App.php(136): DaybookController->index()
+#3 C:\wamp64\www\stock\public\index.php(57): App->__construct()
+#4 {main}
+  thrown in C:\wamp64\www\stock\app\core\Database.php on line 384
+[18-Feb-2026 12:02:44 Africa/Lubumbashi] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause' in C:\wamp64\www\stock\app\core\Database.php:384
+Stack trace:
+#0 C:\wamp64\www\stock\app\core\Database.php(384): PDO->prepare('SELECT id, user...')
+#1 C:\wamp64\www\stock\app\controllers\stock\DaybookController.php(17): Database->selectData('users_t', 'id, username', Array)
+#2 C:\wamp64\www\stock\app\core\App.php(136): DaybookController->index()
+#3 C:\wamp64\www\stock\public\index.php(57): App->__construct()
+#4 {main}
+  thrown in C:\wamp64\www\stock\app\core\Database.php on line 384
+[19-Feb-2026 06:20:34 Africa/Lubumbashi] User logged in: supadmin (ID: 1)
