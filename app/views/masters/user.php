@@ -55,7 +55,7 @@
                                         <option value="">-- Select Location --</option>
                                         <?php foreach ($locations as $loc): ?>
                                             <option value="<?= $loc['id'] ?>">
-                                                <?= htmlspecialchars($loc['main_location_name']) ?></option>
+                                                <?= htmlspecialchars($loc['college_name']) ?></option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -108,7 +108,7 @@
                                         <td><?= htmlspecialchars($row['email']) ?></td>
                                         <td><?= $row['role_name'] ?></td>
                                         <td><?= $row['dept_name'] ?></td>
-                                        <td><?= ($row['main_location_name'])?htmlspecialchars($row['main_location_name']):'' ?></td>
+                                        <td><?= ($row['college_name'])?htmlspecialchars($row['college_name']):'' ?></td>
                                         <td><?= $row['display'] ?></td>
                                         <td>
                                             <button class="btn btn-sm btn-primary editUserBtn"
@@ -177,7 +177,7 @@
                         <select id="edit_location_id" name="location_id" class="form-select form-select-sm">
                             <option value="">-- Select Location --</option>
                             <?php foreach ($locations as $loc): ?>
-                                <option value="<?= $loc['id'] ?>"><?= htmlspecialchars($loc['main_location_name']) ?>
+                                <option value="<?= $loc['id'] ?>"><?= htmlspecialchars($loc['college_name']) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
