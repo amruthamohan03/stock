@@ -116,18 +116,7 @@ class Dashboard
     {
         return [
             'total_users'     => $this->count('users_t'),
-            'total_clients'   => $this->count('clients_t'),
-            'total_licenses'  => $this->count('licenses_t'),
-            'total_imports'   => $this->count('imports_t'),
-            'total_exports'   => $this->count('exports_t'),
-            'total_locals'    => $this->count('locals_t'),
-
             'active_users'    => $this->countTableActive('users_t'),
-            'active_clients'  => $this->countTableActive('clients_t'),
-            'active_licenses' => $this->countTableActive('licenses_t'),
-            'active_imports'  => $this->countTableActive('imports_t'),
-            'active_exports'  => $this->countTableActive('exports_t'),
-            'active_locals'   => $this->countTableActive('locals_t'),
         ];
     }
 

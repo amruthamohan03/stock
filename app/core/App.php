@@ -30,6 +30,7 @@ class App {
             'indent'                => 'stock/',
             'stock'                 => 'stock/',
             'daybook'               => 'stock/',
+            'books'                 => 'report/',
             'item'                  => 'masters/',
             'account'               =>  'account/',
             'clientbankmapping'     =>  'mapping/',
