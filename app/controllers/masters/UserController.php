@@ -17,7 +17,7 @@ class UserController extends Controller
                 u.dept_id,
                 d.department_name AS dept_name,
                 u.location_id,
-                t.main_location_name,
+                t.college_name,
                 u.display,
                 u.profile_image,
                 u.created_at,
@@ -25,7 +25,7 @@ class UserController extends Controller
             FROM users_t u
             LEFT JOIN role_master_t r ON u.role_id = r.id
             LEFT JOIN department_master_t d ON u.dept_id = d.id
-            LEFT JOIN main_office_master_t t ON u.location_id = t.id
+            LEFT JOIN college_t t ON u.location_id = t.id
             WHERE u.display = 'Y'
             ORDER BY u.id DESC
         ";
@@ -33,7 +33,7 @@ class UserController extends Controller
         $result = $db->customQuery($sql);
         $roles = $db->selectData('role_master_t', '*', ['display' => 'Y']);
         $departments = $db->selectData('department_master_t', '*', ['display' => 'Y']);
-        $locations = $db->selectData('main_office_master_t', '*', ['display' => 'Y']); // new dropdown source
+        $locations = $db->selectData('college_t', '*', ['display' => 'Y']); // new dropdown source
 
         $data = [
             'title' => 'User Master',

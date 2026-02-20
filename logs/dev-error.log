@@ -352,3 +352,121 @@ Stack trace:
 #0 C:\wamp64\www\stock\public\index.php(57): App->__construct()
 #1 {main}
   thrown in C:\wamp64\www\stock\app\core\App.php on line 60
+[20-Feb-2026 16:02:06 Africa/Lubumbashi] User logged in: supadmin (ID: 1)
+[20-Feb-2026 16:05:01 Africa/Lubumbashi] PHP Fatal error:  Uncaught Error: Class "Dompdf\Dompdf" not found in C:\wamp64\www\stock\app\controllers\report\IndentbookController.php:197
+Stack trace:
+#0 C:\wamp64\www\stock\app\core\App.php(73): IndentbookController->exportPdf()
+#1 C:\wamp64\www\stock\public\index.php(57): App->__construct()
+#2 {main}
+  thrown in C:\wamp64\www\stock\app\controllers\report\IndentbookController.php on line 197
+[20-Feb-2026 16:31:16 Africa/Lubumbashi] PHP Fatal error:  Uncaught Error: Call to undefined method Database::escape() in C:\wamp64\www\stock\app\controllers\report\BookController.php:135
+Stack trace:
+#0 C:\wamp64\www\stock\app\core\App.php(73): BookController->fetchStockBook()
+#1 C:\wamp64\www\stock\public\index.php(57): App->__construct()
+#2 {main}
+  thrown in C:\wamp64\www\stock\app\controllers\report\BookController.php on line 135
+[20-Feb-2026 16:31:17 Africa/Lubumbashi] PHP Fatal error:  Uncaught Error: Call to undefined method Database::escape() in C:\wamp64\www\stock\app\controllers\report\BookController.php:135
+Stack trace:
+#0 C:\wamp64\www\stock\app\core\App.php(73): BookController->fetchStockBook()
+#1 C:\wamp64\www\stock\public\index.php(57): App->__construct()
+#2 {main}
+  thrown in C:\wamp64\www\stock\app\controllers\report\BookController.php on line 135
+[20-Feb-2026 16:36:32 Africa/Lubumbashi] PHP Fatal error:  Uncaught Error: Call to undefined method Database::escape() in C:\wamp64\www\stock\app\controllers\report\BookController.php:135
+Stack trace:
+#0 C:\wamp64\www\stock\app\core\App.php(73): BookController->fetchStockBook()
+#1 C:\wamp64\www\stock\public\index.php(57): App->__construct()
+#2 {main}
+  thrown in C:\wamp64\www\stock\app\controllers\report\BookController.php on line 135
+[20-Feb-2026 16:36:43 Africa/Lubumbashi] PHP Fatal error:  Uncaught Error: Call to undefined method Database::escape() in C:\wamp64\www\stock\app\controllers\report\BookController.php:135
+Stack trace:
+#0 C:\wamp64\www\stock\app\core\App.php(73): BookController->fetchStockBook()
+#1 C:\wamp64\www\stock\public\index.php(57): App->__construct()
+#2 {main}
+  thrown in C:\wamp64\www\stock\app\controllers\report\BookController.php on line 135
+[20-Feb-2026 17:10:18 Africa/Lubumbashi] Database customQuery error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'st.institution_id' in 'on clause'
+[20-Feb-2026 17:10:18 Africa/Lubumbashi] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'st.institution_id' in 'on clause' in C:\wamp64\www\stock\app\core\Database.php:467
+Stack trace:
+#0 C:\wamp64\www\stock\app\core\Database.php(467): PDO->prepare('\r\n            S...')
+#1 C:\wamp64\www\stock\app\controllers\report\BookController.php(539): Database->customQuery('\r\n            S...')
+#2 C:\wamp64\www\stock\app\controllers\report\BookController.php(299): BookController->_pdfStockBook()
+#3 C:\wamp64\www\stock\app\core\App.php(73): BookController->exportPdf('stock_book')
+#4 C:\wamp64\www\stock\public\index.php(57): App->__construct()
+#5 {main}
+  thrown in C:\wamp64\www\stock\app\core\Database.php on line 467
+[20-Feb-2026 17:10:28 Africa/Lubumbashi] Database customQuery error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'sp.service_provider_name' in 'field list'
+[20-Feb-2026 17:10:28 Africa/Lubumbashi] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'sp.service_provider_name' in 'field list' in C:\wamp64\www\stock\app\core\Database.php:467
+Stack trace:
+#0 C:\wamp64\www\stock\app\core\Database.php(467): PDO->prepare('\r\n            S...')
+#1 C:\wamp64\www\stock\app\controllers\report\BookController.php(755): Database->customQuery('\r\n            S...')
+#2 C:\wamp64\www\stock\app\controllers\report\BookController.php(300): BookController->_pdfDayBook()
+#3 C:\wamp64\www\stock\app\core\App.php(73): BookController->exportPdf('day_book')
+#4 C:\wamp64\www\stock\public\index.php(57): App->__construct()
+#5 {main}
+  thrown in C:\wamp64\www\stock\app\core\Database.php on line 467
+[20-Feb-2026 18:06:01 Africa/Lubumbashi] Database customQuery error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'st.institution_id' in 'on clause'
+[20-Feb-2026 18:06:01 Africa/Lubumbashi] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'st.institution_id' in 'on clause' in C:\wamp64\www\stock\app\core\Database.php:467
+Stack trace:
+#0 C:\wamp64\www\stock\app\core\Database.php(467): PDO->prepare('\r\n            S...')
+#1 C:\wamp64\www\stock\app\controllers\report\BookController.php(539): Database->customQuery('\r\n            S...')
+#2 C:\wamp64\www\stock\app\controllers\report\BookController.php(299): BookController->_pdfStockBook()
+#3 C:\wamp64\www\stock\app\core\App.php(73): BookController->exportPdf('stock_book')
+#4 C:\wamp64\www\stock\public\index.php(57): App->__construct()
+#5 {main}
+  thrown in C:\wamp64\www\stock\app\core\Database.php on line 467
+[20-Feb-2026 19:01:42 Africa/Lubumbashi] Database customQuery error: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'stock_db.main_office_master_t' doesn't exist
+[20-Feb-2026 19:01:42 Africa/Lubumbashi] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'stock_db.main_office_master_t' doesn't exist in C:\wamp64\www\stock\app\core\Database.php:467
+Stack trace:
+#0 C:\wamp64\www\stock\app\core\Database.php(467): PDO->prepare('\r\n            S...')
+#1 C:\wamp64\www\stock\app\controllers\masters\UserController.php(33): Database->customQuery('\r\n            S...')
+#2 C:\wamp64\www\stock\app\core\App.php(73): UserController->index()
+#3 C:\wamp64\www\stock\public\index.php(57): App->__construct()
+#4 {main}
+  thrown in C:\wamp64\www\stock\app\core\Database.php on line 467
+[20-Feb-2026 19:02:31 Africa/Lubumbashi] Database customQuery error: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'stock_db.collage_t' doesn't exist
+[20-Feb-2026 19:02:31 Africa/Lubumbashi] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'stock_db.collage_t' doesn't exist in C:\wamp64\www\stock\app\core\Database.php:467
+Stack trace:
+#0 C:\wamp64\www\stock\app\core\Database.php(467): PDO->prepare('\r\n            S...')
+#1 C:\wamp64\www\stock\app\controllers\masters\UserController.php(33): Database->customQuery('\r\n            S...')
+#2 C:\wamp64\www\stock\app\core\App.php(73): UserController->index()
+#3 C:\wamp64\www\stock\public\index.php(57): App->__construct()
+#4 {main}
+  thrown in C:\wamp64\www\stock\app\core\Database.php on line 467
+[20-Feb-2026 19:03:00 Africa/Lubumbashi] Database customQuery error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.main_location_name' in 'field list'
+[20-Feb-2026 19:03:00 Africa/Lubumbashi] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.main_location_name' in 'field list' in C:\wamp64\www\stock\app\core\Database.php:467
+Stack trace:
+#0 C:\wamp64\www\stock\app\core\Database.php(467): PDO->prepare('\r\n            S...')
+#1 C:\wamp64\www\stock\app\controllers\masters\UserController.php(33): Database->customQuery('\r\n            S...')
+#2 C:\wamp64\www\stock\app\core\App.php(73): UserController->index()
+#3 C:\wamp64\www\stock\public\index.php(57): App->__construct()
+#4 {main}
+  thrown in C:\wamp64\www\stock\app\core\Database.php on line 467
+[20-Feb-2026 19:03:01 Africa/Lubumbashi] Database customQuery error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.main_location_name' in 'field list'
+[20-Feb-2026 19:03:01 Africa/Lubumbashi] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.main_location_name' in 'field list' in C:\wamp64\www\stock\app\core\Database.php:467
+Stack trace:
+#0 C:\wamp64\www\stock\app\core\Database.php(467): PDO->prepare('\r\n            S...')
+#1 C:\wamp64\www\stock\app\controllers\masters\UserController.php(33): Database->customQuery('\r\n            S...')
+#2 C:\wamp64\www\stock\app\core\App.php(73): UserController->index()
+#3 C:\wamp64\www\stock\public\index.php(57): App->__construct()
+#4 {main}
+  thrown in C:\wamp64\www\stock\app\core\Database.php on line 467
+[20-Feb-2026 19:03:01 Africa/Lubumbashi] Database customQuery error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.main_location_name' in 'field list'
+[20-Feb-2026 19:03:01 Africa/Lubumbashi] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 't.main_location_name' in 'field list' in C:\wamp64\www\stock\app\core\Database.php:467
+Stack trace:
+#0 C:\wamp64\www\stock\app\core\Database.php(467): PDO->prepare('\r\n            S...')
+#1 C:\wamp64\www\stock\app\controllers\masters\UserController.php(33): Database->customQuery('\r\n            S...')
+#2 C:\wamp64\www\stock\app\core\App.php(73): UserController->index()
+#3 C:\wamp64\www\stock\public\index.php(57): App->__construct()
+#4 {main}
+  thrown in C:\wamp64\www\stock\app\core\Database.php on line 467
+[20-Feb-2026 19:04:45 Africa/Lubumbashi] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'stock_db.main_office_master_t' doesn't exist in C:\wamp64\www\stock\app\core\Database.php:384
+Stack trace:
+#0 C:\wamp64\www\stock\app\core\Database.php(384): PDO->prepare('SELECT * FROM m...')
+#1 C:\wamp64\www\stock\app\controllers\masters\UserController.php(36): Database->selectData('main_office_mas...', '*', Array)
+#2 C:\wamp64\www\stock\app\core\App.php(73): UserController->index()
+#3 C:\wamp64\www\stock\public\index.php(57): App->__construct()
+#4 {main}
+  thrown in C:\wamp64\www\stock\app\core\Database.php on line 384
+[20-Feb-2026 19:10:50 Africa/Lubumbashi] User logged out: supadmin
+[20-Feb-2026 19:11:05 Africa/Lubumbashi] User logged in: amrutha (ID: 746)
+[20-Feb-2026 19:11:50 Africa/Lubumbashi] User logged out: amrutha
+[20-Feb-2026 19:12:03 Africa/Lubumbashi] User logged in: supadmin (ID: 1)
