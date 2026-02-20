@@ -11,16 +11,6 @@
 // URL mapping: card_key to actual routes
 $urlMap = [
     'total_users'       => 'user/index',
-    'total_clients'     => 'client/index',
-    'total_licenses'    => 'license/index',
-    'local_dashboard'   => 'localdashboard/index',
-    'import_dashboard'  => 'importdashboard/index',
-    'export_dashboard'  => 'exportdashboard/index',
-    'export_logistics'  => 'exportlogistics/index',
-    'export_kpi'        => 'exportkpi/index',
-    'fiche_de_calcul'   => 'fichecalcul/index',
-    'import_invoices'   => 'importinvoice/index',
-    'import_delay_kpi'  => 'importdelaykpi/index',
     'system_settings'   => 'settings/index',
 ];
 

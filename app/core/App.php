@@ -33,9 +33,13 @@ class App {
             'books'                 => 'report/',
             'item'                  => 'masters/',
             'account'               =>  'account/',
+            'rolemenumapping'       => 'mapping/',
             'clientbankmapping'     =>  'mapping/',
             'roleDashboardCard'     => 'mapping/',
-            'dashboardCard'         => 'masters/'
+            'dashboardCard'         => 'masters/',
+            'indentbook'            => 'report/',
+            'stockbook'             => 'report/',
+            'day'                   => 'report/',
 
         ];
 
