@@ -1,233 +1,265 @@
 <div class="page-content">
-    <div class="page-container">
-        <!-- Create Indent Form -->
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header border-bottom border-dashed d-flex align-items-center justify-content-between">
-                        <h4 class="header-title">Create New Indent</h4>
-                        <button type="button" class="btn btn-sm btn-secondary" onclick="$('#indentForm')[0].reset(); $('#itemsTableBody').html('');">
-                            <i class="mdi mdi-refresh"></i> Reset
-                        </button>
-                    </div>
+<div class="page-container">
 
-                    <div class="card-body">
-                        <form id="indentForm" method="post">
-                            <!-- Header Information -->
-                            <div class="row">
-                                <div class="col-md-3 mb-3">
-                                    <label for="institution_id" class="form-label">Institution <span class="text-danger">*</span></label>
-                                    <select class="form-select select2" id="institution_id" name="institution_id" required>
-                                        <option value="">-- Select Institution --</option>
-                                        <?php if (!empty($institutions)): ?>
-                                            <?php foreach ($institutions as $inst): ?>
-                                                <option value="<?= $inst['id'] ?>">
-                                                    <?= htmlspecialchars($inst['college_name']) ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </select>
-                                </div>
-
-                                <div class="col-md-2 mb-3">
-                                    <label for="book_no" class="form-label">Book No <span class="text-danger">*</span></label>
-                                    <input type="number" class="form-control" id="book_no" name="book_no" min="1" required>
-                                </div>
-
-                                <div class="col-md-2 mb-3">
-                                    <label for="indent_no" class="form-label">Indent No <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="indent_no" name="indent_no" required>
-                                </div>
-
-                                <div class="col-md-2 mb-3">
-                                    <label for="item_type" class="form-label">Item Type <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="item_type" name="item_type" required>
-                                        <option value="">-- Select Type --</option>
-                                        <option value="C">Consumable</option>
-                                        <option value="N">Non-Consumable</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-md-3 mb-3">
-                                    <label for="indent_date" class="form-label">Date <span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" id="indent_date" name="indent_date" required>
-                                </div>
-
-                                <div class="col-md-12 mb-3">
-                                    <label for="purpose" class="form-label">Purpose</label>
-                                    <textarea class="form-control" id="purpose" name="purpose" rows="2" 
-                                        placeholder="Please sanction the issue of the following materials for use in..."></textarea>
-                                </div>
-                            </div>
-
-                            <!-- Items Section -->
-                            <div class="row">
-                                <div class="col-12">
-                                    <h5 class="mb-3">Items</h5>
-                                    <div class="table-responsive">
-                                        <table class="table table-bordered" id="itemsTable">
-                                            <thead class="table-light">
-                                                <tr>
-                                                    <th style="width: 50px;">Sl.No</th>
-                                                    <th style="width: 150px;">Item <span class="text-danger">*</span></th>
-                                                    <th style="width: 120px;">Make</th>
-                                                    <th style="width: 120px;">Model</th>
-                                                    <th>Description</th>
-                                                    <th>Purpose</th>
-                                                    <th style="width: 80px;">Qty <span class="text-danger">*</span></th>
-                                                    <th>Remarks</th>
-                                                    <th style="width: 60px;">Action</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="itemsTableBody">
-                                                <!-- Dynamic rows will be added here -->
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <button type="button" class="btn btn-sm btn-success" id="addItemBtn">
-                                        <i class="mdi mdi-plus"></i> Add Item
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="text-end mt-3">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="mdi mdi-content-save"></i> Save Indent
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+<!-- ═══════════════════════════════════════════════════════
+     CREATE / EDIT INDENT FORM
+═══════════════════════════════════════════════════════ -->
+<div class="row">
+<div class="col-12">
+<div class="card">
+    <div class="card-header border-bottom border-dashed d-flex align-items-center justify-content-between">
+        <div>
+            <h4 class="header-title mb-0" id="formTitle">Create New Indent</h4>
+            <!-- Session institution & department shown as read-only info -->
+            <small class="text-muted">
+                <i class="mdi mdi-domain me-1"></i><?= htmlspecialchars($inst_name ?? '') ?>
+                <?php if (!empty($dept_name)): ?>
+                    &nbsp;&mdash;&nbsp;<i class="mdi mdi-sitemap me-1"></i><?= htmlspecialchars($dept_name) ?>
+                <?php endif; ?>
+            </small>
         </div>
-
-        <!-- Indent List -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header border-bottom border-dashed">
-                        <h4 class="header-title">Indent List</h4>
-                    </div>
-
-                    <div class="card-body">
-                        <table id="indent-datatable" class="table table-striped dt-responsive nowrap w-100">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Book No</th>
-                                    <th>Indent No</th>
-                                    <th>Type</th>
-                                    <th>Date</th>
-                                    <th>Institution</th>
-                                    <th>Status</th>
-                                    <th>Created By</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php if (!empty($result)): ?>
-                                    <?php foreach ($result as $row): ?>
-                                        <tr id="indentRow_<?= $row['id']; ?>">
-                                            <td><?= $row['id']; ?></td>
-                                            <td><?= $row['book_no']; ?></td>
-                                            <td><?= $row['indent_no']; ?></td>
-                                            <td>
-                                                <?php 
-                                                    $itemType = ($row['item_type']=='C')? 'Consumable':'Non-Consumable';
-                                                    $typeColor = ($row['item_type'] ?? '') == 'Consumable' ? 'success' : 'warning';
-                                                ?>
-                                                <span class="badge bg-<?= $typeColor ?>"><?= htmlspecialchars($itemType ?? 'N/A'); ?></span>
-                                            </td>
-                                            <td><?= date('d-m-Y', strtotime($row['indent_date'])); ?></td>
-                                            <td><?= htmlspecialchars($row['college_name'] ?? 'N/A'); ?></td>
-                                            <td>
-                                                <?php
-                                                $statusColors = [
-                                                    'CREATED' => 'secondary',
-                                                    'VERIFIED' => 'info',
-                                                    'PASSED' => 'primary',
-                                                    'ISSUED' => 'warning',
-                                                    'RECEIVED' => 'success'
-                                                ];
-                                                $color = $statusColors[$row['status']] ?? 'secondary';
-                                                ?>
-                                                <span class="badge bg-<?= $color ?>"><?= $row['status']; ?></span>
-                                            </td>
-                                            <td><?= htmlspecialchars($row['created_by_name'] ?? 'N/A'); ?></td>
-                                            <td>
-                                                <a href="<?= APP_URL; ?>indent/viewIndent/<?= $row['id']; ?>" 
-                                                   class="btn btn-sm btn-info" title="View">
-                                                    <i class="ti ti-eye"></i>
-                                                </a>
-                                                
-                                                <?php if ($row['status'] == 'CREATED'): ?>
-                                                    <button class="btn btn-sm btn-success verifyBtn" 
-                                                            data-id="<?= $row['id']; ?>" title="Verify">
-                                                        <i class="ti ti-check"></i>
-                                                    </button>
-                                                <?php endif; ?>
-                                                
-                                                <?php if ($row['status'] == 'VERIFIED'): ?>
-                                                    <button class="btn btn-sm btn-primary passBtn" 
-                                                            data-id="<?= $row['id']; ?>" title="Pass">
-                                                        <i class="ti ti-check-double"></i>
-                                                    </button>
-                                                <?php endif; ?>
-                                                
-                                                <?php if ($row['status'] == 'PASSED'): ?>
-                                                    <button class="btn btn-sm btn-warning issueBtn" 
-                                                            data-id="<?= $row['id']; ?>" title="Issue">
-                                                        <i class="ti ti-package"></i>
-                                                    </button>
-                                                <?php endif; ?>
-                                                
-                                                <?php if ($row['status'] == 'CREATED'): ?>
-                                                    <button class="btn btn-sm btn-danger deleteIndentBtn" 
-                                                            data-id="<?= $row['id']; ?>" title="Delete">
-                                                        <i class="ti ti-trash"></i>
-                                                    </button>
-                                                <?php endif; ?>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                <?php else: ?>
-                                    <tr>
-                                        <td colspan="8" class="text-center text-muted">No indents found</td>
-                                    </tr>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-sm btn-secondary" id="resetFormBtn">
+                <i class="mdi mdi-refresh"></i> Reset
+            </button>
         </div>
-
     </div>
 
-    <?php include(VIEW_PATH . 'layouts/partials/footer.php'); ?>
+    <div class="card-body">
+        <form id="indentForm" method="post">
+            <input type="hidden" id="editIndentId" name="edit_id" value="">
+
+            <div class="row g-3">
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">Book No <span class="text-danger">*</span></label>
+                    <input type="number" class="form-control" id="book_no" name="book_no" min="1" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">Indent No <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control" id="indent_no" name="indent_no" required>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label fw-semibold">Item Type <span class="text-danger">*</span></label>
+                    <select class="form-select" id="item_type" name="item_type" required>
+                        <option value="">-- Select Type --</option>
+                        <option value="C">Consumable</option>
+                        <option value="N">Non-Consumable</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Date <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" id="indent_date" name="indent_date" required>
+                </div>
+                <div class="col-md-12">
+                    <label class="form-label fw-semibold">Purpose</label>
+                    <textarea class="form-control" id="purpose" name="purpose" rows="2"
+                        placeholder="Please sanction the issue of the following materials for use in..."></textarea>
+                </div>
+            </div>
+
+            <!-- Items Section -->
+            <div class="mt-4">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <h5 class="mb-0">Items</h5>
+                    <button type="button" class="btn btn-sm btn-success" id="addItemBtn">
+                        <i class="mdi mdi-plus"></i> Add Item
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-sm" id="itemsTable">
+                        <thead class="table-dark">
+                            <tr>
+                                <th style="width:60px">Sl.No</th>
+                                <th style="width:160px">Item Name<span class="text-danger">*</span></th>
+                                <th style="width:130px">Make</th>
+                                <th style="width:130px">Model</th>
+                                <th>Description</th>
+                                <th>Purpose</th>
+                                <th style="width:75px">Qty <span class="text-danger">*</span></th>
+                                <th>Remarks</th>
+                                <th style="width:50px"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="text-end mt-3 d-flex justify-content-end gap-2">
+                <button type="button" class="btn btn-outline-secondary d-none" id="cancelEditBtn">
+                    <i class="mdi mdi-close"></i> Cancel Edit
+                </button>
+                <button type="submit" class="btn btn-primary" id="saveBtn">
+                    <i class="mdi mdi-content-save"></i> Save Indent
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
 </div>
 
-<!-- Pass Indent Modal (for entering qty_passed) -->
+<!-- ═══════════════════════════════════════════════════════
+     INDENT LIST
+═══════════════════════════════════════════════════════ -->
+<div class="row mt-4">
+<div class="col-12">
+<div class="card">
+    <div class="card-header border-bottom border-dashed">
+        <h4 class="header-title">Indent List</h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+        <table id="indent-datatable" class="table table-striped dt-responsive nowrap w-100">
+            <thead>
+                <tr>
+                    <th>Sl.</th>
+                    <th>Book No</th>
+                    <th>Indent No</th>
+                    <th>Type</th>
+                    <th>Date</th>
+                    <th>Institution / Dept</th>
+                    <th>Status</th>
+                    <th>Created By</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php if (!empty($result)): ?>
+                    <?php
+                    /* Serial number is a simple ascending counter regardless of sort order */
+                    $sl = 1;
+                    foreach ($result as $row):
+                        $statusColors = [
+                            'CREATED'  => 'secondary',
+                            'VERIFIED' => 'info',
+                            'PASSED'   => 'primary',
+                            'ISSUED'   => 'warning',
+                            'RECEIVED' => 'success',
+                        ];
+                        $statusColor = $statusColors[$row['status']] ?? 'secondary';
+                        $typeLabel   = ($row['item_type'] === 'C') ? 'Consumable' : 'Non-Consumable';
+                        $typeColor   = ($row['item_type'] === 'C') ? 'success' : 'info';
+                        $isCreated   = ($row['status'] === 'CREATED');
+                    ?>
+                    <tr id="indentRow_<?= $row['id'] ?>">
+                        <!-- Sl. No. — ascending counter (not DB id) -->
+                        <td><?= $sl++ ?></td>
+                        <td><?= htmlspecialchars($row['book_no']) ?></td>
+                        <td><strong><?= htmlspecialchars($row['indent_no']) ?></strong></td>
+                        <td>
+                            <span class="badge bg-<?= $typeColor ?>">
+                                <?= htmlspecialchars($typeLabel) ?>
+                            </span>
+                        </td>
+                        <td><?= date('d-m-Y', strtotime($row['indent_date'])) ?></td>
+                        <td>
+                            <span class="d-block"><?= htmlspecialchars($row['college_name'] ?? '—') ?></span>
+                            <?php if (!empty($row['department_name'])): ?>
+                                <small class="text-muted"><?= htmlspecialchars($row['department_name']) ?></small>
+                            <?php endif; ?>
+                        </td>
+                        <td>
+                            <span class="badge bg-<?= $statusColor ?>">
+                                <?= htmlspecialchars($row['status']) ?>
+                            </span>
+                        </td>
+                        <td><?= htmlspecialchars($row['created_by_name'] ?? '—') ?></td>
+                        <td>
+                            <!-- View (always available) -->
+                            <a href="<?= APP_URL ?>indent/viewIndent/<?= $row['id'] ?>"
+                               class="btn btn-sm btn-info" title="View">
+                                <i class="ti ti-eye"></i>
+                            </a>
+
+                            <!-- EDIT — only when CREATED (not yet verified) -->
+                            <?php if ($isCreated): ?>
+                            <button class="btn btn-sm btn-secondary editIndentBtn"
+                                    data-id="<?= $row['id'] ?>" title="Edit">
+                                <i class="ti ti-pencil"></i>
+                            </button>
+                            <?php endif; ?>
+
+                            <!-- VERIFY — CREATED -->
+                            <?php if ($isCreated): ?>
+                            <button class="btn btn-sm btn-success verifyBtn"
+                                    data-id="<?= $row['id'] ?>" title="Verify">
+                                <i class="ti ti-check"></i>
+                            </button>
+                            <?php endif; ?>
+
+                            <!-- PASS — VERIFIED -->
+                            <?php if ($row['status'] === 'VERIFIED'): ?>
+                            <button class="btn btn-sm btn-primary passBtn"
+                                    data-id="<?= $row['id'] ?>" title="Pass">
+                                <i class="ti ti-certificate"></i>
+                            </button>
+                            <?php endif; ?>
+
+                            <!-- ISSUE — PASSED -->
+                            <?php if ($row['status'] === 'PASSED'): ?>
+                            <button class="btn btn-sm btn-warning issueBtn"
+                                    data-id="<?= $row['id'] ?>" title="Issue">
+                                <i class="ti ti-package"></i>
+                            </button>
+                            <?php endif; ?>
+
+                            <!-- RECEIVE — ISSUED -->
+                            <?php if ($row['status'] === 'ISSUED'): ?>
+                            <button class="btn btn-sm btn-success receiveBtn"
+                                    data-id="<?= $row['id'] ?>" title="Receive">
+                                <i class="ti ti-check-circle"></i>
+                            </button>
+                            <?php endif; ?>
+
+                            <!-- DELETE — only CREATED -->
+                            <?php if ($isCreated): ?>
+                            <button class="btn btn-sm btn-danger deleteIndentBtn"
+                                    data-id="<?= $row['id'] ?>" title="Delete">
+                                <i class="ti ti-trash"></i>
+                            </button>
+                            <?php endif; ?>
+                        </td>
+                    </tr>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <tr>
+                        <td colspan="9" class="text-center text-muted py-4">No indents found</td>
+                    </tr>
+                <?php endif; ?>
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+</div><!-- page-container -->
+
+<?php include(VIEW_PATH . 'layouts/partials/footer.php'); ?>
+
+<!-- ═══════════════════════════════════════════════════════
+     PASS MODAL
+═══════════════════════════════════════════════════════ -->
 <div class="modal fade" id="passModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">Pass Indent - Enter Quantities</h5>
+                <h5 class="modal-title">Pass Indent — Enter Quantities</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <form id="passForm">
                 <div class="modal-body">
-                    <table class="table table-sm">
-                        <thead>
+                    <table class="table table-sm table-bordered">
+                        <thead class="table-light">
                             <tr>
-                                <th>Item</th>
-                                <th>Qty Intended</th>
-                                <th>Qty Passed</th>
+                                <th>Item Name</th>
+                                <th class="text-center" style="width:110px">Qty Intended</th>
+                                <th class="text-center" style="width:130px">Qty Passed</th>
                             </tr>
                         </thead>
-                        <tbody id="passItemsBody">
-                            <!-- Will be populated dynamically -->
-                        </tbody>
+                        <tbody id="passItemsBody"></tbody>
                     </table>
                 </div>
                 <div class="modal-footer">
@@ -239,27 +271,27 @@
     </div>
 </div>
 
-<!-- Issue Indent Modal (for entering qty_issued) -->
+<!-- ═══════════════════════════════════════════════════════
+     ISSUE MODAL
+═══════════════════════════════════════════════════════ -->
 <div class="modal fade" id="issueModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title">Issue Indent - Enter Quantities</h5>
+                <h5 class="modal-title">Issue Indent — Enter Quantities</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form id="issueForm">
                 <div class="modal-body">
-                    <table class="table table-sm">
-                        <thead>
+                    <table class="table table-sm table-bordered">
+                        <thead class="table-light">
                             <tr>
                                 <th>Item</th>
-                                <th>Qty Passed</th>
-                                <th>Qty Issued</th>
+                                <th class="text-center" style="width:110px">Qty Passed</th>
+                                <th class="text-center" style="width:130px">Qty Issued</th>
                             </tr>
                         </thead>
-                        <tbody id="issueItemsBody">
-                            <!-- Will be populated dynamically -->
-                        </tbody>
+                        <tbody id="issueItemsBody"></tbody>
                     </table>
                 </div>
                 <div class="modal-footer">
@@ -271,362 +303,395 @@
     </div>
 </div>
 
+</div><!-- page-content -->
+
+<!-- ═══════════════════════════════════════════════════════
+     SCRIPT
+═══════════════════════════════════════════════════════ -->
 <script>
-$(document).ready(function () {
-    let itemCounter = 0;
-    
-    // Items dropdown data (from PHP)
-    const items = <?= json_encode($items ?? []); ?>;
-    const makes = <?= json_encode($makes ?? []); ?>;
-    
-    // Initialize DataTable
+$(function () {
+
+    /* ── PHP data ────────────────────────────────────────── */
+    const itemsList = <?= json_encode($items ?? []) ?>;
+    const makesList = <?= json_encode($makes ?? []) ?>;
+    let   itemCounter = 0;
+    let   isEditMode  = false;
+
+    /* ── DataTable ───────────────────────────────────────── */
     if (!$.fn.DataTable.isDataTable('#indent-datatable')) {
         $('#indent-datatable').DataTable({
-            "pageLength": 10,
-            "ordering": true,
-            "searching": true,
-            "order": [[0, 'ASC']]
+            pageLength : 10,
+            ordering   : true,
+            searching  : true,
+            /* Column 0 (Sl.) is already pre-rendered ascending; disable re-sort on it */
+            columnDefs : [{ orderable: false, targets: [0, 8] }],
+            order      : []   /* preserve PHP render order */
         });
     }
-    
-    // Initialize Select2
-    if ($.fn.select2) {
-        $('.select2').select2({ width: '100%' });
-    }
-    
-    // Set today's date as default
+
+    /* ── Defaults ────────────────────────────────────────── */
     $('#indent_date').val(new Date().toISOString().split('T')[0]);
-    
-    // Add Item Row
-    $('#addItemBtn').click(function() {
+
+    /* ── Build one item row ──────────────────────────────── */
+    function buildItemRow(idx, data) {
+        data = data || {};
+        let itemOpts = '<option value="">-- Select Item --</option>';
+        itemsList.forEach(i => {
+            itemOpts += `<option value="${i.id}"${data.item_id == i.id ? ' selected' : ''}>${i.item_name}</option>`;
+        });
+        let makeOpts = '<option value="">-- Select Make --</option>';
+        makesList.forEach(m => {
+            makeOpts += `<option value="${m.id}"${data.make_id == m.id ? ' selected' : ''}>${m.make_name}</option>`;
+        });
+        return `
+        <tr class="item-row">
+            <td>
+                <input type="number" class="form-control form-control-sm"
+                       name="items[${idx}][sl_no]" value="${data.sl_no || idx}" style="width:80px;min-width:80px" readonly>
+            </td>
+            <td>
+                <select class="form-select form-select-sm item-select"
+                        name="items[${idx}][item_id]" required>${itemOpts}</select>
+            </td>
+            <td>
+                <select class="form-select form-select-sm make-select"
+                        name="items[${idx}][make_id]" data-idx="${idx}">${makeOpts}</select>
+            </td>
+            <td>
+                <select class="form-select form-select-sm model-select"
+                        name="items[${idx}][model_id]" data-idx="${idx}">
+                    <option value="">-- Select Model --</option>
+                </select>
+            </td>
+            <td><input type="text" class="form-control form-control-sm"
+                       name="items[${idx}][item_description]"
+                       value="${data.item_description || ''}"></td>
+            <td><input type="text" class="form-control form-control-sm"
+                       name="items[${idx}][item_purpose]"
+                       value="${data.item_purpose || ''}"></td>
+            <td><input type="number" class="form-control form-control-sm"
+                       name="items[${idx}][qty_intended]"
+                       value="${data.qty_intended || ''}" min="1" required></td>
+            <td><input type="text" class="form-control form-control-sm"
+                       name="items[${idx}][remarks]"
+                       value="${data.remarks || ''}"></td>
+            <td>
+                <button type="button" class="btn btn-sm btn-danger remove-item">
+                    <i class="ti ti-trash"></i>
+                </button>
+            </td>
+        </tr>`;
+    }
+
+    /* ── Add blank row ───────────────────────────────────── */
+    $('#addItemBtn').click(function () {
         itemCounter++;
-        let itemOptions = '<option value="">-- Select Item --</option>';
-        items.forEach(item => {
-            itemOptions += `<option value="${item.id}">${item.item_name}</option>`;
-        });
-        
-        let makeOptions = '<option value="">-- Select Make --</option>';
-        makes.forEach(make => {
-            makeOptions += `<option value="${make.id}">${make.make_name}</option>`;
-        });
-        
-        const row = `
-            <tr class="item-row">
-                <td><input type="number" class="form-control form-control-sm" name="items[${itemCounter}][sl_no]" value="${itemCounter}" readonly></td>
-                <td>
-                    <select class="form-select form-select-sm item-select" name="items[${itemCounter}][item_id]" required>
-                        ${itemOptions}
-                    </select>
-                </td>
-                <td>
-                    <select class="form-select form-select-sm make-select" name="items[${itemCounter}][make_id]" data-counter="${itemCounter}">
-                        ${makeOptions}
-                    </select>
-                </td>
-                <td>
-                    <select class="form-select form-select-sm model-select" name="items[${itemCounter}][model_id]" data-counter="${itemCounter}">
-                        <option value="">-- Select Model --</option>
-                    </select>
-                </td>
-                <td><input type="text" class="form-control form-control-sm" name="items[${itemCounter}][item_description]"></td>
-                <td><input type="text" class="form-control form-control-sm" name="items[${itemCounter}][item_purpose]"></td>
-                <td><input type="number" class="form-control form-control-sm" name="items[${itemCounter}][qty_intended]" min="1" required></td>
-                <td><input type="text" class="form-control form-control-sm" name="items[${itemCounter}][remarks]"></td>
-                <td><button type="button" class="btn btn-sm btn-danger remove-item"><i class="ti ti-trash"></i></button></td>
-            </tr>
-        `;
-        
-        $('#itemsTableBody').append(row);
+        $('#itemsTableBody').append(buildItemRow(itemCounter));
     });
-    
-    // Remove Item Row
-    $(document).on('click', '.remove-item', function() {
+
+    /* ── Remove row ──────────────────────────────────────── */
+    $(document).on('click', '.remove-item', function () {
         $(this).closest('tr').remove();
     });
-    
-    // Cascading Dropdown: Make -> Model
-    $(document).on('change', '.make-select', function() {
+
+    /* ── Make → Model cascade ────────────────────────────── */
+    $(document).on('change', '.make-select', function () {
         const makeId = $(this).val();
-        const counter = $(this).data('counter');
-        const modelSelect = $(`.model-select[data-counter="${counter}"]`);
-        
-        if (makeId) {
-            $.ajax({
-                url: '<?= APP_URL; ?>indent/getModelsByMake',
-                type: 'GET',
-                data: { make_id: makeId },
-                dataType: 'json',
-                success: function(res) {
-                    if (res.success) {
-                        let options = '<option value="">-- Select Model --</option>';
-                        res.data.forEach(model => {
-                            options += `<option value="${model.id}">${model.model_name}</option>`;
-                        });
-                        modelSelect.html(options);
-                    }
-                }
-            });
-        } else {
-            modelSelect.html('<option value="">-- Select Model --</option>');
-        }
+        const idx    = $(this).data('idx');
+        const $model = $(`.model-select[data-idx="${idx}"]`);
+
+        $model.html('<option value="">-- Select Model --</option>');
+        if (!makeId) return;
+
+        $.get('<?= APP_URL ?>indent/getModelsByMake', { make_id: makeId }, function (res) {
+            if (res.success) {
+                res.data.forEach(m => {
+                    $model.append(`<option value="${m.id}">${m.model_name}</option>`);
+                });
+            }
+        }, 'json');
     });
-    
-    // Submit Indent Form
-    $('#indentForm').submit(function(e) {
+
+    /* ── Reset / Cancel Edit ─────────────────────────────── */
+    function resetForm() {
+        isEditMode = false;
+        $('#indentForm')[0].reset();
+        $('#itemsTableBody').html('');
+        $('#editIndentId').val('');
+        $('#formTitle').text('Create New Indent');
+        $('#saveBtn').html('<i class="mdi mdi-content-save"></i> Save Indent');
+        $('#cancelEditBtn').addClass('d-none');
+        $('#indent_date').val(new Date().toISOString().split('T')[0]);
+        itemCounter = 0;
+        $('html, body').animate({ scrollTop: 0 }, 300);
+    }
+
+    $('#resetFormBtn').click(resetForm);
+    $('#cancelEditBtn').click(resetForm);
+
+    /* ── SUBMIT (Create or Update) ───────────────────────── */
+    $('#indentForm').submit(function (e) {
         e.preventDefault();
-        
-        // Check if at least one item is added
+
         if ($('.item-row').length === 0) {
-            Swal.fire({
-                icon: 'warning',
-                title: 'No Items',
-                text: 'Please add at least one item to the indent'
-            });
+            Swal.fire({ icon: 'warning', title: 'No Items', text: 'Please add at least one item' });
             return;
         }
-        
+
+        const editId = $('#editIndentId').val();
+        const url    = editId
+            ? '<?= APP_URL ?>indent/crudData/updation?id=' + editId
+            : '<?= APP_URL ?>indent/crudData/insertion';
+
         $.ajax({
-            url: '<?= APP_URL; ?>indent/crudData/insertion',
-            type: 'POST',
-            data: $(this).serialize(),
-            dataType: 'json',
-            success: function(res) {
+            url      : url,
+            type     : 'POST',
+            data     : $(this).serialize(),
+            dataType : 'json',
+            success  : function (res) {
                 if (res.success) {
                     Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: res.message,
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        location.reload();
-                    });
+                        icon: 'success', title: 'Success!', text: res.message,
+                        showConfirmButton: false, timer: 1500
+                    }).then(() => location.reload());
                 } else {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: res.message
-                    });
+                    Swal.fire({ icon: 'error', title: 'Error!', text: res.message });
                 }
             },
-            error: function(xhr) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: 'An error occurred: ' + xhr.responseText
-                });
+            error: function (xhr) {
+                Swal.fire({ icon: 'error', title: 'Error!', text: xhr.responseText });
             }
         });
     });
-    
-    // Verify Indent
-    $(document).on('click', '.verifyBtn', function() {
+
+    /* ══════════════════════════════════════════════════════
+       EDIT BUTTON — load indent into form (CREATED only)
+    ══════════════════════════════════════════════════════ */
+    $(document).on('click', '.editIndentBtn', function () {
         const id = $(this).data('id');
-        
+
+        $.get('<?= APP_URL ?>indent/getIndentById', { id }, function (res) {
+            if (!res.success) { Swal.fire('Error', res.message, 'error'); return; }
+
+            const { indent, items } = res.data;
+
+            /* Guard: only editable if CREATED */
+            if (indent.status !== 'CREATED') {
+                Swal.fire('Cannot Edit', 'Only CREATED indents can be edited.', 'warning');
+                return;
+            }
+
+            isEditMode = true;
+            $('#editIndentId').val(indent.id);
+            $('#book_no').val(indent.book_no);
+            $('#indent_no').val(indent.indent_no);
+            $('#item_type').val(indent.item_type);
+            $('#indent_date').val(indent.indent_date);
+            $('#purpose').val(indent.purpose);
+            $('#formTitle').text('Edit Indent — ' + indent.indent_no);
+            $('#saveBtn').html('<i class="mdi mdi-content-save-edit"></i> Update Indent');
+            $('#cancelEditBtn').removeClass('d-none');
+
+            /* Populate items */
+            $('#itemsTableBody').html('');
+            itemCounter = 0;
+            items.forEach(item => {
+                itemCounter++;
+                const $row = $(buildItemRow(itemCounter, {
+                    sl_no            : item.sl_no,
+                    item_id          : item.item_id,
+                    make_id          : item.make_id,
+                    model_id         : item.model_id,
+                    item_description : item.item_description,
+                    item_purpose     : item.item_purpose,
+                    qty_intended     : item.qty_intended,
+                    remarks          : item.remarks,
+                }));
+                $('#itemsTableBody').append($row);
+
+                /* Load model options if make is set */
+                if (item.make_id) {
+                    const $model = $row.find('.model-select');
+                    $.get('<?= APP_URL ?>indent/getModelsByMake', { make_id: item.make_id }, function (r) {
+                        if (r.success) {
+                            r.data.forEach(m => {
+                                $model.append(`<option value="${m.id}"${m.id == item.model_id ? ' selected' : ''}>${m.model_name}</option>`);
+                            });
+                        }
+                    }, 'json');
+                }
+            });
+
+            /* Scroll to form */
+            $('html, body').animate({ scrollTop: 0 }, 400);
+
+        }, 'json');
+    });
+
+    /* ══════════════════════════════════════════════════════
+       VERIFY
+    ══════════════════════════════════════════════════════ */
+    $(document).on('click', '.verifyBtn', function () {
+        const id = $(this).data('id');
         Swal.fire({
             title: 'Verify Indent?',
-            text: "This will mark the indent as verified",
+            text: 'This will mark the indent as verified and lock editing.',
             icon: 'question',
             showCancelButton: true,
             confirmButtonColor: '#28a745',
-            cancelButtonColor: '#6c757d',
             confirmButtonText: 'Yes, Verify!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: '<?= APP_URL; ?>indent/verifyIndent',
-                    type: 'POST',
-                    data: { id: id },
-                    dataType: 'json',
-                    success: function(res) {
-                        if (res.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Verified!',
-                                text: res.message,
-                                showConfirmButton: false,
-                                timer: 1500
-                            }).then(() => location.reload());
-                        } else {
-                            Swal.fire('Error!', res.message, 'error');
-                        }
-                    }
-                });
-            }
-        });
-    });
-    
-    // Pass Indent (with qty_passed entry)
-    $(document).on('click', '.passBtn', function() {
-        const id = $(this).data('id');
-        
-        // Get indent items
-        $.ajax({
-            url: '<?= APP_URL; ?>indent/getIndentById',
-            type: 'GET',
-            data: { id: id },
-            dataType: 'json',
-            success: function(res) {
+        }).then(r => {
+            if (!r.isConfirmed) return;
+            $.post('<?= APP_URL ?>indent/verifyIndent', { id }, function (res) {
                 if (res.success) {
-                    const items = res.data.items;
-                    let rows = '';
-                    items.forEach(item => {
-                        rows += `
-                            <tr>
-                                <td>
-                                    <input type="hidden" name="items[${item.id}][id]" value="${item.id}">
-                                    ${item.item_description || 'Item #' + item.item_id}
-                                </td>
-                                <td>${item.qty_intended}</td>
-                                <td>
-                                    <input type="number" class="form-control form-control-sm" 
-                                           name="items[${item.id}][qty_passed]" 
-                                           value="${item.qty_intended}" 
-                                           min="0" max="${item.qty_intended}" required>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                    $('#passItemsBody').html(rows);
-                    $('#passModal').data('indent-id', id).modal('show');
-                }
-            }
-        });
-    });
-    
-    // Submit Pass Form
-    $('#passForm').submit(function(e) {
-        e.preventDefault();
-        const indentId = $('#passModal').data('indent-id');
-        
-        $.ajax({
-            url: '<?= APP_URL; ?>indent/passIndent',
-            type: 'POST',
-            data: $(this).serialize() + '&id=' + indentId,
-            dataType: 'json',
-            success: function(res) {
-                if (res.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Passed!',
-                        text: res.message,
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        $('#passModal').modal('hide');
-                        location.reload();
-                    });
+                    Swal.fire({ icon:'success', title:'Verified!', text:res.message,
+                        showConfirmButton:false, timer:1500 }).then(() => location.reload());
                 } else {
                     Swal.fire('Error!', res.message, 'error');
                 }
-            }
+            }, 'json');
         });
     });
-    
-    // Issue Indent (with qty_issued entry)
-    $(document).on('click', '.issueBtn', function() {
+
+    /* ══════════════════════════════════════════════════════
+       PASS
+    ══════════════════════════════════════════════════════ */
+    $(document).on('click', '.passBtn', function () {
         const id = $(this).data('id');
-        
-        $.ajax({
-            url: '<?= APP_URL; ?>indent/getIndentById',
-            type: 'GET',
-            data: { id: id },
-            dataType: 'json',
-            success: function(res) {
-                if (res.success) {
-                    const items = res.data.items;
-                    let rows = '';
-                    items.forEach(item => {
-                        rows += `
-                            <tr>
-                                <td>
-                                    <input type="hidden" name="items[${item.id}][id]" value="${item.id}">
-                                    ${item.item_description || 'Item #' + item.item_id}
-                                </td>
-                                <td>${item.qty_passed}</td>
-                                <td>
-                                    <input type="number" class="form-control form-control-sm" 
-                                           name="items[${item.id}][qty_issued]" 
-                                           value="${item.qty_passed}" 
-                                           min="0" max="${item.qty_passed}" required>
-                                </td>
-                            </tr>
-                        `;
-                    });
-                    $('#issueItemsBody').html(rows);
-                    $('#issueModal').data('indent-id', id).modal('show');
-                }
-            }
-        });
+        $.get('<?= APP_URL ?>indent/getIndentById', { id }, function (res) {
+            if (!res.success) return;
+            let rows = '';
+            res.data.items.forEach(item => {
+                rows += `<tr>
+                    <td>
+                        <input type="hidden" name="items[${item.id}][id]" value="${item.id}">
+                        ${item.item_name || 'Item #' + item.item_id}
+                        ${item.item_description ? '<br><small class="text-muted">' + item.item_description + '</small>' : ''}
+                    </td>
+                    <td class="text-center">${item.qty_intended}</td>
+                    <td>
+                        <input type="number" class="form-control form-control-sm"
+                               name="items[${item.id}][qty_passed]"
+                               value="${item.qty_intended}" min="0" max="${item.qty_intended}" required>
+                    </td>
+                </tr>`;
+            });
+            $('#passItemsBody').html(rows);
+            $('#passModal').data('indent-id', id);
+            new bootstrap.Modal('#passModal').show();
+        }, 'json');
     });
-    
-    // Submit Issue Form
-    $('#issueForm').submit(function(e) {
+
+    $('#passForm').submit(function (e) {
         e.preventDefault();
-        const indentId = $('#issueModal').data('indent-id');
-        
+        const id = $('#passModal').data('indent-id');
         $.ajax({
-            url: '<?= APP_URL; ?>indent/issueIndent',
-            type: 'POST',
-            data: $(this).serialize() + '&id=' + indentId,
-            dataType: 'json',
-            success: function(res) {
+            url: '<?= APP_URL ?>indent/passIndent', type: 'POST',
+            data: $(this).serialize() + '&id=' + id, dataType: 'json',
+            success: function (res) {
                 if (res.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Issued!',
-                        text: res.message,
-                        showConfirmButton: false,
-                        timer: 1500
-                    }).then(() => {
-                        $('#issueModal').modal('hide');
+                    Swal.fire({ icon:'success', title:'Passed!', text:res.message,
+                        showConfirmButton:false, timer:1500 }).then(() => {
+                        bootstrap.Modal.getInstance('#passModal').hide();
                         location.reload();
                     });
-                } else {
-                    Swal.fire('Error!', res.message, 'error');
-                }
+                } else { Swal.fire('Error!', res.message, 'error'); }
             }
         });
     });
-    
-    // Delete Indent
-    $(document).on('click', '.deleteIndentBtn', function() {
+
+    /* ══════════════════════════════════════════════════════
+       ISSUE
+    ══════════════════════════════════════════════════════ */
+    $(document).on('click', '.issueBtn', function () {
         const id = $(this).data('id');
-        
+        $.get('<?= APP_URL ?>indent/getIndentById', { id }, function (res) {
+            if (!res.success) return;
+            let rows = '';
+            res.data.items.forEach(item => {
+                rows += `<tr>
+                    <td>
+                        <input type="hidden" name="items[${item.id}][id]" value="${item.id}">
+                        ${item.item_name || 'Item #' + item.item_id}
+                        ${item.item_description ? '<br><small class="text-muted">' + item.item_description + '</small>' : ''}
+                    </td>
+                    <td class="text-center">${item.qty_passed}</td>
+                    <td>
+                        <input type="number" class="form-control form-control-sm"
+                               name="items[${item.id}][qty_issued]"
+                               value="${item.qty_passed}" min="0" max="${item.qty_passed}" required>
+                    </td>
+                </tr>`;
+            });
+            $('#issueItemsBody').html(rows);
+            $('#issueModal').data('indent-id', id);
+            new bootstrap.Modal('#issueModal').show();
+        }, 'json');
+    });
+
+    $('#issueForm').submit(function (e) {
+        e.preventDefault();
+        const id = $('#issueModal').data('indent-id');
+        $.ajax({
+            url: '<?= APP_URL ?>indent/issueIndent', type: 'POST',
+            data: $(this).serialize() + '&id=' + id, dataType: 'json',
+            success: function (res) {
+                if (res.success) {
+                    Swal.fire({ icon:'success', title:'Issued!', text:res.message,
+                        showConfirmButton:false, timer:1500 }).then(() => {
+                        bootstrap.Modal.getInstance('#issueModal').hide();
+                        location.reload();
+                    });
+                } else { Swal.fire('Error!', res.message, 'error'); }
+            }
+        });
+    });
+
+    /* ══════════════════════════════════════════════════════
+       RECEIVE
+    ══════════════════════════════════════════════════════ */
+    $(document).on('click', '.receiveBtn', function () {
+        const id = $(this).data('id');
         Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#d33',
-            cancelButtonColor: '#6c757d',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: '<?= APP_URL; ?>indent/crudData/deletion?id=' + id,
-                    type: 'POST',
-                    dataType: 'json',
-                    success: function(res) {
-                        if (res.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Deleted!',
-                                text: res.message,
-                                showConfirmButton: false,
-                                timer: 1500
-                            }).then(() => {
-                                $('#indentRow_' + id).fadeOut(500, function() {
-                                    $(this).remove();
-                                });
-                            });
-                        } else {
-                            Swal.fire('Error!', res.message, 'error');
-                        }
-                    }
-                });
-            }
+            title: 'Mark as Received?', text: 'This completes the indent process.',
+            icon: 'question', showCancelButton: true,
+            confirmButtonColor: '#28a745', confirmButtonText: 'Yes, Received!'
+        }).then(r => {
+            if (!r.isConfirmed) return;
+            $.post('<?= APP_URL ?>indent/receiveIndent', { id }, function (res) {
+                if (res.success) {
+                    Swal.fire({ icon:'success', title:'Received!', text:res.message,
+                        showConfirmButton:false, timer:1500 }).then(() => location.reload());
+                } else { Swal.fire('Error!', res.message, 'error'); }
+            }, 'json');
         });
     });
+
+    /* ══════════════════════════════════════════════════════
+       DELETE
+    ══════════════════════════════════════════════════════ */
+    $(document).on('click', '.deleteIndentBtn', function () {
+        const id = $(this).data('id');
+        Swal.fire({
+            title: 'Delete Indent?', text: "This cannot be undone!",
+            icon: 'warning', showCancelButton: true,
+            confirmButtonColor: '#d33', confirmButtonText: 'Yes, Delete!'
+        }).then(r => {
+            if (!r.isConfirmed) return;
+            $.ajax({
+                url: '<?= APP_URL ?>indent/crudData/deletion?id=' + id,
+                type: 'POST', dataType: 'json',
+                success: function (res) {
+                    if (res.success) {
+                        Swal.fire({ icon:'success', title:'Deleted!', text:res.message,
+                            showConfirmButton:false, timer:1500 }).then(() => {
+                            $('#indentRow_' + id).fadeOut(400, function () { $(this).remove(); });
+                        });
+                    } else { Swal.fire('Error!', res.message, 'error'); }
+                }
+            });
+        });
+    });
+
 });
 </script>

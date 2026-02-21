@@ -32,14 +32,11 @@ class App {
             'daybook'               => 'stock/',
             'book'                  => 'report/',
             'item'                  => 'masters/',
-            'account'               =>  'account/',
+            'account'               => 'account/',
             'rolemenumapping'       => 'mapping/',
-            'clientbankmapping'     =>  'mapping/',
+            'clientbankmapping'     => 'mapping/',
             'roleDashboardCard'     => 'mapping/',
-            'dashboardCard'         => 'masters/',
-            'indentbook'            => 'report/',
-            'stockbook'             => 'report/',
-            'day'                   => 'report/',
+            'dashboardCard'         => 'masters/'
 
         ];
 
