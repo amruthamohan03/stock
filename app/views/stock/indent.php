@@ -208,7 +208,7 @@
                             <?php if ($row['status'] === 'ISSUED'): ?>
                             <button class="btn btn-sm btn-success receiveBtn"
                                     data-id="<?= $row['id'] ?>" title="Receive">
-                                <i class="ti ti-check-circle"></i>
+                                <i class="ti ti-file-check"></i>
                             </button>
                             <?php endif; ?>
 

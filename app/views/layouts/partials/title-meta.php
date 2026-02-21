@@ -1,5 +1,5 @@
 <meta charset="utf-8" />
-<title><?= $title ?> | Malabar ERP</title>
+<title><?= $title ?> | StockPro</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta content="nexus" name="author" />
 
