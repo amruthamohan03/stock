@@ -470,3 +470,45 @@ Stack trace:
 [20-Feb-2026 19:11:05 Africa/Lubumbashi] User logged in: amrutha (ID: 746)
 [20-Feb-2026 19:11:50 Africa/Lubumbashi] User logged out: amrutha
 [20-Feb-2026 19:12:03 Africa/Lubumbashi] User logged in: supadmin (ID: 1)
+[21-Feb-2026 03:39:29 Africa/Lubumbashi] User logged out: supadmin
+[21-Feb-2026 03:45:55 Africa/Lubumbashi] User logged in: supadmin (ID: 1)
+[21-Feb-2026 03:50:58 Africa/Lubumbashi] User logged out: supadmin
+[21-Feb-2026 03:51:03 Africa/Lubumbashi] User logged in: amrutha (ID: 746)
+[21-Feb-2026 03:51:16 Africa/Lubumbashi] PHP Warning:  Undefined array key "userData" in C:\wamp64\www\stock\app\controllers\stock\IndentController.php on line 309
+[21-Feb-2026 03:51:16 Africa/Lubumbashi] PHP Stack trace:
+[21-Feb-2026 03:51:16 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
+[21-Feb-2026 03:51:16 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
+[21-Feb-2026 03:51:16 Africa/Lubumbashi] PHP   3. IndentController->issueIndent() C:\wamp64\www\stock\app\core\App.php:70
+[21-Feb-2026 03:51:16 Africa/Lubumbashi] PHP Warning:  Trying to access array offset on null in C:\wamp64\www\stock\app\controllers\stock\IndentController.php on line 309
+[21-Feb-2026 03:51:16 Africa/Lubumbashi] PHP Stack trace:
+[21-Feb-2026 03:51:16 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
+[21-Feb-2026 03:51:16 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
+[21-Feb-2026 03:51:16 Africa/Lubumbashi] PHP   3. IndentController->issueIndent() C:\wamp64\www\stock\app\core\App.php:70
+[21-Feb-2026 03:51:18 Africa/Lubumbashi] PHP Warning:  Undefined array key "userData" in C:\wamp64\www\stock\app\controllers\stock\IndentController.php on line 309
+[21-Feb-2026 03:51:18 Africa/Lubumbashi] PHP Stack trace:
+[21-Feb-2026 03:51:18 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
+[21-Feb-2026 03:51:18 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
+[21-Feb-2026 03:51:18 Africa/Lubumbashi] PHP   3. IndentController->issueIndent() C:\wamp64\www\stock\app\core\App.php:70
+[21-Feb-2026 03:51:18 Africa/Lubumbashi] PHP Warning:  Trying to access array offset on null in C:\wamp64\www\stock\app\controllers\stock\IndentController.php on line 309
+[21-Feb-2026 03:51:18 Africa/Lubumbashi] PHP Stack trace:
+[21-Feb-2026 03:51:18 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
+[21-Feb-2026 03:51:18 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
+[21-Feb-2026 03:51:18 Africa/Lubumbashi] PHP   3. IndentController->issueIndent() C:\wamp64\www\stock\app\core\App.php:70
+[21-Feb-2026 03:51:28 Africa/Lubumbashi] PHP Warning:  Undefined array key "userData" in C:\wamp64\www\stock\app\controllers\stock\IndentController.php on line 309
+[21-Feb-2026 03:51:28 Africa/Lubumbashi] PHP Stack trace:
+[21-Feb-2026 03:51:28 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
+[21-Feb-2026 03:51:28 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
+[21-Feb-2026 03:51:28 Africa/Lubumbashi] PHP   3. IndentController->issueIndent() C:\wamp64\www\stock\app\core\App.php:70
+[21-Feb-2026 03:51:28 Africa/Lubumbashi] PHP Warning:  Trying to access array offset on null in C:\wamp64\www\stock\app\controllers\stock\IndentController.php on line 309
+[21-Feb-2026 03:51:28 Africa/Lubumbashi] PHP Stack trace:
+[21-Feb-2026 03:51:28 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
+[21-Feb-2026 03:51:28 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
+[21-Feb-2026 03:51:28 Africa/Lubumbashi] PHP   3. IndentController->issueIndent() C:\wamp64\www\stock\app\core\App.php:70
+[21-Feb-2026 04:53:09 Africa/Lubumbashi] PHP Fatal error:  Uncaught PDOException: SQLSTATE[23000]: Integrity constraint violation: 1048 Column 'department_id' cannot be null in C:\wamp64\www\stock\app\core\Database.php:424
+Stack trace:
+#0 C:\wamp64\www\stock\app\core\Database.php(424): PDOStatement->execute()
+#1 C:\wamp64\www\stock\app\controllers\stock\IndentController.php(119): Database->insertData('indent_master_t', Array)
+#2 C:\wamp64\www\stock\app\core\App.php(70): IndentController->crudData('insertion')
+#3 C:\wamp64\www\stock\public\index.php(57): App->__construct()
+#4 {main}
+  thrown in C:\wamp64\www\stock\app\core\Database.php on line 424

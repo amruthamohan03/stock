@@ -29,7 +29,9 @@ class User {
                     users_t.profile_image,
                     users_t.password,
                     role_master_t.id as role_id,
-                    role_master_t.role_name
+                    role_master_t.role_name,
+                    users_t.location_id as institution_id,
+                    users_t.dept_id as department_id
                 FROM users_t 
                 LEFT JOIN role_master_t ON users_t.role_id = role_master_t.id 
                 WHERE users_t.username = :username 

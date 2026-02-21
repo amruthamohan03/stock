@@ -56,7 +56,6 @@ class AuthController extends Controller {
 
         if (empty($errors)) {
             $user = $this->userModel->login($username, $password);
-            
             if ($user) {
                 // Set session using SessionManager
                 SessionManager::setUserSession([
@@ -66,7 +65,9 @@ class AuthController extends Controller {
                     'role_name'     => $user->role_name,
                     'role_id'       => $user->role_id,
                     'profile_image' => $user->profile_image ?? null,
-                    'email'         => $user->email ?? ''
+                    'email'         => $user->email ?? '',
+                    'institution_id'=> $user->institution_id,
+                    'department_id' => $user->department_id
                 ]);
                 
                 SessionManager::setFlash('dashboard', 'Welcome back, ' . $user->full_name . '!', 'alert alert-success');
