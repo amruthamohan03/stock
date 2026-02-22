@@ -221,37 +221,37 @@ class AuthController extends Controller {
     /**
      * Logout user
      */
-    public function logout() {
-        SessionManager::destroy();
-        SessionManager::setFlash('login', 'You have been logged out successfully.', 'alert alert-info');
-        $this->redirect('auth/login');
-    }
+    // public function logout() {
+    //     SessionManager::destroy();
+    //     SessionManager::setFlash('login', 'You have been logged out successfully.', 'alert alert-info');
+    //     $this->redirect('auth/login');
+    // }
 
     /**
      * Check session status (AJAX endpoint)
      */
-    public function checkSession() {
-        header('Content-Type: application/json');
+    // public function checkSession() {
+    //     header('Content-Type: application/json');
         
-        $response = [
-            'isLoggedIn' => SessionManager::isLoggedIn(),
-            'remaining' => SessionManager::getRemainingTime()
-        ];
+    //     $response = [
+    //         'isLoggedIn' => SessionManager::isLoggedIn(),
+    //         'remaining' => SessionManager::getRemainingTime()
+    //     ];
         
-        echo json_encode($response);
-        exit;
-    }
+    //     echo json_encode($response);
+    //     exit;
+    // }
 
     /**
      * Keep session alive (AJAX endpoint)
      */
-    public function keepAlive() {
-        header('Content-Type: application/json');
+    // public function keepAlive() {
+    //     header('Content-Type: application/json');
         
-        $response = SessionManager::keepAlive();
-        echo json_encode($response);
-        exit;
-    }
+    //     $response = SessionManager::keepAlive();
+    //     echo json_encode($response);
+    //     exit;
+    // }
 
     /**
      * Get session configuration (for JavaScript)
@@ -263,4 +263,45 @@ class AuthController extends Controller {
         echo json_encode($config);
         exit;
     }
+    public function checkSession()
+{
+    header('Content-Type: application/json');
+    // SessionManager::init() was already called by your router/bootstrap.
+    // If not, call it here:
+    // SessionManager::init();
+
+    echo json_encode(SessionManager::getStatus());
+    exit;
+}
+
+// ── /auth/keepAlive ───────────────────────────────────────────────────────────
+// Called by JS every 5 minutes.
+// THE ONLY endpoint that resets last_activity (PHP fix D).
+public function keepAlive()
+{
+    header('Content-Type: application/json');
+    // SessionManager::init();  // uncomment if not called by router
+
+    echo json_encode(SessionManager::keepAlive());
+    exit;
+}
+
+// ── /auth/getConfig ───────────────────────────────────────────────────────────
+// Called once on page load by JS SessionManager.init().
+// public function getConfig()
+// {
+//     header('Content-Type: application/json');
+//     // SessionManager::init();  // uncomment if not called by router
+
+//     echo json_encode(SessionManager::getConfig());
+//     exit;
+// }
+
+// ── /auth/logout ──────────────────────────────────────────────────────────────
+public function logout()
+{
+    SessionManager::destroy();
+    header('Location: ' . APP_URL . 'auth/login');
+    exit;
+}
 }

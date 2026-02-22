@@ -512,3 +512,26 @@ Stack trace:
 #3 C:\wamp64\www\stock\public\index.php(57): App->__construct()
 #4 {main}
   thrown in C:\wamp64\www\stock\app\core\Database.php on line 424
+[21-Feb-2026 05:20:49 Africa/Lubumbashi] User logged out: amrutha
+[21-Feb-2026 05:20:58 Africa/Lubumbashi] User logged in: supadmin (ID: 1)
+[21-Feb-2026 18:51:43 Africa/Lubumbashi] User logged in: supadmin (ID: 1)
+[22-Feb-2026 04:51:34 Africa/Lubumbashi] PHP Fatal error:  Uncaught PDOException: SQLSTATE[22001]: String data, right truncated: 1406 Data too long for column 'item_description' at row 1 in C:\wamp64\www\stock\app\core\Database.php:424
+Stack trace:
+#0 C:\wamp64\www\stock\app\core\Database.php(424): PDOStatement->execute()
+#1 C:\wamp64\www\stock\app\controllers\stock\IndentController.php(213): Database->insertData('indent_item_t', Array)
+#2 C:\wamp64\www\stock\app\controllers\stock\IndentController.php(122): IndentController->_upsertItems(Object(Database), 3, Array, 'insert')
+#3 C:\wamp64\www\stock\app\core\App.php(70): IndentController->crudData('insertion')
+#4 C:\wamp64\www\stock\public\index.php(57): App->__construct()
+#5 {main}
+  thrown in C:\wamp64\www\stock\app\core\Database.php on line 424
+[22-Feb-2026 09:29:02 Africa/Lubumbashi] SessionManager: login — supadmin (ID:1)
+[22-Feb-2026 11:58:02 Africa/Lubumbashi] PHP Warning:  Undefined array key "item_type" in C:\wamp64\www\stock\app\controllers\masters\ItemController.php on line 112
+[22-Feb-2026 11:58:02 Africa/Lubumbashi] PHP Stack trace:
+[22-Feb-2026 11:58:02 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
+[22-Feb-2026 11:58:02 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
+[22-Feb-2026 11:58:02 Africa/Lubumbashi] PHP   3. ItemController->crudData($action = 'updation') C:\wamp64\www\stock\app\core\App.php:70
+[22-Feb-2026 11:58:05 Africa/Lubumbashi] PHP Warning:  Undefined array key "item_type" in C:\wamp64\www\stock\app\controllers\masters\ItemController.php on line 112
+[22-Feb-2026 11:58:05 Africa/Lubumbashi] PHP Stack trace:
+[22-Feb-2026 11:58:05 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
+[22-Feb-2026 11:58:05 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
+[22-Feb-2026 11:58:05 Africa/Lubumbashi] PHP   3. ItemController->crudData($action = 'updation') C:\wamp64\www\stock\app\core\App.php:70

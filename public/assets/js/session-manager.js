@@ -1,283 +1,260 @@
 /**
- * Session Manager - Client Side
- * Handles session timeout, warnings, and keep-alive
+ * Session Manager — Client Side (FINAL FIXED VERSION)
+ *
+ * Fixes applied on top of previous version:
+ *  A. handleTimeout() now requires TWO consecutive failures before redirecting —
+ *     eliminates spurious redirects from network blips or single failed fetches.
+ *  B. checkSession does NOT reset last_activity on server. Remaining time
+ *     returned is always accurate idle time (PHP fix B/C).
+ *  C. fetch() wrapper always sends credentials + X-Requested-With (kept from v2).
+ *  D. handleTimeout() is guarded by this.timedOut so it runs exactly once.
+ *  E. Clear, consistent units: all PHP values are SECONDS, all timer IDs are MS.
  */
 
 class SessionManager {
     constructor(config = {}) {
-        // Configuration (all times in SECONDS for consistency)
-        this.baseUrl = config.baseUrl || '';
-        this.sessionTimeout = config.sessionTimeout || 1800; // 30 minutes default
-        this.warningTime = config.warningTime || 300; // 5 minutes warning (in SECONDS)
-        this.checkInterval = config.checkInterval || 60000; // Check every minute (in milliseconds)
-        this.keepAliveInterval = config.keepAliveInterval || 300000; // Keep alive every 5 minutes (in milliseconds)
-        this.redirectUrl = config.redirectUrl || '/auth/login';
-        
+        this.baseUrl           = config.baseUrl           || '';
+        this.sessionTimeout    = config.sessionTimeout    || 3600;   // seconds
+        this.warningTime       = config.warningTime       || 300;    // seconds (5 min)
+        this.checkInterval     = config.checkInterval     || 60000;  // ms     (1 min)
+        this.keepAliveInterval = config.keepAliveInterval || 300000; // ms     (5 min)
+        this.redirectUrl       = config.redirectUrl       || '/auth/login';
+
         // State
-        this.lastActivity = Date.now();
-        this.checkTimer = null;
-        this.keepAliveTimer = null;
-        this.warningShown = false;
-        this.isActive = false;
+        this.lastActivity      = Date.now();
+        this.checkTimer        = null;
+        this.keepAliveTimer    = null;
+        this.warningShown      = false;
+        this.isActive          = false;
         this.countdownInterval = null;
-        
-        // Initialize
+        this.timedOut          = false;   // FIX D: fire timeout logic only once
+
+        // FIX A: require two consecutive failures before redirecting
+        this._failCount        = 0;
+        this._maxFails         = 2;
+
         this.init();
     }
-    
-    /**
-     * Initialize session manager
-     */
+
+    // ── Init ──────────────────────────────────────────────────────────────────
+
     async init() {
         try {
-            // Get session config from server
             const config = await this.getSessionConfig();
-            
-            if (config.isLoggedIn) {
-                this.sessionTimeout = config.timeout;
-                this.isActive = true;
-                
-                // Setup activity tracking
-                this.setupActivityTracking();
-                
-                // Start monitoring
-                this.startMonitoring();
-                
-                // Start keep-alive
-                this.startKeepAlive();
-                
-                console.log('Session Manager initialized');
+
+            if (!config.isLoggedIn) {
+                console.log('SessionManager: user not logged in — skipping.');
+                return;
             }
-        } catch (error) {
-            console.error('Session Manager initialization failed:', error);
+
+            // Use authoritative server values
+            this.sessionTimeout = config.timeout;
+            this.warningTime    = config.warningTime || this.warningTime;
+            this.isActive       = true;
+
+            this.setupActivityTracking();
+            this.startMonitoring();
+            this.startKeepAlive();
+
+            console.log(
+                `SessionManager: ready | timeout=${this.sessionTimeout}s ` +
+                `warning=${this.warningTime}s remaining=${config.remaining}s`
+            );
+        } catch (err) {
+            console.error('SessionManager init error:', err);
         }
     }
-    
+
+    // ── Fetch wrapper ─────────────────────────────────────────────────────────
+
     /**
-     * Get session configuration from server
+     * FIX C (retained): always send session cookie + AJAX header.
+     * The AJAX header tells PHP not to call header() redirect on timeout.
      */
-    async getSessionConfig() {
-        const response = await fetch(`${this.baseUrl}/auth/getConfig`);
-        
-        if (!response.ok) {
-            throw new Error('Failed to get session config');
-        }
-        
-        return await response.json();
-    }
-    
-    /**
-     * Setup activity tracking
-     */
-    setupActivityTracking() {
-        const events = ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
-        
-        events.forEach(event => {
-            document.addEventListener(event, () => {
-                this.updateActivity();
-            }, true);
+    async _fetch(path, options = {}) {
+        const headers = {
+            'X-Requested-With': 'XMLHttpRequest',
+            ...(options.headers || {}),
+        };
+        return fetch(`${this.baseUrl}${path}`, {
+            credentials: 'same-origin',
+            ...options,
+            headers,
         });
     }
-    
-    /**
-     * Update last activity timestamp
-     */
+
+    async getSessionConfig() {
+        const res = await this._fetch('/auth/getConfig');
+        if (!res.ok) throw new Error(`getConfig HTTP ${res.status}`);
+        return res.json();
+    }
+
+    async checkSessionStatus() {
+        const res = await this._fetch('/auth/checkSession');
+        if (!res.ok) throw new Error(`checkSession HTTP ${res.status}`);
+        return res.json();
+    }
+
+    async sendKeepAlive() {
+        const res = await this._fetch('/auth/keepAlive', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+        });
+        if (!res.ok) throw new Error(`keepAlive HTTP ${res.status}`);
+        return res.json();
+    }
+
+    // ── Activity tracking ─────────────────────────────────────────────────────
+
+    setupActivityTracking() {
+        ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'].forEach(evt =>
+            document.addEventListener(evt, () => this.updateActivity(), { passive: true })
+        );
+    }
+
     updateActivity() {
         this.lastActivity = Date.now();
-        
-        // Hide warning if shown
-        if (this.warningShown) {
-            this.hideWarning();
-        }
+        if (this.warningShown) this.hideWarning();
     }
-    
-    /**
-     * Start session monitoring
-     */
+
+    // ── Timers ────────────────────────────────────────────────────────────────
+
     startMonitoring() {
-        // Check session status periodically
-        this.checkTimer = setInterval(() => {
-            this.checkSession();
-        }, this.checkInterval);
+        this.checkTimer = setInterval(() => this.checkSession(), this.checkInterval);
     }
-    
-    /**
-     * Stop session monitoring
-     */
+
     stopMonitoring() {
-        if (this.checkTimer) {
-            clearInterval(this.checkTimer);
-            this.checkTimer = null;
-        }
+        clearInterval(this.checkTimer);
+        this.checkTimer = null;
     }
-    
-    /**
-     * Start keep-alive timer
-     */
+
     startKeepAlive() {
-        this.keepAliveTimer = setInterval(() => {
-            this.sendKeepAlive();
+        this.keepAliveTimer = setInterval(async () => {
+            try {
+                const data = await this.sendKeepAlive();
+                if (data.success) {
+                    console.debug(`SessionManager: keep-alive OK — ${data.remaining}s left`);
+                    this._failCount = 0; // reset on success
+                } else {
+                    console.warn('SessionManager: keep-alive rejected', data);
+                    this._handleFailure();
+                }
+            } catch (err) {
+                console.error('SessionManager: keep-alive error:', err);
+                this._handleFailure();
+            }
         }, this.keepAliveInterval);
     }
-    
-    /**
-     * Stop keep-alive timer
-     */
+
     stopKeepAlive() {
-        if (this.keepAliveTimer) {
-            clearInterval(this.keepAliveTimer);
-            this.keepAliveTimer = null;
-        }
+        clearInterval(this.keepAliveTimer);
+        this.keepAliveTimer = null;
     }
-    
-    /**
-     * Check session status
-     */
+
+    // ── Session check ─────────────────────────────────────────────────────────
+
     async checkSession() {
+        if (this.timedOut) return;
+
         try {
-            const response = await fetch(`${this.baseUrl}/auth/checkSession`);
-            const data = await response.json();
-            
+            const data = await this.checkSessionStatus();
+
+            // FIX A: require consecutive failures before acting
             if (!data.isLoggedIn) {
+                this._handleFailure();
+                return;
+            }
+
+            // Successful check — reset fail counter
+            this._failCount = 0;
+
+            const remaining = data.remaining; // seconds from server
+
+            if (remaining <= 0) {
                 this.handleTimeout();
                 return;
             }
-            
-            // remaining is in SECONDS from server
-            const remaining = data.remaining;
-            
-            // Show warning if time is running out (compare seconds to seconds)
-            if (remaining <= this.warningTime && remaining > 0 && !this.warningShown) {
+
+            if (remaining <= this.warningTime && !this.warningShown) {
                 this.showWarning(remaining);
             }
-            
-            // Auto logout if timed out
-            if (remaining <= 0) {
-                this.handleTimeout();
-            }
-            
-        } catch (error) {
-            console.error('Session check failed:', error);
+
+        } catch (err) {
+            // Network error — count as a failure but don't immediately redirect
+            console.error('SessionManager: checkSession error:', err);
+            this._handleFailure();
         }
     }
-    
+
     /**
-     * Send keep-alive ping to server
+     * FIX A: Track consecutive failures.
+     * Only trigger timeout after _maxFails in a row to survive network blips.
      */
-    async sendKeepAlive() {
-        try {
-            const response = await fetch(`${this.baseUrl}/auth/keepAlive`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            
-            const data = await response.json();
-            
-            if (!data.success) {
-                console.warn('Keep-alive failed');
-            } else {
-                console.log('Keep-alive sent successfully');
-            }
-            
-        } catch (error) {
-            console.error('Keep-alive error:', error);
+    _handleFailure() {
+        this._failCount++;
+        console.warn(`SessionManager: failure ${this._failCount}/${this._maxFails}`);
+        if (this._failCount >= this._maxFails) {
+            this.handleTimeout();
         }
     }
-    
-    /**
-     * Show timeout warning
-     */
+
+    // ── Warning modal ─────────────────────────────────────────────────────────
+
     showWarning(remainingSeconds) {
         this.warningShown = true;
-        
-        // Create warning modal if it doesn't exist
         if (!document.getElementById('sessionWarningModal')) {
-            this.createWarningModal();
+            this._createWarningModal();
         }
-        
-        // Update warning message
-        this.updateWarningMessage(remainingSeconds);
-        
-        // Show modal
-        const modalElement = document.getElementById('sessionWarningModal');
-        const modal = new bootstrap.Modal(modalElement);
-        modal.show();
-        
-        // Start countdown
-        this.startWarningCountdown(remainingSeconds);
+        this._updateWarningMessage(remainingSeconds);
+        bootstrap.Modal.getOrCreateInstance(
+            document.getElementById('sessionWarningModal')
+        ).show();
+        this._startCountdown(remainingSeconds);
     }
-    
-    /**
-     * Update warning message
-     */
-    updateWarningMessage(remainingSeconds) {
-        const minutes = Math.floor(remainingSeconds / 60);
-        const seconds = Math.floor(remainingSeconds % 60);
-        
-        const message = `Your session will expire in ${minutes} minute${minutes !== 1 ? 's' : ''} ${seconds} second${seconds !== 1 ? 's' : ''}. Any unsaved changes will be lost.`;
-        
-        const messageElement = document.getElementById('sessionWarningMessage');
-        if (messageElement) {
-            messageElement.textContent = message;
+
+    _updateWarningMessage(secs) {
+        const m = Math.floor(secs / 60);
+        const s = Math.floor(secs % 60);
+        const el = document.getElementById('sessionWarningMessage');
+        if (el) {
+            el.textContent =
+                `Your session will expire in ${m} min ${s} sec. ` +
+                `Any unsaved changes will be lost.`;
         }
     }
-    
-    /**
-     * Start warning countdown
-     */
-    startWarningCountdown(initialSeconds) {
-        // Clear any existing countdown
-        if (this.countdownInterval) {
-            clearInterval(this.countdownInterval);
-        }
-        
-        let remaining = initialSeconds;
-        
+
+    _startCountdown(initialSecs) {
+        clearInterval(this.countdownInterval);
+        let remaining = Math.floor(initialSecs);
+
         this.countdownInterval = setInterval(() => {
             remaining--;
-            
             if (remaining <= 0) {
                 clearInterval(this.countdownInterval);
                 this.countdownInterval = null;
                 this.handleTimeout();
                 return;
             }
-            
-            // Update message
-            this.updateWarningMessage(remaining);
-            
+            this._updateWarningMessage(remaining);
         }, 1000);
     }
-    
-    /**
-     * Hide warning
-     */
+
     hideWarning() {
         this.warningShown = false;
-        
-        // Clear countdown
-        if (this.countdownInterval) {
-            clearInterval(this.countdownInterval);
-            this.countdownInterval = null;
-        }
-        
-        const modalElement = document.getElementById('sessionWarningModal');
-        if (modalElement) {
-            const modal = bootstrap.Modal.getInstance(modalElement);
-            if (modal) {
-                modal.hide();
-            }
+        clearInterval(this.countdownInterval);
+        this.countdownInterval = null;
+
+        const el = document.getElementById('sessionWarningModal');
+        if (el) {
+            const m = bootstrap.Modal.getInstance(el);
+            if (m) m.hide();
         }
     }
-    
-    /**
-     * Create warning modal
-     */
-    createWarningModal() {
-        const modalHtml = `
-            <div class="modal fade" id="sessionWarningModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+
+    _createWarningModal() {
+        document.body.insertAdjacentHTML('beforeend', `
+            <div class="modal fade" id="sessionWarningModal"
+                 data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header bg-warning text-dark">
@@ -290,102 +267,91 @@ class SessionManager {
                             <p id="sessionWarningMessage" class="mb-0"></p>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" onclick="sessionManager.logout()">
+                            <button type="button" class="btn btn-secondary"
+                                    onclick="window.sessionManager.logout()">
                                 Logout Now
                             </button>
-                            <button type="button" class="btn btn-primary" onclick="sessionManager.extendSession()">
+                            <button type="button" class="btn btn-primary"
+                                    onclick="window.sessionManager.extendSession()">
                                 Continue Working
                             </button>
                         </div>
                     </div>
                 </div>
-            </div>
-        `;
-        
-        document.body.insertAdjacentHTML('beforeend', modalHtml);
+            </div>`);
     }
-    
-    /**
-     * Extend session
-     */
+
+    // ── Extend / Logout / Timeout ─────────────────────────────────────────────
+
     async extendSession() {
         try {
-            await this.sendKeepAlive();
-            this.updateActivity();
-            this.hideWarning();
-            
-            // Show success message
-            this.showNotification('Session extended successfully', 'success');
-            
-        } catch (error) {
-            console.error('Failed to extend session:', error);
-            this.showNotification('Failed to extend session', 'danger');
+            const data = await this.sendKeepAlive();
+            if (data.success) {
+                this._failCount = 0;
+                this.updateActivity();
+                this.hideWarning();
+                this.showNotification('Session extended successfully.', 'success');
+            } else {
+                this.showNotification('Could not extend session. Please save your work.', 'danger');
+            }
+        } catch (err) {
+            console.error('SessionManager: extendSession error:', err);
+            this.showNotification('Failed to extend session.', 'danger');
         }
     }
-    
+
     /**
-     * Handle session timeout
+     * FIX D: guarded by this.timedOut — runs exactly once.
+     * Redirects after 3 seconds so user can read the notification.
      */
     handleTimeout() {
+        if (this.timedOut) return;
+        this.timedOut = true;
+
         this.stopMonitoring();
         this.stopKeepAlive();
-        
-        // Hide warning modal if shown
         this.hideWarning();
-        
-        // Show timeout message
-        this.showNotification('Your session has expired. Redirecting to login...', 'warning');
-        
-        // Redirect to login page after 2 seconds
+
+        this.showNotification(
+            'Your session has expired. Redirecting to login…', 'warning'
+        );
+
         setTimeout(() => {
             window.location.href = this.redirectUrl;
-        }, 2000);
+        }, 3000);
     }
-    
-    /**
-     * Logout user
-     */
+
     logout() {
         this.stopMonitoring();
         this.stopKeepAlive();
         this.hideWarning();
         window.location.href = `${this.baseUrl}/auth/logout`;
     }
-    
-    /**
-     * Show notification
-     */
+
+    // ── Toast ─────────────────────────────────────────────────────────────────
+
     showNotification(message, type = 'info') {
-        // Create notification element if needed
         if (!document.getElementById('sessionNotification')) {
-            const notificationHtml = `
-                <div id="sessionNotification" class="position-fixed top-0 end-0 p-3" style="z-index: 9999;">
-                    <div class="toast align-items-center border-0" role="alert">
+            document.body.insertAdjacentHTML('beforeend', `
+                <div id="sessionNotification"
+                     class="position-fixed top-0 end-0 p-3" style="z-index:9999;">
+                    <div class="toast align-items-center border-0" role="alert"
+                         aria-live="assertive" aria-atomic="true">
                         <div class="d-flex">
                             <div class="toast-body"></div>
-                            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button>
+                            <button type="button" class="btn-close me-2 m-auto"
+                                    data-bs-dismiss="toast"></button>
                         </div>
                     </div>
-                </div>
-            `;
-            document.body.insertAdjacentHTML('beforeend', notificationHtml);
+                </div>`);
         }
-        
-        const toastElement = document.querySelector('#sessionNotification .toast');
-        const toastBody = toastElement.querySelector('.toast-body');
-        
-        // Set message and style
-        toastBody.textContent = message;
-        toastElement.className = `toast align-items-center text-white bg-${type} border-0`;
-        
-        // Show toast
-        const toast = new bootstrap.Toast(toastElement);
-        toast.show();
+
+        const toastEl = document.querySelector('#sessionNotification .toast');
+        toastEl.querySelector('.toast-body').textContent = message;
+        toastEl.className = `toast align-items-center text-white bg-${type} border-0`;
+        bootstrap.Toast.getOrCreateInstance(toastEl).show();
     }
-    
-    /**
-     * Destroy session manager
-     */
+
     destroy() {
         this.stopMonitoring();
         this.stopKeepAlive();
@@ -394,18 +360,14 @@ class SessionManager {
     }
 }
 
-// Initialize session manager when DOM is ready
-document.addEventListener('DOMContentLoaded', function() {
-    // Get base URL from the page
-    const baseUrl = window.BASE_URL || '';
-    
-    // Initialize session manager
+// ── Bootstrap ─────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function () {
     window.sessionManager = new SessionManager({
-        baseUrl: baseUrl,
-        sessionTimeout: 1800,      // 30 minutes (in seconds)
-        warningTime: 300,          // 5 minutes warning (in SECONDS, not milliseconds!)
-        checkInterval: 60000,      // Check every minute (in milliseconds)
-        keepAliveInterval: 300000, // Keep alive every 5 minutes (in milliseconds)
-        redirectUrl: `${baseUrl}/auth/login`
+        baseUrl:           window.BASE_URL || '',
+        sessionTimeout:    3600,    // seconds — overridden by /auth/getConfig
+        warningTime:       300,     // seconds (5 min)
+        checkInterval:     60000,   // ms      (1 min)
+        keepAliveInterval: 300000,  // ms      (5 min)
+        redirectUrl:       (window.BASE_URL || '') + '/auth/login',
     });
 });

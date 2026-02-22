@@ -100,6 +100,8 @@
                         <th class="text-center" style="width:90px">Qty. Passed</th>
                         <th class="text-center" style="width:90px">Qty. Issued</th>
                         <th>Remarks</th>
+                        <th class="text-center" style="width:110px">Stock Book<br><small class="fw-normal">Page / Vol</small></th>
+                        <th class="text-center" style="width:110px">Day Book<br><small class="fw-normal">Page / Vol</small></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -124,11 +126,33 @@
                             <td class="text-center"><?= $item['qty_passed'] ?: '<span class="text-muted">—</span>' ?></td>
                             <td class="text-center"><?= $item['qty_issued']  ?: '<span class="text-muted">—</span>' ?></td>
                             <td><?= htmlspecialchars($item['remarks'] ?? '') ?></td>
+                            <td class="text-center">
+                                <?php if (!empty($item['stock_book_page_no'])): ?>
+                                    <span class="d-block">Pg. <?= (int)$item['stock_book_page_no'] ?></span>
+                                <?php endif; ?>
+                                <?php if (!empty($item['stock_book_volume'])): ?>
+                                    <small class="text-muted">Vol <?= (int)$item['stock_book_volume'] ?></small>
+                                <?php endif; ?>
+                                <?php if (empty($item['stock_book_page_no']) && empty($item['stock_book_volume'])): ?>
+                                    <span class="text-muted">—</span>
+                                <?php endif; ?>
+                            </td>
+                            <td class="text-center">
+                                <?php if (!empty($item['day_book_page_no'])): ?>
+                                    <span class="d-block">Pg. <?= (int)$item['day_book_page_no'] ?></span>
+                                <?php endif; ?>
+                                <?php if (!empty($item['day_book_volume'])): ?>
+                                    <small class="text-muted">Vol <?= (int)$item['day_book_volume'] ?></small>
+                                <?php endif; ?>
+                                <?php if (empty($item['day_book_page_no']) && empty($item['day_book_volume'])): ?>
+                                    <span class="text-muted">—</span>
+                                <?php endif; ?>
+                            </td>
                         </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="7" class="text-center text-muted py-3">No items found</td>
+                            <td colspan="9" class="text-center text-muted py-3">No items found</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
