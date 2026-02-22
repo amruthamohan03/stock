@@ -155,23 +155,10 @@
 
                     <!-- TAX NOT TAX DROPDOWN -->
                     <div class="mb-3">
-                        <label class="form-label">Taxable/ Non-taxable<span class="text-danger">*</span></label>
+                        <label class="form-label">Consumable/ Non-consumable<span class="text-danger">*</span></label>
                         <select class="form-select" name="tax_not_tax" id="edit_tax_not_tax" required>
-                            <option value="A">A</option>
-                            <option value="B">B</option>
-                        </select>
-                    </div>
-
-                    <!-- ITEM TYPE DROPDOWN -->
-                    <div class="mb-3">
-                        <label class="form-label">Item Type <span class="text-danger">*</span></label>
-                        <select class="form-select" name="item_type" id="edit_item_type" required>
-                            <option value="">-- Select Item Type --</option>
-                            <?php if (!empty($transactionEnum)): ?>
-                                <?php foreach ($transactionEnum as $key => $value): ?>
-                                    <option value="<?= $key ?>"><?= htmlspecialchars($value) ?></option>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
+                            <option value="C">Consumable</option>
+                            <option value="N">Non-Consumable</option>
                         </select>
                     </div>
 

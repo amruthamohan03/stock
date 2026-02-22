@@ -16,22 +16,11 @@ class ItemController extends Controller
         // Get all categories for dropdown
         $categories = $db->selectData('quotation_categories_t', 'id, category_name', ['display' => 'Y'], 'category_name ASC');
 
-        // Define transaction type enum for dropdown
-        $transactionEnum = [
-            "I"   => "Import",
-            "E"   => "Export",
-            "U"   => "Under Value",
-            "IE"  => "Import, Export",
-            "IU"  => "Import, Under Value",
-            "EU"  => "Export, Under Value",
-            "IEU" => "Import, Export, Under Value"
-        ];
 
         $data = [
             'title' => 'Item Master',
             'result' => $result,
-            'categories' => $categories,
-            'transactionEnum' => $transactionEnum
+            'categories' => $categories
         ];
 
         $this->viewWithLayout('masters/item', $data);
@@ -106,11 +95,6 @@ class ItemController extends Controller
 
             if ($data['category_id'] <= 0) {
                 echo json_encode(['success' => false, 'message' => '⚠ Please select a category.']);
-                exit;
-            }
-
-            if (!$data['item_type']) {
-                echo json_encode(['success' => false, 'message' => '⚠ Please select item type.']);
                 exit;
             }
 

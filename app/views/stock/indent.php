@@ -349,7 +349,7 @@ $(function () {
         <tr class="item-row">
             <td>
                 <input type="number" class="form-control form-control-sm"
-                       name="items[${idx}][sl_no]" value="${data.sl_no || idx}" style="width:80px;min-width:80px" readonly>
+                       name="items[${idx}][sl_no]" value="${data.sl_no || idx}" style="width:80px;min-width:80px">
                        <input type="hidden" name="items[${idx}][id]" value="${data.id || 0}">
             </td>
             <td>
