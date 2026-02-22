@@ -77,6 +77,8 @@
                                 <th>Purpose</th>
                                 <th style="width:75px">Qty <span class="text-danger">*</span></th>
                                 <th>Remarks</th>
+                                <th style="width:160px">Stock Book<br><small class="fw-normal text-muted">Page / Volume</small></th>
+                                <th style="width:160px">Day Book<br><small class="fw-normal text-muted">Page / Volume</small></th>
                                 <th style="width:50px"></th>
                             </tr>
                         </thead>
@@ -348,6 +350,7 @@ $(function () {
             <td>
                 <input type="number" class="form-control form-control-sm"
                        name="items[${idx}][sl_no]" value="${data.sl_no || idx}" style="width:80px;min-width:80px" readonly>
+                       <input type="hidden" name="items[${idx}][id]" value="${data.id || 0}">
             </td>
             <td>
                 <select class="form-select form-select-sm item-select"
@@ -375,6 +378,36 @@ $(function () {
             <td><input type="text" class="form-control form-control-sm"
                        name="items[${idx}][remarks]"
                        value="${data.remarks || ''}"></td>
+            <td>
+                <div class="d-flex gap-1">
+                    <input type="number" class="form-control form-control-sm" style="width:70px"
+                           name="items[${idx}][stock_book_page_no]"
+                           placeholder="Page" min="1"
+                           value="${data.stock_book_page_no || ''}">
+                    <select class="form-select form-select-sm" style="width:80px"
+                            name="items[${idx}][stock_book_volume]">
+                        <option value="">Vol</option>
+                        <option value="1"${data.stock_book_volume == 1 ? ' selected' : ''}>Vol 1</option>
+                        <option value="2"${data.stock_book_volume == 2 ? ' selected' : ''}>Vol 2</option>
+                        <option value="3"${data.stock_book_volume == 3 ? ' selected' : ''}>Vol 3</option>
+                    </select>
+                </div>
+            </td>
+            <td>
+                <div class="d-flex gap-1">
+                    <input type="number" class="form-control form-control-sm" style="width:70px"
+                           name="items[${idx}][day_book_page_no]"
+                           placeholder="Page" min="1"
+                           value="${data.day_book_page_no || ''}">
+                    <select class="form-select form-select-sm" style="width:80px"
+                            name="items[${idx}][day_book_volume]">
+                        <option value="">Vol</option>
+                        <option value="1"${data.day_book_volume == 1 ? ' selected' : ''}>Vol 1</option>
+                        <option value="2"${data.day_book_volume == 2 ? ' selected' : ''}>Vol 2</option>
+                        <option value="3"${data.day_book_volume == 3 ? ' selected' : ''}>Vol 3</option>
+                    </select>
+                </div>
+            </td>
             <td>
                 <button type="button" class="btn btn-sm btn-danger remove-item">
                     <i class="ti ti-trash"></i>
@@ -498,14 +531,19 @@ $(function () {
             items.forEach(item => {
                 itemCounter++;
                 const $row = $(buildItemRow(itemCounter, {
-                    sl_no            : item.sl_no,
-                    item_id          : item.item_id,
-                    make_id          : item.make_id,
-                    model_id         : item.model_id,
-                    item_description : item.item_description,
-                    item_purpose     : item.item_purpose,
-                    qty_intended     : item.qty_intended,
-                    remarks          : item.remarks,
+                    id                   : item.id,   // ← add this line
+                    sl_no                : item.sl_no,
+                    item_id              : item.item_id,
+                    make_id              : item.make_id,
+                    model_id             : item.model_id,
+                    item_description     : item.item_description,
+                    item_purpose         : item.item_purpose,
+                    qty_intended         : item.qty_intended,
+                    remarks              : item.remarks,
+                    stock_book_page_no   : item.stock_book_page_no,
+                    stock_book_volume    : item.stock_book_volume,
+                    day_book_page_no     : item.day_book_page_no,
+                    day_book_volume      : item.day_book_volume,
                 }));
                 $('#itemsTableBody').append($row);
 

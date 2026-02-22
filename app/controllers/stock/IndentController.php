@@ -150,10 +150,10 @@ class IndentController extends Controller
 
             $update = $db->updateData('indent_master_t', $indentData, ['id' => $id]);
 
-            /* Sync items: soft-delete existing, re-insert */
+            /* Sync items: update existing rows in-place, insert truly new ones,
+               soft-delete only rows the user removed from the form */
             if ($update !== false) {
-                $db->updateData('indent_item_t', ['display' => 'N'], ['indent_id' => $id]);
-                $this->_upsertItems($db, $id, $_POST['items'] ?? [], 'update');
+                $this->_syncItems($db, $id, $_POST['items'] ?? []);
                 echo json_encode(['success'=>true,'message'=>'Indent updated successfully']);
             } else {
                 echo json_encode(['success'=>false,'message'=>'Update failed']);
@@ -186,27 +186,82 @@ class IndentController extends Controller
         }
     }
 
-    /* ─── Private: insert / re-insert items ─────────────────── */
+    /* ─── Private: build a clean item field array ──────────── */
+    private function _itemFields(array $item, int $indentId): array
+    {
+        return [
+            'indent_id'          => $indentId,
+            'sl_no'              => (int)($item['sl_no'] ?? 0),
+            'item_id'            => (int)($item['item_id'] ?? 0),
+            'make_id'            => !empty($item['make_id'])  ? (int)$item['make_id']  : null,
+            'model_id'           => !empty($item['model_id']) ? (int)$item['model_id'] : null,
+            'item_description'   => htmlspecialchars(trim($item['item_description'] ?? ''), ENT_QUOTES),
+            'item_purpose'       => htmlspecialchars(trim($item['item_purpose']     ?? ''), ENT_QUOTES),
+            'qty_intended'       => (int)($item['qty_intended'] ?? 0),
+            'remarks'            => htmlspecialchars(trim($item['remarks'] ?? ''), ENT_QUOTES),
+            'stock_book_page_no' => !empty($item['stock_book_page_no']) ? (int)$item['stock_book_page_no'] : null,
+            'stock_book_volume'  => !empty($item['stock_book_volume'])  ? (int)$item['stock_book_volume']  : null,
+            'day_book_page_no'   => !empty($item['day_book_page_no'])   ? (int)$item['day_book_page_no']   : null,
+            'day_book_volume'    => !empty($item['day_book_volume'])     ? (int)$item['day_book_volume']    : null,
+            'display'            => 'Y',
+        ];
+    }
+
+    /* ─── Private: INSERT on first save ─────────────────────── */
     private function _upsertItems(Database $db, int $indentId, array $items, string $mode): void
     {
         if (empty($items)) return;
+        foreach ($items as $item) {
+            $row = $this->_itemFields($item, $indentId);
+            $row['qty_passed'] = 0;
+            $row['qty_issued'] = 0;
+            $db->insertData('indent_item_t', $row);
+        }
+    }
+
+    /* ─── Private: SYNC on update — no blanket delete/re-insert ─
+     *
+     *  Logic:
+     *   • Existing item  (item has id > 0 matching a live DB row) → UPDATE in place
+     *   • New item       (id absent / 0)                          → INSERT
+     *   • Removed item   (DB row whose id is not in the POST)     → soft-delete only that row
+     *
+     *  qty_passed and qty_issued are preserved on existing rows so
+     *  workflow progress is never lost.
+     * ────────────────────────────────────────────────────────── */
+    private function _syncItems(Database $db, int $indentId, array $items): void
+    {
+        /* Collect the IDs of every live DB row for this indent */
+        $existingRows = $db->customQuery(
+            "SELECT id FROM indent_item_t WHERE indent_id = $indentId AND display = 'Y'"
+        );
+        $existingIds = array_column($existingRows ?: [], 'id');
+
+        /* Track which submitted IDs we actually touched */
+        $submittedIds = [];
 
         foreach ($items as $item) {
-            $row = [
-                'indent_id'        => $indentId,
-                'sl_no'            => (int)($item['sl_no'] ?? 0),
-                'item_id'          => (int)($item['item_id'] ?? 0),
-                'make_id'          => !empty($item['make_id'])  ? (int)$item['make_id']  : null,
-                'model_id'         => !empty($item['model_id']) ? (int)$item['model_id'] : null,
-                'item_description' => htmlspecialchars(trim($item['item_description'] ?? ''), ENT_QUOTES),
-                'item_purpose'     => htmlspecialchars(trim($item['item_purpose']     ?? ''), ENT_QUOTES),
-                'qty_intended'     => (int)($item['qty_intended'] ?? 0),
-                'qty_passed'       => 0,
-                'qty_issued'       => 0,
-                'remarks'          => htmlspecialchars(trim($item['remarks'] ?? ''), ENT_QUOTES),
-                'display'          => 'Y',
-            ];
-            $db->insertData('indent_item_t', $row);
+            $itemId = (int)($item['id'] ?? 0);
+            $fields = $this->_itemFields($item, $indentId);
+
+            if ($itemId > 0 && in_array($itemId, $existingIds)) {
+                /* ── UPDATE existing row in place ── */
+                /* Never overwrite qty_passed / qty_issued — those belong to workflow */
+                $db->updateData('indent_item_t', $fields, ['id' => $itemId]);
+                $submittedIds[] = $itemId;
+            } else {
+                /* ── INSERT brand-new row ── */
+                $fields['qty_passed'] = 0;
+                $fields['qty_issued'] = 0;
+                $newId = $db->insertData('indent_item_t', $fields);
+                if ($newId) $submittedIds[] = $newId;
+            }
+        }
+
+        /* Soft-delete only the rows the user removed (not in submitted list) */
+        $toDelete = array_diff($existingIds, $submittedIds);
+        foreach ($toDelete as $delId) {
+            $db->updateData('indent_item_t', ['display' => 'N'], ['id' => (int)$delId]);
         }
     }
 

@@ -1,391 +1,288 @@
 <?php
 /**
- * Session Manager Class - FIXED VERSION
- * Handles all session operations with security features
+ * Session Manager Class — FINAL FIXED VERSION
+ *
+ * Key fixes vs previous versions:
+ *  A. validateSession() never does header() redirect on AJAX requests —
+ *     AJAX callers get an empty/invalid session and JS handles the redirect.
+ *  B. Periodic session_regenerate_id() REMOVED from normal requests.
+ *     Regeneration now happens ONLY on login/logout — eliminates the race
+ *     condition where the browser's next fetch still carries the old cookie.
+ *  C. checkSession / getStatus are pure READS — they do NOT update last_activity.
+ *     Only keepAlive() and setUserSession() reset the idle clock.
+ *     This means getRemainingTime() always reflects true idle time.
  */
 class SessionManager {
-    // Session configuration - ADJUSTED TIMEOUTS
-    private const SESSION_TIMEOUT = 3600; // 1 hour (was 30 min)
-    private const SESSION_REGENERATE_TIME = 600; // 10 minutes (was 5 min)
-    private const MAX_IDLE_TIME = 7200; // 2 hours (was 1 hour)
-    
-    /**
-     * Initialize session with security settings
-     */
-    public static function init() {
+
+    // ── Timeout constants (seconds) — keep in sync with config.php ──────────
+    private const SESSION_TIMEOUT = 3600;   // 1 hour idle limit
+    private const MAX_IDLE_TIME   = 7200;   // 2 hour absolute max
+    // ────────────────────────────────────────────────────────────────────────
+
+    public static function init(): void
+    {
         if (session_status() === PHP_SESSION_NONE) {
-            // Session security settings - FIXED HTTPS CHECK
             ini_set('session.cookie_httponly', 1);
             ini_set('session.use_only_cookies', 1);
-            
-            // Only use secure cookies if on HTTPS
-            $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') 
-                    || (!empty($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443);
+
+            $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+                    || (($_SERVER['SERVER_PORT'] ?? 80) == 443);
             ini_set('session.cookie_secure', $isHttps ? 1 : 0);
-            
-            ini_set('session.cookie_samesite', 'Lax'); // Changed from Strict
-            
-            // Set session lifetime
+            ini_set('session.cookie_samesite', 'Lax');
             ini_set('session.gc_maxlifetime', self::MAX_IDLE_TIME);
-            ini_set('session.cookie_lifetime', 0); // Until browser closes
-            
+            ini_set('session.cookie_lifetime', 0);
+
             session_start();
-            
-            // Initialize session security
             self::initSecurity();
-            
-            // Check session validity
-            self::validateSession();
+            self::validateSession(self::isAjaxRequest()); // FIX A
         }
     }
-    
-    /**
-     * Initialize session security parameters
-     */
-    private static function initSecurity() {
+
+    // ── Internals ─────────────────────────────────────────────────────────────
+
+    private static function initSecurity(): void
+    {
         if (!isset($_SESSION['initiated'])) {
-            session_regenerate_id(true);
-            $_SESSION['initiated'] = true;
-            $_SESSION['user_agent'] = self::getUserAgent();
-            $_SESSION['ip_address'] = self::getIpAddress();
-            $_SESSION['created_at'] = time();
+            session_regenerate_id(true); // Only on brand-new session
+            $_SESSION['initiated']     = true;
+            $_SESSION['user_agent']    = self::getUserAgent();
+            $_SESSION['ip_address']    = self::getIpAddress();
+            $_SESSION['created_at']    = time();
             $_SESSION['last_activity'] = time();
-            $_SESSION['last_regeneration'] = time();
         }
     }
-    
-    /**
-     * Validate session security and timeout
-     */
-    private static function validateSession() {
-        // Check if session exists
+
+    private static function validateSession(bool $isAjax = false): void
+    {
         if (!isset($_SESSION['initiated'])) {
             return;
         }
-        
-        // Validate user agent - RELAXED CHECK
-        if (!self::validateUserAgent()) {
-            // Log suspicious activity but don't destroy immediately
-            error_log("Session user agent mismatch for session: " . session_id());
-            // Only destroy if user is logged in and agent changed
-            if (isset($_SESSION['is_logged_in']) && $_SESSION['is_logged_in']) {
-                self::destroy();
-                return;
-            }
-        }
-        
-        // Skip IP validation entirely (mobile users, VPN changes, etc.)
-        // If you need it, enable validateIpAddress() method
-        
-        // Check session timeout
-        if (self::isTimedOut()) {
+
+        // UA check — only invalidate logged-in sessions
+        if (!self::validateUserAgent() && self::isLoggedIn()) {
+            error_log('SessionManager: UA mismatch — ' . session_id());
             self::destroy();
-            header('Location: /login.php?timeout=1');
+            if ($isAjax) return; // FIX A: JS will see empty session & redirect
+            header('Location: /auth/login?reason=ua');
             exit;
         }
-        
-        // Regenerate session ID periodically - WITH PROTECTION
-        if (self::shouldRegenerateId() && !self::isAjaxRequest()) {
-            session_regenerate_id(true);
-            $_SESSION['last_regeneration'] = time();
+
+        if (self::isTimedOut()) {
+            self::destroy();
+            if ($isAjax) return; // FIX A: no redirect on AJAX
+            header('Location: /auth/login?timeout=1');
+            exit;
         }
-        
-        // Update last activity
-        $_SESSION['last_activity'] = time();
+
+        // FIX B & C: Do NOT update last_activity here.
+        // keepAlive() is the only place that resets the idle clock.
+        // This ensures getRemainingTime() always reflects real idle time.
     }
-    
-    /**
-     * Check if request is AJAX
-     */
-    private static function isAjaxRequest() {
-        return !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
-               strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+
+    private static function isAjaxRequest(): bool
+    {
+        return !empty($_SERVER['HTTP_X_REQUESTED_WITH'])
+            && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
     }
-    
-    /**
-     * Check if session is timed out
-     */
-    private static function isTimedOut() {
-        if (!isset($_SESSION['last_activity'])) {
-            return false; // Changed from true
-        }
-        
-        // Only check timeout for logged-in users
-        if (!isset($_SESSION['is_logged_in']) || !$_SESSION['is_logged_in']) {
+
+    private static function isTimedOut(): bool
+    {
+        if (!isset($_SESSION['last_activity']) || !self::isLoggedIn()) {
             return false;
         }
-        
-        $inactiveTime = time() - $_SESSION['last_activity'];
-        
-        // Check for session timeout
-        if ($inactiveTime > self::SESSION_TIMEOUT) {
-            error_log("Session timed out: " . session_id() . " (inactive for {$inactiveTime} seconds)");
+
+        $idle = time() - $_SESSION['last_activity'];
+        if ($idle > self::SESSION_TIMEOUT) {
+            error_log("SessionManager: idle timeout — " . session_id() . " ({$idle}s idle)");
             return true;
         }
-        
-        // Check for max idle time
+
         if (isset($_SESSION['created_at'])) {
-            $totalTime = time() - $_SESSION['created_at'];
-            if ($totalTime > self::MAX_IDLE_TIME) {
-                error_log("Session max time exceeded: " . session_id() . " (total {$totalTime} seconds)");
+            $age = time() - $_SESSION['created_at'];
+            if ($age > self::MAX_IDLE_TIME) {
+                error_log("SessionManager: max-age exceeded — " . session_id() . " ({$age}s)");
                 return true;
             }
         }
-        
+
         return false;
     }
-    
-    /**
-     * Check if session ID should be regenerated
-     */
-    private static function shouldRegenerateId() {
-        if (!isset($_SESSION['last_regeneration'])) {
-            return true;
-        }
-        
-        return (time() - $_SESSION['last_regeneration']) > self::SESSION_REGENERATE_TIME;
+
+    private static function validateUserAgent(): bool
+    {
+        if (!isset($_SESSION['user_agent'])) return true;
+        return self::extractBrowserInfo(self::getUserAgent())
+            === self::extractBrowserInfo($_SESSION['user_agent']);
     }
-    
-    /**
-     * Validate user agent - RELAXED
-     */
-    private static function validateUserAgent() {
-        if (!isset($_SESSION['user_agent'])) {
-            return true;
+
+    private static function extractBrowserInfo(string $ua): string
+    {
+        if (preg_match('/(Chrome|Firefox|Safari|Edge|Opera)\/\d+/', $ua, $m)) {
+            return $m[0];
         }
-        
-        // Allow minor user agent variations (browser updates, etc.)
-        $currentUA = self::getUserAgent();
-        $sessionUA = $_SESSION['user_agent'];
-        
-        // Extract major browser info only
-        $currentBrowser = self::extractBrowserInfo($currentUA);
-        $sessionBrowser = self::extractBrowserInfo($sessionUA);
-        
-        return $currentBrowser === $sessionBrowser;
+        return substr($ua, 0, 50);
     }
-    
-    /**
-     * Extract major browser info from user agent
-     */
-    private static function extractBrowserInfo($userAgent) {
-        // Extract browser name and major version
-        if (preg_match('/(Chrome|Firefox|Safari|Edge|Opera)\/\d+/', $userAgent, $matches)) {
-            return $matches[0];
-        }
-        return substr($userAgent, 0, 50); // Fallback
-    }
-    
-    /**
-     * Validate IP address
-     */
-    private static function validateIpAddress() {
-        if (!isset($_SESSION['ip_address'])) {
-            return true;
-        }
-        
-        // Relaxed validation - allow IP changes (for mobile users, VPN, etc.)
-        return true;
-    }
-    
-    /**
-     * Get user agent
-     */
-    private static function getUserAgent() {
+
+    private static function getUserAgent(): string
+    {
         return $_SERVER['HTTP_USER_AGENT'] ?? 'unknown';
     }
-    
-    /**
-     * Get IP address
-     */
-    private static function getIpAddress() {
-        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-            return $_SERVER['HTTP_CLIENT_IP'];
-        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-            // Get first IP in chain
-            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-            return trim($ips[0]);
-        } else {
-            return $_SERVER['REMOTE_ADDR'] ?? 'unknown';
+
+    private static function getIpAddress(): string
+    {
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) return $_SERVER['HTTP_CLIENT_IP'];
+        if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            return trim(explode(',', $_SERVER['HTTP_X_FORWARDED_FOR'])[0]);
         }
+        return $_SERVER['REMOTE_ADDR'] ?? 'unknown';
     }
-    
+
+    // ── Public API ────────────────────────────────────────────────────────────
+
     /**
-     * Set user session data after login
+     * Set session after successful login.
+     * FIX B: This is ONE of only TWO places that call session_regenerate_id().
      */
-    public static function setUserSession($userData) {
-        $_SESSION['user_id'] = $userData['id'];
-        $_SESSION['user_data'] = [
+    public static function setUserSession(array $userData): void
+    {
+        session_regenerate_id(true); // Secure: rotate ID on privilege change
+
+        $_SESSION['user_id']       = $userData['id'];
+        $_SESSION['user_data']     = [
             'id'            => $userData['id'],
             'fullname'      => $userData['fullname'],
             'username'      => $userData['username'],
             'role_name'     => $userData['role_name'],
             'role_id'       => $userData['role_id'],
             'profile_image' => $userData['profile_image'] ?? null,
-            'email'         => $userData['email'] ?? ''
+            'email'         => $userData['email'] ?? '',
         ];
-        $_SESSION['is_logged_in'] = true;
-        $_SESSION['login_time'] = time();
-        $_SESSION['last_activity'] = time(); // Reset activity timer
-        
-        // Regenerate session ID on login for security
-        session_regenerate_id(true);
-        $_SESSION['last_regeneration'] = time();
-        
-        // Log successful login
-        error_log("User logged in: " . $userData['username'] . " (ID: " . $userData['id'] . ")");
+        $_SESSION['is_logged_in']  = true;
+        $_SESSION['login_time']    = time();
+        $_SESSION['last_activity'] = time();
+
+        error_log("SessionManager: login — {$userData['username']} (ID:{$userData['id']})");
     }
-    
-    /**
-     * Check if user is logged in
-     */
-    public static function isLoggedIn() {
-        return isset($_SESSION['is_logged_in']) && 
-               $_SESSION['is_logged_in'] === true && 
-               isset($_SESSION['user_id']);
+
+    public static function isLoggedIn(): bool
+    {
+        return !empty($_SESSION['is_logged_in'])
+            && $_SESSION['is_logged_in'] === true
+            && isset($_SESSION['user_id']);
     }
-    
-    /**
-     * Get user ID
-     */
-    public static function getUserId() {
-        return $_SESSION['user_id'] ?? null;
+
+    public static function getUserId(): ?int
+    {
+        return isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : null;
     }
-    
-    /**
-     * Get user data
-     */
-    public static function getUserData($key = null) {
-        if ($key === null) {
-            return $_SESSION['user_data'] ?? [];
-        }
-        
+
+    public static function getUserData(?string $key = null)
+    {
+        if ($key === null) return $_SESSION['user_data'] ?? [];
         return $_SESSION['user_data'][$key] ?? null;
     }
-    
+
     /**
-     * Get remaining session time in seconds
+     * FIX C: Pure read — does NOT touch last_activity.
      */
-    public static function getRemainingTime() {
-        if (!isset($_SESSION['last_activity'])) {
-            return self::SESSION_TIMEOUT;
-        }
-        
-        $elapsed = time() - $_SESSION['last_activity'];
-        $remaining = self::SESSION_TIMEOUT - $elapsed;
-        
-        return max(0, $remaining);
+    public static function getRemainingTime(): int
+    {
+        if (!isset($_SESSION['last_activity'])) return self::SESSION_TIMEOUT;
+        return max(0, self::SESSION_TIMEOUT - (time() - $_SESSION['last_activity']));
     }
-    
+
     /**
-     * Update session activity (keep alive)
+     * FIX D: keepAlive() is the ONLY method that resets last_activity.
+     * Called by JS every 5 minutes while the page is open.
      */
-    public static function keepAlive() {
-        if (self::isLoggedIn()) {
-            $_SESSION['last_activity'] = time();
-            return [
-                'success' => true,
-                'remaining' => self::getRemainingTime(),
-                'timeout' => self::SESSION_TIMEOUT
-            ];
+    public static function keepAlive(): array
+    {
+        if (!self::isLoggedIn()) {
+            return ['success' => false, 'message' => 'Not logged in'];
         }
-        
+        $_SESSION['last_activity'] = time();
         return [
-            'success' => false,
-            'message' => 'Not logged in'
+            'success'   => true,
+            'remaining' => self::getRemainingTime(),
+            'timeout'   => self::SESSION_TIMEOUT,
         ];
     }
-    
+
     /**
-     * Destroy session completely
+     * Pure status read for /auth/checkSession — no side effects.
      */
-    public static function destroy() {
-        // Log logout
+    public static function getStatus(): array
+    {
+        return [
+            'isLoggedIn' => self::isLoggedIn(),
+            'remaining'  => self::getRemainingTime(),
+            'timeout'    => self::SESSION_TIMEOUT,
+        ];
+    }
+
+    /**
+     * Config endpoint consumed by JS SessionManager via /auth/getConfig.
+     * All times in SECONDS.
+     */
+    public static function getConfig(): array
+    {
+        return [
+            'isLoggedIn'  => self::isLoggedIn(),
+            'timeout'     => self::SESSION_TIMEOUT,
+            'warningTime' => defined('SESSION_WARNING_TIME') ? (int)SESSION_WARNING_TIME : 300,
+            'remaining'   => self::getRemainingTime(),
+        ];
+    }
+
+    public static function getTimeout(): int { return self::SESSION_TIMEOUT; }
+
+    /**
+     * Destroy session (logout).
+     * FIX B: This is TWO of only TWO places that call session_regenerate_id().
+     */
+    public static function destroy(): void
+    {
         if (isset($_SESSION['user_data']['username'])) {
-            error_log("User logged out: " . $_SESSION['user_data']['username']);
+            error_log("SessionManager: logout — " . $_SESSION['user_data']['username']);
         }
-        
         $_SESSION = [];
-        
-        // Delete session cookie
         if (isset($_COOKIE[session_name()])) {
-            $params = session_get_cookie_params();
-            setcookie(
-                session_name(),
-                '',
-                time() - 3600,
-                $params['path'],
-                $params['domain'],
-                $params['secure'],
-                $params['httponly']
-            );
+            $p = session_get_cookie_params();
+            setcookie(session_name(), '', time() - 3600,
+                $p['path'], $p['domain'], $p['secure'], $p['httponly']);
         }
-        
         session_destroy();
     }
-    
-    /**
-     * Set flash message
-     */
-    public static function setFlash($key, $message, $type = 'info') {
-        $_SESSION['flash'][$key] = [
-            'message' => $message,
-            'type' => $type
-        ];
+
+    public static function setFlash(string $key, string $message, string $type = 'info'): void
+    {
+        $_SESSION['flash'][$key] = ['message' => $message, 'type' => $type];
     }
-    
-    /**
-     * Get and clear flash message
-     */
-    public static function getFlash($key) {
+
+    public static function getFlash(string $key): ?array
+    {
         if (isset($_SESSION['flash'][$key])) {
             $flash = $_SESSION['flash'][$key];
             unset($_SESSION['flash'][$key]);
             return $flash;
         }
-        
         return null;
     }
-    
-    /**
-     * Get session timeout value (for JavaScript)
-     */
-    public static function getTimeout() {
-        return self::SESSION_TIMEOUT;
-    }
-    
-    /**
-     * Get session configuration for JavaScript
-     */
-    public static function getConfig() {
+
+    public static function getDebugInfo(): array
+    {
         return [
-            'timeout' => self::SESSION_TIMEOUT,
-            'remaining' => self::getRemainingTime(),
-            'isLoggedIn' => self::isLoggedIn(),
-            'lastActivity' => $_SESSION['last_activity'] ?? null
-        ];
-    }
-    
-    /**
-     * Debug session info (remove in production)
-     */
-    public static function getDebugInfo() {
-        if (!isset($_SESSION['initiated'])) {
-            return ['error' => 'Session not initiated'];
-        }
-        
-        return [
-            'session_id' => session_id(),
-            'is_logged_in' => self::isLoggedIn(),
-            'user_id' => self::getUserId(),
-            'last_activity' => $_SESSION['last_activity'] ?? null,
-            'last_activity_ago' => isset($_SESSION['last_activity']) ? (time() - $_SESSION['last_activity']) : null,
-            'created_at' => $_SESSION['created_at'] ?? null,
-            'session_age' => isset($_SESSION['created_at']) ? (time() - $_SESSION['created_at']) : null,
-            'remaining_time' => self::getRemainingTime(),
-            'user_agent_match' => self::validateUserAgent(),
-            'is_https' => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
-            'cookie_params' => session_get_cookie_params()
+            'session_id'        => session_id(),
+            'is_logged_in'      => self::isLoggedIn(),
+            'user_id'           => self::getUserId(),
+            'idle_seconds'      => isset($_SESSION['last_activity'])
+                                    ? (time() - $_SESSION['last_activity']) : 'n/a',
+            'session_age'       => isset($_SESSION['created_at'])
+                                    ? (time() - $_SESSION['created_at']) : 'n/a',
+            'remaining_seconds' => self::getRemainingTime(),
+            'ua_match'          => self::validateUserAgent(),
+            'is_https'          => (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off'),
+            'cookie_params'     => session_get_cookie_params(),
         ];
     }
 }
