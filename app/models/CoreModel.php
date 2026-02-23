@@ -75,10 +75,31 @@ class CoreModel
     }
 
     /* ---------------- SELECT ---------------- */
-    public function selectData($table, $fields = '*')
+    public function selectData($table, $fields = '*', $where = [], $orderBy = '')
     {
         $sql = "SELECT {$fields} FROM {$table} WHERE is_active = 'Y'";
+
+        // Additional WHERE conditions
+        if (!empty($where)) {
+            foreach ($where as $column => $value) {
+                $sql .= " AND {$column} = :{$column}";
+            }
+        }
+
+        // ORDER BY (optional)
+        if (!empty($orderBy)) {
+            $sql .= " ORDER BY {$orderBy}";
+        }
+
         $this->db->query($sql);
+
+        // Bind values
+        if (!empty($where)) {
+            foreach ($where as $column => $value) {
+                $this->db->bind(":{$column}", $value);
+            }
+        }
+
         return $this->db->resultSet();
     }
 

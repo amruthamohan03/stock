@@ -5,12 +5,12 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header border-bottom border-dashed d-flex align-items-center justify-content-between">
-                        <h4 class="header-title">Stock Book Entry</h4>
+                        <h4 class="header-title">Stock Book Entry (Enhanced)</h4>
                         <div>
                             <a href="<?= APP_URL; ?>stock/stockBooks" class="btn btn-sm btn-info">
                                 <i class="mdi mdi-book-open-variant"></i> View Stock Books
                             </a>
-                            <button type="button" class="btn btn-sm btn-secondary" onclick="$('#stockForm')[0].reset();">
+                            <button type="button" class="btn btn-sm btn-secondary" onclick="resetForm();">
                                 <i class="mdi mdi-refresh"></i> Reset
                             </button>
                         </div>
@@ -18,11 +18,29 @@
 
                     <div class="card-body">
                         <form id="stockForm" method="post">
+                            <!-- ROW 1: Basic Item Selection & Date -->
                             <div class="row">
-                                <!-- Item Selection -->
-                                <div class="col-md-4 mb-3">
-                                    <label for="item_id" class="form-label">Item/Article Name <span class="text-danger">*</span></label>
-                                    <select class="form-select select2" id="item_id" name="item_id" required>
+                                <!-- Indent Reference -->
+                                <div class="col-md-3 mb-3">
+                                    <label for="indent_id" class="form-label">Indent No <span class="text-danger">*</span></label>
+                                    <select class="form-select select2" id="indent_id" name="indent_id">
+                                        <option value="">-- Select Indent --</option>
+                                    </select>
+                                    <small class="text-muted">Select indent to auto-populate items</small>
+                                </div>
+
+                                <!-- Indent Item Selection -->
+                                <div class="col-md-3 mb-3">
+                                    <label for="indent_item_id" class="form-label">Select Item from Indent <span class="text-danger">*</span></label>
+                                    <select class="form-select select2" id="indent_item_id" name="indent_item_id" required>
+                                        <option value="">-- Select Item --</option>
+                                    </select>
+                                </div>
+
+                                <!-- Item Selection (Alternative) -->
+                                <div class="col-md-3 mb-3">
+                                    <label for="item_id" class="form-label">Or Select Item Directly</label>
+                                    <select class="form-select select2" id="item_id" name="item_id">
                                         <option value="">-- Select Item --</option>
                                         <?php if (!empty($items)): ?>
                                             <?php foreach ($items as $item): ?>
@@ -34,83 +52,123 @@
                                     </select>
                                 </div>
 
-                                <!-- Location -->
-                                <div class="col-md-3 mb-3">
-                                    <label for="location" class="form-label">Location/Lab <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="location" name="location" 
-                                           placeholder="e.g., C.I.T. LAB, Computer Lab" required>
-                                </div>
-
-                                <!-- Transaction Type -->
-                                <div class="col-md-3 mb-3">
-                                    <label for="transaction_type" class="form-label">Transaction Type <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="transaction_type" name="transaction_type" required>
-                                        <option value="">-- Select Type --</option>
-                                        <option value="RECEIPT">Receipt (Stock In)</option>
-                                        <option value="ISSUE">Issue (Stock Out)</option>
-                                        <option value="BROUGHT_FORWARD">Brought Forward</option>
-                                        <option value="ADJUSTMENT">Adjustment</option>
-                                    </select>
-                                </div>
-
                                 <!-- Transaction Date -->
-                                <div class="col-md-2 mb-3">
+                                <div class="col-md-3 mb-3">
                                     <label for="transaction_date" class="form-label">Date <span class="text-danger">*</span></label>
                                     <input type="date" class="form-control" id="transaction_date" name="transaction_date" 
                                            value="<?= date('Y-m-d'); ?>" required>
                                 </div>
                             </div>
 
+                            <!-- ROW 2: Location Info -->
                             <div class="row">
-                                <!-- Voucher/Invoice Number -->
+                                <!-- Storage Location -->
                                 <div class="col-md-3 mb-3">
-                                    <label for="voucher_no" class="form-label">Voucher/Invoice No</label>
-                                    <input type="text" class="form-control" id="voucher_no" name="voucher_no" 
-                                           placeholder="Invoice/Bill No">
+                                    <label for="location" class="form-label">Storage Location/Lab <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="location" name="location" 
+                                           placeholder="e.g., C.I.T. LAB" required>
                                 </div>
 
-                                <!-- Voucher Date -->
+                                <!-- Transaction Type -->
                                 <div class="col-md-2 mb-3">
-                                    <label for="voucher_date" class="form-label">Voucher Date</label>
-                                    <input type="date" class="form-control" id="voucher_date" name="voucher_date">
-                                </div>
-
-                                <!-- Indent Reference (for Issues) -->
-                                <div class="col-md-3 mb-3" id="indent_field" style="display: none;">
-                                    <label for="indent_id" class="form-label">Indent Reference</label>
-                                    <select class="form-select select2" id="indent_id" name="indent_id">
-                                        <option value="">-- Select Indent --</option>
+                                    <label for="transaction_type" class="form-label">Transaction Type <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="transaction_type" name="transaction_type" required>
+                                        <option value="">-- Select --</option>
+                                        <option value="BROUGHT_FORWARD">Brought Forward</option>
+                                        <option value="RECEIPT">Receipt (Stock In)</option>
+                                        <option value="ISSUE">Issue (Stock Out)</option>
+                                        <option value="ADJUSTMENT">Adjustment</option>
                                     </select>
                                 </div>
 
-                                <!-- Received From -->
-                                <div class="col-md-4 mb-3" id="received_from_field" style="display: none;">
-                                    <label for="received_from" class="form-label">Received From</label>
-                                    <input type="text" class="form-control" id="received_from" name="received_from" 
-                                           placeholder="Supplier/Vendor Name">
+                                <!-- Issue To Location (Dropdown from master) -->
+                                <div class="col-md-3 mb-3" id="issued_to_location_field" style="display: none;">
+                                    <label for="issued_to_location_id" class="form-label">Issued To (Location)</label>
+                                    <select class="form-select select2" id="issued_to_location_id" name="issued_to_location_id">
+                                        <option value="">-- Select Location --</option>
+                                        <?php if (!empty($locations)): ?>
+                                            <?php foreach ($locations as $loc): ?>
+                                                <option value="<?= $loc['id'] ?>">
+                                                    <?= htmlspecialchars($loc['location_name']) ?> (<?= $loc['location_type'] ?>)
+                                                </option>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </select>
                                 </div>
 
-                                <!-- Issued To -->
-                                <div class="col-md-4 mb-3" id="issued_to_field" style="display: none;">
-                                    <label for="issued_to" class="form-label">Issued To</label>
-                                    <input type="text" class="form-control" id="issued_to" name="issued_to" 
-                                           placeholder="Department/Person Name">
+                                <!-- Item Status -->
+                                <div class="col-md-2 mb-3" id="item_status_field" style="display: none;">
+                                    <label for="item_status" class="form-label">Item Status</label>
+                                    <select class="form-select" id="item_status" name="item_status">
+                                        <option value="WORKING">WORKING</option>
+                                        <option value="NOT WORKING">NOT WORKING</option>
+                                        <option value="DELETED">DELETED</option>
+                                        <option value="REPAIRED">REPAIRED</option>
+                                        <option value="PENDING">PENDING</option>
+                                    </select>
+                                </div>
+
+                                <!-- Brought Forward -->
+                                <div class="col-md-2 mb-3" id="brought_forward_field" style="display: none;">
+                                    <label for="brought_forward" class="form-label">Brought Forward</label>
+                                    <input type="number" class="form-control" id="brought_forward" name="brought_forward" 
+                                           min="0" value="0" placeholder="Opening balance">
                                 </div>
                             </div>
 
+                            <!-- ROW 3: Quantities -->
                             <div class="row">
-                                <!-- Receipt Quantity -->
+                                <!-- Received From -->
+                                <div class="col-md-3 mb-3" id="received_from_field" style="display: none;">
+                                    <label for="received_from" class="form-label">Received From (Supplier)</label>
+                                    <input type="text" class="form-control" id="received_from" name="received_from" 
+                                           placeholder="Vendor/Supplier Name">
+                                </div>
+
+                                <!-- Receipt Quantity (from Indent) -->
                                 <div class="col-md-2 mb-3" id="receipt_qty_field" style="display: none;">
                                     <label for="receipt_qty" class="form-label">Receipt Qty <span class="text-danger">*</span></label>
                                     <input type="number" class="form-control" id="receipt_qty" name="receipt_qty" 
-                                           min="0" value="0">
+                                           min="0" value="0" placeholder="Qty">
+                                    <small class="text-muted" id="indent_qty_hint"></small>
                                 </div>
 
                                 <!-- Issue Quantity -->
                                 <div class="col-md-2 mb-3" id="issue_qty_field" style="display: none;">
                                     <label for="issue_qty" class="form-label">Issue Qty <span class="text-danger">*</span></label>
                                     <input type="number" class="form-control" id="issue_qty" name="issue_qty" 
-                                           min="0" value="0">
+                                           min="0" value="0" placeholder="Qty">
+                                </div>
+
+                                <!-- Serial Number (Optional) -->
+                                <div class="col-md-2 mb-3" id="serial_no_field" style="display: none;">
+                                    <label for="serial_no" class="form-label">Serial No</label>
+                                    <input type="text" class="form-control" id="serial_no" name="serial_no" 
+                                           placeholder="Serial number (optional)">
+                                    <small class="text-muted">Optional field</small>
+                                </div>
+
+                                <!-- Carried Over -->
+                                <div class="col-md-2 mb-3" id="carried_over_field" style="display: none;">
+                                    <label for="carried_over" class="form-label">Carried Over</label>
+                                    <input type="number" class="form-control" id="carried_over" name="carried_over" 
+                                           min="0" value="0" placeholder="Closing balance">
+                                </div>
+                            </div>
+
+                            <!-- ROW 4: Voucher & Additional Info -->
+                            <div class="row">
+                                <!-- Voucher No -->
+                                <div class="col-md-2 mb-3">
+                                    <label for="voucher_no" class="form-label">Voucher/Invoice No</label>
+                                    <input type="text" class="form-control" id="voucher_no" name="voucher_no" 
+                                           placeholder="Invoice No">
+                                </div>
+
+                                <!-- Voucher Date -->
+                                <div class="col-md-2 mb-3">
+                                    <label for="voucher_date" class="form-label">Voucher Date</label>
+                                    <input type="date" class="form-control" id="voucher_date" name="voucher_date">
                                 </div>
 
                                 <!-- Receiver Initial -->
@@ -123,13 +181,13 @@
                                 <!-- Remarks -->
                                 <div class="col-md-5 mb-3">
                                     <label for="remarks" class="form-label">Remarks</label>
-                                    <input type="text" class="form-control" id="remarks" name="remarks" 
-                                           placeholder="Additional notes">
+                                    <textarea class="form-control" id="remarks" name="remarks" rows="1"
+                                              placeholder="Additional notes"></textarea>
                                 </div>
                             </div>
 
-                            <div class="text-end">
-                                <button type="submit" class="btn btn-primary">
+                            <div class="text-end mt-3">
+                                <button type="submit" class="btn btn-primary btn-lg">
                                     <i class="mdi mdi-content-save"></i> Record Transaction
                                 </button>
                             </div>
@@ -156,8 +214,9 @@
                                     <th>Item</th>
                                     <th>Location</th>
                                     <th>Type</th>
-                                    <th>Voucher No</th>
-                                    <th>From/To</th>
+                                    <th>Indent</th>
+                                    <th>Serial No</th>
+                                    <th>Status</th>
                                     <th>Receipt</th>
                                     <th>Issue</th>
                                     <th>Balance</th>
@@ -167,37 +226,33 @@
                             <tbody>
                                 <?php if (!empty($transactions)): ?>
                                     <?php foreach ($transactions as $trans): ?>
-                                        <tr id="transRow_<?= $trans['id']; ?>">
+                                        <tr>
                                             <td><?= $trans['id']; ?></td>
                                             <td><?= date('d-m-Y', strtotime($trans['transaction_date'])); ?></td>
                                             <td><?= htmlspecialchars($trans['item_name']); ?></td>
                                             <td><?= htmlspecialchars($trans['location']); ?></td>
                                             <td>
-                                                <?php
-                                                $typeColors = [
-                                                    'RECEIPT' => 'success',
-                                                    'ISSUE' => 'danger',
-                                                    'BROUGHT_FORWARD' => 'info',
-                                                    'ADJUSTMENT' => 'warning'
-                                                ];
-                                                $color = $typeColors[$trans['transaction_type']] ?? 'secondary';
-                                                ?>
-                                                <span class="badge bg-<?= $color ?>"><?= $trans['transaction_type']; ?></span>
+                                                <span class="badge bg-<?= 
+                                                    $trans['transaction_type'] == 'RECEIPT' ? 'success' : 
+                                                    ($trans['transaction_type'] == 'ISSUE' ? 'danger' : 'warning')
+                                                ?>">
+                                                    <?= $trans['transaction_type']; ?>
+                                                </span>
                                             </td>
+                                            <td><?= htmlspecialchars($trans['indent_no'] ?? '-'); ?></td>
                                             <td>
-                                                <?= htmlspecialchars($trans['voucher_no'] ?? '-'); ?>
-                                                <?php if (!empty($trans['indent_no'])): ?>
-                                                    <br><small class="text-muted">Indent: <?= $trans['indent_no']; ?></small>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td>
-                                                <?php if ($trans['transaction_type'] == 'RECEIPT'): ?>
-                                                    <small><?= htmlspecialchars($trans['received_from'] ?? '-'); ?></small>
-                                                <?php elseif ($trans['transaction_type'] == 'ISSUE'): ?>
-                                                    <small><?= htmlspecialchars($trans['issued_to'] ?? '-'); ?></small>
+                                                <?php if (!empty($trans['serial_no'])): ?>
+                                                    <span class="badge bg-info"><?= htmlspecialchars($trans['serial_no']); ?></span>
                                                 <?php else: ?>
-                                                    -
+                                                    <span class="text-muted">-</span>
                                                 <?php endif; ?>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-<?= 
+                                                    $trans['item_status'] == 'WORKING' ? 'success' : 'warning'
+                                                ?>">
+                                                    <?= $trans['item_status']; ?>
+                                                </span>
                                             </td>
                                             <td class="text-center">
                                                 <?= $trans['receipt_qty'] > 0 ? '<span class="text-success">' . $trans['receipt_qty'] . '</span>' : '-'; ?>
@@ -234,28 +289,72 @@
 $(document).ready(function() {
     // Initialize DataTable
     $('#stock-datatable').DataTable({
-        order: [[0, 'desc']]
+        order: [[0, 'desc']],
+        pageLength: 20
     });
 
-    // Transaction type change event
+    // Load indents on page load
+    loadAvailableIndents();
+
+    // Load indent items when indent is selected
+    $('#indent_id').change(function() {
+        const indent_id = $(this).val();
+        if (indent_id) {
+            $.ajax({
+                url: '<?= APP_URL; ?>stock/getIndentItems?indent_id=' + indent_id,
+                type: 'GET',
+                dataType: 'json',
+                success: function(res) {
+                    if (res.success) {
+                        let options = '<option value="">-- Select Item --</option>';
+                        res.data.forEach(item => {
+                            options += `<option value="${item.id}" data-qty="${item.qty_intended}">
+                                ${item.item_name} (Qty: ${item.qty_intended})
+                            </option>`;
+                        });
+                        $('#indent_item_id').html(options).select2();
+                    }
+                }
+            });
+        } else {
+            $('#indent_item_id').html('<option value="">-- Select Item --</option>').select2();
+        }
+    });
+
+    // Auto-populate receipt qty from indent when item is selected
+    $('#indent_item_id').change(function() {
+        const qty = $(this).find('option:selected').data('qty');
+        const item_id = $(this).val();
+        
+        if (qty) {
+            $('#receipt_qty').val(qty);
+            $('#indent_qty_hint').text('Intended Qty: ' + qty);
+        }
+        
+        if (item_id) {
+            $('#item_id').val(item_id).trigger('change');
+        }
+    });
+
+    // Handle transaction type changes
     $('#transaction_type').change(function() {
         const type = $(this).val();
         
-        // Hide all conditional fields first
-        $('#indent_field, #received_from_field, #issued_to_field, #receipt_qty_field, #issue_qty_field').hide();
-        $('#receipt_qty, #issue_qty').val(0);
+        // Hide all conditional fields
+        $('#brought_forward_field, #received_from_field, #receipt_qty_field, #issue_qty_field, #carried_over_field, #serial_no_field, #item_status_field, #issued_to_location_field').hide();
         
-        if (type === 'RECEIPT' || type === 'BROUGHT_FORWARD') {
-            $('#received_from_field, #receipt_qty_field').show();
+        $('#receipt_qty, #issue_qty').prop('required', false);
+        
+        if (type === 'BROUGHT_FORWARD') {
+            $('#brought_forward_field, #carried_over_field, #serial_no_field, #item_status_field').show();
+        } else if (type === 'RECEIPT') {
+            $('#received_from_field, #receipt_qty_field, #carried_over_field, #serial_no_field, #item_status_field').show();
             $('#receipt_qty').prop('required', true);
         } else if (type === 'ISSUE') {
-            $('#indent_field, #issued_to_field, #issue_qty_field').show();
+            $('#issued_to_location_field, #issue_qty_field, #carried_over_field, #serial_no_field, #item_status_field').show();
             $('#issue_qty').prop('required', true);
-            
-            // Load available indents
-            loadAvailableIndents();
         } else if (type === 'ADJUSTMENT') {
-            $('#receipt_qty_field, #issue_qty_field').show();
+            $('#receipt_qty_field, #issue_qty_field, #carried_over_field, #serial_no_field, #item_status_field').show();
         }
     });
 
@@ -267,22 +366,42 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(res) {
                 if (res.success) {
-                    let options = '<option value="">-- Select Indent (Optional) --</option>';
+                    let options = '<option value="">-- Select Indent --</option>';
                     res.data.forEach(indent => {
                         options += `<option value="${indent.id}">
-                            Indent No: ${indent.indent_no} | Book: ${indent.book_no} | 
-                            ${indent.college_name} | Type: ${indent.item_type}
+                            ${indent.indent_no} | Book: ${indent.book_no} | ${indent.college_name}
                         </option>`;
                     });
-                    $('#indent_id').html(options);
+                    $('#indent_id').html(options).select2();
                 }
             }
         });
     }
 
+    // Reset form
+    function resetForm() {
+        $('#stockForm')[0].reset();
+        $('#transaction_type').trigger('change');
+        $('#item_status').val('WORKING');
+        $('#brought_forward').val(0);
+        $('#carried_over').val(0);
+    }
+
     // Submit form
     $('#stockForm').submit(function(e) {
         e.preventDefault();
+        
+        // Validate item selection
+        const item_id = $('#item_id').val() || $('#indent_item_id').val();
+        if (!item_id) {
+            Swal.fire('Error!', 'Please select an item', 'error');
+            return;
+        }
+        
+        // Set item_id if indent item is selected
+        if (!$('#item_id').val() && $('#indent_item_id').val()) {
+            $('#item_id').val($('#indent_item_id').find('option:selected').data('item-id'));
+        }
         
         $.ajax({
             url: '<?= APP_URL; ?>stock/createTransaction',

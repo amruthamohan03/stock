@@ -9,16 +9,21 @@ class StockController extends Controller{
         // Get all items for dropdown
         $items = $db->selectData('item_master_t', 'id, item_name', ['display' => 'Y']);
         
+        // Get issued_to locations
+        $locations = $db->selectData('issued_to_master_t', 'id, location_code, location_name, location_type', ['display' => 'Y']);
+        
         // Get recent stock transactions (last 50)
         $query = "SELECT st.*, 
                   sb.location,
                   i.item_name,
                   im.indent_no,
+                  lt.location_name as issued_to_location_name,
                   u.username as created_by_name
                   FROM stock_transaction_t st
                   LEFT JOIN stock_book_t sb ON st.stock_book_id = sb.id
                   LEFT JOIN item_master_t i ON sb.item_id = i.id
                   LEFT JOIN indent_master_t im ON st.indent_id = im.id
+                  LEFT JOIN issued_to_master_t lt ON st.issued_to_location_id = lt.id
                   LEFT JOIN users_t u ON st.created_by = u.id
                   ORDER BY st.transaction_date DESC, st.id DESC
                   LIMIT 50";
@@ -27,13 +32,14 @@ class StockController extends Controller{
         $data = [
             'title'        => 'Stock Book Management',
             'items'        => $items,
+            'locations'    => $locations,
             'transactions' => $transactions
         ];
         
         $this->viewWithLayout('stock/stock', $data);
     }
 
-    // Get available indents for stock issue (indents that are ISSUED or RECEIVED but not yet used in stock)
+    // Get available indents with their items for stock entry
     public function getAvailableIndents()
     {
         header('Content-Type: application/json');
@@ -42,7 +48,7 @@ class StockController extends Controller{
         
         // Get indents that are ISSUED/RECEIVED but stock_issued = 'N'
         $query = "SELECT im.id, im.indent_no, im.book_no, im.indent_date, 
-                  c.college_name, im.item_type
+                  c.college_name, im.item_type, im.institution_id
                   FROM indent_master_t im
                   LEFT JOIN college_t c ON im.institution_id = c.id
                   WHERE im.status IN ('ISSUED', 'RECEIVED') 
@@ -55,7 +61,7 @@ class StockController extends Controller{
         exit;
     }
 
-    // Get indent items for selected indent
+    // Get indent items with quantities
     public function getIndentItems()
     {
         header('Content-Type: application/json');
@@ -68,16 +74,30 @@ class StockController extends Controller{
         
         $db = new Database();
         
-        // Get indent items with item details
-        $query = "SELECT ii.*, i.item_name 
+        // Get indent items with item details and intended quantities
+        $query = "SELECT ii.*, i.item_name, im.indent_no
                   FROM indent_item_t ii
                   LEFT JOIN item_master_t i ON ii.item_id = i.id
+                  LEFT JOIN indent_master_t im ON ii.indent_id = im.id
                   WHERE ii.indent_id = " . $indent_id . "
                   ORDER BY ii.sl_no";
         
         $items = $db->customQuery($query);
         
         echo json_encode(['success' => true, 'data' => $items]);
+        exit;
+    }
+
+    // Get locations dropdown
+    public function getLocations()
+    {
+        header('Content-Type: application/json');
+        
+        $db = new Database();
+        
+        $locations = $db->selectData('issued_to_master_t', 'id, location_code, location_name, location_type', ['display' => 'Y']);
+        
+        echo json_encode(['success' => true, 'data' => $locations]);
         exit;
     }
 
@@ -98,13 +118,18 @@ class StockController extends Controller{
         $location = isset($_POST['location']) ? htmlspecialchars(trim($_POST['location']), ENT_QUOTES) : '';
         $transaction_type = isset($_POST['transaction_type']) ? $_POST['transaction_type'] : '';
         $transaction_date = isset($_POST['transaction_date']) ? $_POST['transaction_date'] : '';
+        $indent_id = isset($_POST['indent_id']) ? (int)$_POST['indent_id'] : null;
+        $indent_item_id = isset($_POST['indent_item_id']) ? (int)$_POST['indent_item_id'] : null;
         $voucher_no = isset($_POST['voucher_no']) ? htmlspecialchars(trim($_POST['voucher_no']), ENT_QUOTES) : null;
         $voucher_date = isset($_POST['voucher_date']) ? $_POST['voucher_date'] : null;
-        $indent_id = isset($_POST['indent_id']) ? (int)$_POST['indent_id'] : null;
         $received_from = isset($_POST['received_from']) ? htmlspecialchars(trim($_POST['received_from']), ENT_QUOTES) : null;
-        $issued_to = isset($_POST['issued_to']) ? htmlspecialchars(trim($_POST['issued_to']), ENT_QUOTES) : null;
         $receipt_qty = isset($_POST['receipt_qty']) ? (int)$_POST['receipt_qty'] : 0;
         $issue_qty = isset($_POST['issue_qty']) ? (int)$_POST['issue_qty'] : 0;
+        $brought_forward = isset($_POST['brought_forward']) ? (int)$_POST['brought_forward'] : 0;
+        $carried_over = isset($_POST['carried_over']) ? (int)$_POST['carried_over'] : 0;
+        $item_status = isset($_POST['item_status']) ? $_POST['item_status'] : 'WORKING';
+        $serial_no = isset($_POST['serial_no']) ? htmlspecialchars(trim($_POST['serial_no']), ENT_QUOTES) : null;
+        $issued_to_location_id = isset($_POST['issued_to_location_id']) ? (int)$_POST['issued_to_location_id'] : null;
         $receiver_initial = isset($_POST['receiver_initial']) ? htmlspecialchars(trim($_POST['receiver_initial']), ENT_QUOTES) : null;
         $remarks = isset($_POST['remarks']) ? htmlspecialchars(trim($_POST['remarks']), ENT_QUOTES) : null;
         
@@ -126,23 +151,22 @@ class StockController extends Controller{
             exit;
         }
         
-        // Get or create stock book entry for this item + location
+        // Get or create stock book entry
         $stockBook = $db->selectData('stock_book_t', '*', [
             'item_id' => $item_id,
             'location' => $location
         ]);
         
         if (empty($stockBook)) {
-            // Create new stock book entry
             $stockBookData = [
                 'item_id' => $item_id,
                 'location' => $location,
-                'opening_balance' => 0,
-                'current_balance' => 0,
+                'opening_balance' => $brought_forward,
+                'current_balance' => $brought_forward,
                 'created_by' => 1 // Replace with session user
             ];
             $stock_book_id = $db->insertData('stock_book_t', $stockBookData);
-            $current_balance = 0;
+            $current_balance = $brought_forward;
         } else {
             $stock_book_id = $stockBook[0]['id'];
             $current_balance = $stockBook[0]['current_balance'];
@@ -164,6 +188,11 @@ class StockController extends Controller{
             exit;
         }
         
+        // Set carried_over if not provided
+        if ($carried_over == 0) {
+            $carried_over = $new_balance;
+        }
+        
         // Insert transaction
         $transactionData = [
             'stock_book_id' => $stock_book_id,
@@ -172,11 +201,16 @@ class StockController extends Controller{
             'voucher_no' => $voucher_no,
             'voucher_date' => !empty($voucher_date) ? $voucher_date : null,
             'indent_id' => $indent_id,
+            'indent_item_id' => $indent_item_id,
             'received_from' => $received_from,
-            'issued_to' => $issued_to,
             'receipt_qty' => $receipt_qty,
             'issue_qty' => $issue_qty,
             'balance_qty' => $new_balance,
+            'brought_forward' => $brought_forward,
+            'carried_over' => $carried_over,
+            'item_status' => $item_status,
+            'serial_no' => !empty($serial_no) ? $serial_no : null,
+            'issued_to_location_id' => $issued_to_location_id,
             'receiver_initial' => $receiver_initial,
             'remarks' => $remarks,
             'created_by' => 1 // Replace with session user
@@ -190,6 +224,21 @@ class StockController extends Controller{
                 'current_balance' => $new_balance
             ], ['id' => $stock_book_id]);
             
+            // If serial number provided, add to tracking table
+            if (!empty($serial_no)) {
+                $serialData = [
+                    'stock_transaction_id' => $transaction_id,
+                    'stock_book_id' => $stock_book_id,
+                    'serial_no' => $serial_no,
+                    'item_status' => $item_status,
+                    'issued_to_location_id' => $issued_to_location_id,
+                    'issued_date' => $transaction_date,
+                    'issue_remarks' => $remarks,
+                    'created_by' => 1
+                ];
+                $db->insertData('stock_serial_tracking_t', $serialData);
+            }
+            
             // If this is an issue transaction with indent, mark indent as stock_issued
             if ($transaction_type == 'ISSUE' && !empty($indent_id)) {
                 $db->updateData('indent_master_t', [
@@ -198,7 +247,7 @@ class StockController extends Controller{
                 ], ['id' => $indent_id]);
             }
             
-            echo json_encode(['success' => true, 'message' => 'Transaction recorded successfully']);
+            echo json_encode(['success' => true, 'message' => 'Transaction recorded successfully', 'transaction_id' => $transaction_id]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Failed to record transaction']);
         }
@@ -227,13 +276,15 @@ class StockController extends Controller{
             return;
         }
         
-        // Get all transactions for this stock book
+        // Get all transactions for this stock book with new fields
         $query = "SELECT st.*, 
                   im.indent_no,
                   im.book_no,
+                  lt.location_name as issued_to_location_name,
                   u.username as created_by_name
                   FROM stock_transaction_t st
                   LEFT JOIN indent_master_t im ON st.indent_id = im.id
+                  LEFT JOIN issued_to_master_t lt ON st.issued_to_location_id = lt.id
                   LEFT JOIN users_t u ON st.created_by = u.id
                   WHERE st.stock_book_id = " . (int)$stock_book_id . "
                   ORDER BY st.transaction_date ASC, st.id ASC";
@@ -288,6 +339,11 @@ class StockController extends Controller{
             exit;
         }
         
+        // Delete serial tracking if exists
+        if (!empty($transaction[0]['serial_no'])) {
+            $db->deleteData('stock_serial_tracking_t', ['stock_transaction_id' => $id]);
+        }
+        
         // Delete transaction
         $delete = $db->deleteData('stock_transaction_t', ['id' => $id]);
         
@@ -324,7 +380,8 @@ class StockController extends Controller{
             
             // Update transaction balance
             $db->updateData('stock_transaction_t', [
-                'balance_qty' => $balance
+                'balance_qty' => $balance,
+                'carried_over' => $balance
             ], ['id' => $trans['id']]);
         }
         
