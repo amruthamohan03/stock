@@ -50,7 +50,7 @@
                             <option value="">All Locations</option>
                             <?php foreach ($locations as $loc): ?>
                                 <option value="<?= htmlspecialchars($loc['location_name']) ?>">
-                                    <?= htmlspecialchars($loc['location_name']) ?> (<?= $loc['location_type'] ?>)
+                                    <?= htmlspecialchars($loc['location_name']) ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>

@@ -13,7 +13,7 @@ class LiveController extends Controller
         $items = $db->selectData('item_master_t', 'id, item_name', ['display' => 'Y']);
 
         // Fetch all active locations for filter dropdown
-        $locations = $db->selectData('issued_to_master_t', 'id, location_name, location_type', ['display' => 'Y']);
+        $locations = $db->selectData('issued_to_master_t', 'id, location_name', ['display' => 'Y']);
 
         // Fetch item-wise live stock summary
         $liveStock = $this->fetchLiveStockData($db);
