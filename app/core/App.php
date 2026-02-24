@@ -36,7 +36,8 @@ class App {
             'rolemenumapping'       => 'mapping/',
             'clientbankmapping'     => 'mapping/',
             'roleDashboardCard'     => 'mapping/',
-            'dashboardCard'         => 'masters/'
+            'dashboardCard'         => 'masters/',
+            'live'                  => 'report/',
 
         ];
 
