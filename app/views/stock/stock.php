@@ -65,10 +65,6 @@
                                     <input type="date" class="form-control" id="transaction_date" name="transaction_date" 
                                            value="<?= date('Y-m-d'); ?>" required>
                                 </div>
-                            </div>
-
-                            <!-- ROW 2: Location Info -->
-                            <div class="row">
                                 <!-- Storage Location - NOW DROPDOWN FROM ISSUED_TO_MASTER_T -->
                                 <div class="col-md-3 mb-3">
                                     <label for="location" class="form-label">Storage Location/Lab <span class="text-danger">*</span></label>
@@ -85,7 +81,7 @@
                                 </div>
 
                                 <!-- Transaction Type -->
-                                <div class="col-md-2 mb-3">
+                                <div class="col-md-3 mb-3">
                                     <label for="transaction_type" class="form-label">Transaction Type <span class="text-danger">*</span></label>
                                     <select class="form-select" id="transaction_type" name="transaction_type" required>
                                         <option value="">-- Select --</option>
@@ -112,7 +108,7 @@
                                 </div>
 
                                 <!-- Item Status -->
-                                <div class="col-md-2 mb-3" id="item_status_field" style="display: none;">
+                                <div class="col-md-3 mb-3" id="item_status_field" style="display: none;">
                                     <label for="item_status" class="form-label">Item Status</label>
                                     <select class="form-select" id="item_status" name="item_status">
                                         <option value="WORKING">WORKING</option>
@@ -124,15 +120,11 @@
                                 </div>
 
                                 <!-- Brought Forward -->
-                                <div class="col-md-2 mb-3" id="brought_forward_field" style="display: none;">
+                                <div class="col-md-3 mb-3" id="brought_forward_field" style="display: none;">
                                     <label for="brought_forward" class="form-label">Brought Forward</label>
                                     <input type="number" class="form-control" id="brought_forward" name="brought_forward" 
                                            min="0" value="0" placeholder="Opening balance">
                                 </div>
-                            </div>
-
-                            <!-- ROW 3: Quantities -->
-                            <div class="row">
                                 <!-- Received From -->
                                 <div class="col-md-3 mb-3" id="received_from_field" style="display: none;">
                                     <label for="received_from" class="form-label">Received From (Supplier)</label>
@@ -141,7 +133,7 @@
                                 </div>
 
                                 <!-- Receipt Quantity (from Indent) -->
-                                <div class="col-md-2 mb-3" id="receipt_qty_field" style="display: none;">
+                                <div class="col-md-3 mb-3" id="receipt_qty_field" style="display: none;">
                                     <label for="receipt_qty" class="form-label">Receipt Qty <span class="text-danger">*</span></label>
                                     <input type="number" class="form-control" id="receipt_qty" name="receipt_qty" 
                                            min="0" value="0" placeholder="Qty">
@@ -149,14 +141,14 @@
                                 </div>
 
                                 <!-- Issue Quantity -->
-                                <div class="col-md-2 mb-3" id="issue_qty_field" style="display: none;">
+                                <div class="col-md-3 mb-3" id="issue_qty_field" style="display: none;">
                                     <label for="issue_qty" class="form-label">Issue Qty <span class="text-danger">*</span></label>
                                     <input type="number" class="form-control" id="issue_qty" name="issue_qty" 
                                            min="0" value="0" placeholder="Qty">
                                 </div>
 
                                 <!-- Serial Number (Optional) -->
-                                <div class="col-md-2 mb-3" id="serial_no_field" style="display: none;">
+                                <div class="col-md-3 mb-3" id="serial_no_field" style="display: none;">
                                     <label for="serial_no" class="form-label">Serial No</label>
                                     <input type="text" class="form-control" id="serial_no" name="serial_no" 
                                            placeholder="Serial number (optional)">
@@ -164,24 +156,21 @@
                                 </div>
 
                                 <!-- Carried Over -->
-                                <div class="col-md-2 mb-3" id="carried_over_field" style="display: none;">
+                                <div class="col-md-3 mb-3" id="carried_over_field" style="display: none;">
                                     <label for="carried_over" class="form-label">Carried Over</label>
                                     <input type="number" class="form-control" id="carried_over" name="carried_over" 
                                            min="0" value="0" placeholder="Closing balance">
                                 </div>
-                            </div>
-
                             <!-- ROW 4: Voucher & Additional Info -->
-                            <div class="row">
                                 <!-- Voucher No -->
-                                <div class="col-md-2 mb-3">
+                                <div class="col-md-3 mb-3">
                                     <label for="voucher_no" class="form-label">Voucher/Invoice No</label>
                                     <input type="text" class="form-control" id="voucher_no" name="voucher_no" 
                                            placeholder="Invoice No">
                                 </div>
 
                                 <!-- Voucher Date -->
-                                <div class="col-md-2 mb-3">
+                                <div class="col-md-3 mb-3">
                                     <label for="voucher_date" class="form-label">Voucher Date</label>
                                     <input type="date" class="form-control" id="voucher_date" name="voucher_date">
                                 </div>
