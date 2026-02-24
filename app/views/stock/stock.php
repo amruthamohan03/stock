@@ -25,6 +25,13 @@
                                     <label for="indent_id" class="form-label">Indent No <span class="text-danger">*</span></label>
                                     <select class="form-select select2" id="indent_id" name="indent_id">
                                         <option value="">-- Select Indent --</option>
+                                        <?php
+                                        if (!empty($indents)) { 
+                                            foreach ($indents as $row) {
+                                                echo '<option value="' . $row['id'] . '">Indent No: ' . htmlspecialchars($row['indent_no']) . ' Dated '.$row['indent_date'].'</option>';
+                                            }
+                                        }
+                                        ?>
                                     </select>
                                     <small class="text-muted">Select indent to auto-populate items</small>
                                 </div>
@@ -62,11 +69,19 @@
 
                             <!-- ROW 2: Location Info -->
                             <div class="row">
-                                <!-- Storage Location -->
+                                <!-- Storage Location - NOW DROPDOWN FROM ISSUED_TO_MASTER_T -->
                                 <div class="col-md-3 mb-3">
                                     <label for="location" class="form-label">Storage Location/Lab <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="location" name="location" 
-                                           placeholder="e.g., C.I.T. LAB" required>
+                                    <select class="form-select select2" id="location" name="location" required>
+                                        <option value="">-- Select Location --</option>
+                                        <?php if (!empty($locations)): ?>
+                                            <?php foreach ($locations as $loc): ?>
+                                                <option value="<?= htmlspecialchars($loc['location_name']) ?>">
+                                                    <?= htmlspecialchars($loc['location_name']) ?> (<?= $loc['location_type'] ?>)
+                                                </option>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </select>
                                 </div>
 
                                 <!-- Transaction Type -->
@@ -197,86 +212,223 @@
             </div>
         </div>
 
-        <!-- Recent Transactions List -->
+        <!-- Recent Stock Transactions - ITEM WISE -->
         <div class="row mt-4">
             <div class="col-12">
                 <div class="card">
                     <div class="card-header border-bottom border-dashed">
-                        <h4 class="header-title">Recent Stock Transactions</h4>
+                        <h4 class="header-title">Recent Stock Transactions (Item Wise)</h4>
                     </div>
 
                     <div class="card-body">
-                        <table id="stock-datatable" class="table table-striped dt-responsive nowrap w-100">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Date</th>
-                                    <th>Item</th>
-                                    <th>Location</th>
-                                    <th>Type</th>
-                                    <th>Indent</th>
-                                    <th>Serial No</th>
-                                    <th>Status</th>
-                                    <th>Receipt</th>
-                                    <th>Issue</th>
-                                    <th>Balance</th>
-                                    <th>Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php if (!empty($transactions)): ?>
-                                    <?php foreach ($transactions as $trans): ?>
-                                        <tr>
-                                            <td><?= $trans['id']; ?></td>
-                                            <td><?= date('d-m-Y', strtotime($trans['transaction_date'])); ?></td>
-                                            <td><?= htmlspecialchars($trans['item_name']); ?></td>
-                                            <td><?= htmlspecialchars($trans['location']); ?></td>
-                                            <td>
-                                                <span class="badge bg-<?= 
-                                                    $trans['transaction_type'] == 'RECEIPT' ? 'success' : 
-                                                    ($trans['transaction_type'] == 'ISSUE' ? 'danger' : 'warning')
-                                                ?>">
-                                                    <?= $trans['transaction_type']; ?>
-                                                </span>
-                                            </td>
-                                            <td><?= htmlspecialchars($trans['indent_no'] ?? '-'); ?></td>
-                                            <td>
-                                                <?php if (!empty($trans['serial_no'])): ?>
-                                                    <span class="badge bg-info"><?= htmlspecialchars($trans['serial_no']); ?></span>
-                                                <?php else: ?>
-                                                    <span class="text-muted">-</span>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td>
-                                                <span class="badge bg-<?= 
-                                                    $trans['item_status'] == 'WORKING' ? 'success' : 'warning'
-                                                ?>">
-                                                    <?= $trans['item_status']; ?>
-                                                </span>
-                                            </td>
-                                            <td class="text-center">
-                                                <?= $trans['receipt_qty'] > 0 ? '<span class="text-success">' . $trans['receipt_qty'] . '</span>' : '-'; ?>
-                                            </td>
-                                            <td class="text-center">
-                                                <?= $trans['issue_qty'] > 0 ? '<span class="text-danger">' . $trans['issue_qty'] . '</span>' : '-'; ?>
-                                            </td>
-                                            <td class="text-center"><strong><?= $trans['balance_qty']; ?></strong></td>
-                                            <td>
-                                                <a href="<?= APP_URL; ?>stock/viewLedger/<?= $trans['stock_book_id']; ?>" 
-                                                   class="btn btn-sm btn-info" title="View Ledger">
-                                                    <i class="ti ti-book"></i>
-                                                </a>
-                                                <button class="btn btn-sm btn-danger deleteTransBtn" 
-                                                        data-id="<?= $trans['id']; ?>" title="Delete">
-                                                    <i class="ti ti-trash"></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
+                        <?php if (!empty($transactionsByItem)): ?>
+                            <div class="accordion" id="transactionAccordion">
+                                <?php 
+                                $itemIndex = 0;
+                                foreach ($transactionsByItem as $itemId => $itemData): 
+                                    $itemIndex++;
+                                ?>
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="heading<?= $itemIndex; ?>">
+                                            <button class="accordion-button <?= $itemIndex > 1 ? 'collapsed' : ''; ?>" type="button" 
+                                                    data-bs-toggle="collapse" data-bs-target="#collapse<?= $itemIndex; ?>" 
+                                                    aria-expanded="<?= $itemIndex == 1 ? 'true' : 'false'; ?>">
+                                                <strong><?= htmlspecialchars($itemData['item_name']); ?></strong>
+                                                <span class="badge bg-primary ms-2"><?= count($itemData['transactions']); ?> Transactions</span>
+                                            </button>
+                                        </h2>
+                                        <div id="collapse<?= $itemIndex; ?>" class="accordion-collapse collapse <?= $itemIndex == 1 ? 'show' : ''; ?>" 
+                                             data-bs-parent="#transactionAccordion">
+                                            <div class="accordion-body p-0">
+                                                <div class="table-responsive">
+                                                    <table class="table table-sm table-striped mb-0">
+                                                        <thead class="table-light">
+                                                            <tr>
+                                                                <th>ID</th>
+                                                                <th>Date</th>
+                                                                <th>Location</th>
+                                                                <th>Type</th>
+                                                                <th>Indent</th>
+                                                                <th>Serial No</th>
+                                                                <th>Status</th>
+                                                                <th class="text-center">Receipt</th>
+                                                                <th class="text-center">Issue</th>
+                                                                <th class="text-center">Balance</th>
+                                                                <th>Remarks</th>
+                                                                <th class="text-center">Action</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <?php foreach ($itemData['transactions'] as $trans): ?>
+                                                                <tr>
+                                                                    <td><small><?= $trans['id']; ?></small></td>
+                                                                    <td><small><?= date('d-m-Y', strtotime($trans['transaction_date'])); ?></small></td>
+                                                                    <td><small><?= htmlspecialchars($trans['location']); ?></small></td>
+                                                                    <td>
+                                                                        <span class="badge bg-<?= 
+                                                                            $trans['transaction_type'] == 'RECEIPT' ? 'success' : 
+                                                                            ($trans['transaction_type'] == 'ISSUE' ? 'danger' : 'warning')
+                                                                        ?> fs-6">
+                                                                            <?= substr($trans['transaction_type'], 0, 3); ?>
+                                                                        </span>
+                                                                    </td>
+                                                                    <td><small><?= htmlspecialchars($trans['indent_no'] ?? '-'); ?></small></td>
+                                                                    <td>
+                                                                        <?php if (!empty($trans['serial_no'])): ?>
+                                                                            <span class="badge bg-info fs-6"><?= htmlspecialchars($trans['serial_no']); ?></span>
+                                                                        <?php else: ?>
+                                                                            <span class="text-muted">-</span>
+                                                                        <?php endif; ?>
+                                                                    </td>
+                                                                    <td>
+                                                                        <span class="badge bg-<?= 
+                                                                            $trans['item_status'] == 'WORKING' ? 'success' : 'warning'
+                                                                        ?> fs-6">
+                                                                            <?= substr($trans['item_status'], 0, 3); ?>
+                                                                        </span>
+                                                                    </td>
+                                                                    <td class="text-center">
+                                                                        <?= $trans['receipt_qty'] > 0 ? '<span class="text-success fw-bold">' . $trans['receipt_qty'] . '</span>' : '-'; ?>
+                                                                    </td>
+                                                                    <td class="text-center">
+                                                                        <?= $trans['issue_qty'] > 0 ? '<span class="text-danger fw-bold">' . $trans['issue_qty'] . '</span>' : '-'; ?>
+                                                                    </td>
+                                                                    <td class="text-center"><strong><?= $trans['balance_qty']; ?></strong></td>
+                                                                    <td><small><?= htmlspecialchars(substr($trans['remarks'] ?? '', 0, 30)); ?></small></td>
+                                                                    <td class="text-center">
+                                                                        <button class="btn btn-sm btn-warning editTransBtn" 
+                                                                                data-id="<?= $trans['id']; ?>" title="Edit"
+                                                                                data-bs-toggle="modal" data-bs-target="#editTransactionModal">
+                                                                            <i class="ti ti-edit"></i>
+                                                                        </button>
+                                                                        <button class="btn btn-sm btn-danger deleteTransBtn" 
+                                                                                data-id="<?= $trans['id']; ?>" title="Delete">
+                                                                            <i class="ti ti-trash"></i>
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                            <?php endforeach; ?>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+                        <?php else: ?>
+                            <div class="alert alert-info" role="alert">
+                                <i class="mdi mdi-information"></i> No transactions recorded yet
+                            </div>
+                        <?php endif; ?>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Transaction Modal -->
+    <div class="modal fade" id="editTransactionModal" tabindex="-1" aria-labelledby="editTransactionLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editTransactionLabel">Edit Stock Transaction</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editTransactionForm" method="post">
+                        <input type="hidden" id="edit_transaction_id" name="transaction_id">
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_item_name" class="form-label">Item Name</label>
+                                <input type="text" class="form-control" id="edit_item_name" name="edit_item_name" readonly>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_transaction_type" class="form-label">Transaction Type</label>
+                                <input type="text" class="form-control" id="edit_transaction_type" name="edit_transaction_type" readonly>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_transaction_date" class="form-label">Date <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="edit_transaction_date" name="transaction_date" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_voucher_no" class="form-label">Voucher/Invoice No</label>
+                                <input type="text" class="form-control" id="edit_voucher_no" name="voucher_no">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_voucher_date" class="form-label">Voucher Date</label>
+                                <input type="date" class="form-control" id="edit_voucher_date" name="voucher_date">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_receipt_qty" class="form-label">Receipt Qty</label>
+                                <input type="number" class="form-control" id="edit_receipt_qty" name="receipt_qty" min="0" value="0">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_issue_qty" class="form-label">Issue Qty</label>
+                                <input type="number" class="form-control" id="edit_issue_qty" name="issue_qty" min="0" value="0">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_serial_no" class="form-label">Serial No</label>
+                                <input type="text" class="form-control" id="edit_serial_no" name="serial_no">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_item_status" class="form-label">Item Status</label>
+                                <select class="form-select" id="edit_item_status" name="item_status">
+                                    <option value="WORKING">WORKING</option>
+                                    <option value="NOT WORKING">NOT WORKING</option>
+                                    <option value="DELETED">DELETED</option>
+                                    <option value="REPAIRED">REPAIRED</option>
+                                    <option value="PENDING">PENDING</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_issued_to_location_id" class="form-label">Issued To (Location)</label>
+                                <select class="form-select" id="edit_issued_to_location_id" name="issued_to_location_id">
+                                    <option value="">-- Select Location --</option>
+                                    <?php if (!empty($locations)): ?>
+                                        <?php foreach ($locations as $loc): ?>
+                                            <option value="<?= $loc['id'] ?>">
+                                                <?= htmlspecialchars($loc['location_name']) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_received_from" class="form-label">Received From</label>
+                                <input type="text" class="form-control" id="edit_received_from" name="received_from">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_receiver_initial" class="form-label">Receiver Initial</label>
+                                <input type="text" class="form-control" id="edit_receiver_initial" name="receiver_initial">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="edit_remarks" class="form-label">Remarks</label>
+                            <textarea class="form-control" id="edit_remarks" name="remarks" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="updateTransaction();">Update Transaction</button>
                 </div>
             </div>
         </div>
@@ -287,12 +439,6 @@
 
 <script>
 $(document).ready(function() {
-    // Initialize DataTable
-    $('#stock-datatable').DataTable({
-        order: [[0, 'desc']],
-        pageLength: 20
-    });
-
     // Load indents on page load
     loadAvailableIndents();
 
@@ -437,6 +583,76 @@ $(document).ready(function() {
             }
         });
     });
+
+    // Edit transaction button click
+    $(document).on('click', '.editTransBtn', function() {
+        const id = $(this).data('id');
+        
+        $.ajax({
+            url: '<?= APP_URL; ?>stock/getTransaction?id=' + id,
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                if (res.success) {
+                    const trans = res.data;
+                    $('#edit_transaction_id').val(trans.id);
+                    $('#edit_item_name').val(trans.item_name);
+                    $('#edit_transaction_type').val(trans.transaction_type);
+                    $('#edit_transaction_date').val(trans.transaction_date);
+                    $('#edit_voucher_no').val(trans.voucher_no || '');
+                    $('#edit_voucher_date').val(trans.voucher_date || '');
+                    $('#edit_receipt_qty').val(trans.receipt_qty);
+                    $('#edit_issue_qty').val(trans.issue_qty);
+                    $('#edit_serial_no').val(trans.serial_no || '');
+                    $('#edit_item_status').val(trans.item_status);
+                    $('#edit_issued_to_location_id').val(trans.issued_to_location_id || '');
+                    $('#edit_received_from').val(trans.received_from || '');
+                    $('#edit_receiver_initial').val(trans.receiver_initial || '');
+                    $('#edit_remarks').val(trans.remarks || '');
+                }
+            },
+            error: function() {
+                Swal.fire('Error!', 'Failed to load transaction details', 'error');
+            }
+        });
+    });
+
+    // Update transaction
+    function updateTransaction() {
+        $.ajax({
+            url: '<?= APP_URL; ?>stock/updateTransaction',
+            type: 'POST',
+            data: $('#editTransactionForm').serialize(),
+            dataType: 'json',
+            beforeSend: function() {
+                Swal.fire({
+                    title: 'Updating...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+            },
+            success: function(res) {
+                if (res.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: res.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Error!', res.message, 'error');
+                }
+            },
+            error: function() {
+                Swal.fire('Error!', 'Something went wrong', 'error');
+            }
+        });
+    }
 
     // Delete transaction
     $(document).on('click', '.deleteTransBtn', function() {
