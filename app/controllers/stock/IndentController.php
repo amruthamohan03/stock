@@ -27,8 +27,8 @@ class IndentController extends Controller
     {
         $db = new Database();
 
-        $items = $db->selectData('item_master_t', 'id, item_name', ['display' => 'Y']);
-        $makes = $db->selectData('make_t',        'id, make_name', ['display' => 'Y']);
+        $items = $db->selectData('item_master_t', 'id, item_name', ['display' => 'Y'],'item_name ASC');
+        $makes = $db->selectData('make_t',        'id, make_name', ['display' => 'Y'],'make_name ASC');
 
         /* Institution & dept names for display (from session IDs) */
         $instRow  = $db->selectData('college_t',           'college_name',    ['id' => $this->_instId()]);
