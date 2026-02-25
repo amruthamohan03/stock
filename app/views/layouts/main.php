@@ -52,7 +52,7 @@ if (!SessionManager::isLoggedIn()) {
         <script src="<?php echo BASE_URL;?>/assets/vendor/apexcharts/apexcharts.min.js"></script>
         <script src="<?php echo BASE_URL;?>/assets/js/pages/dashboard.js"></script>
     <?php endif; ?>
-    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="<?php echo BASE_URL; ?>/assets/vendor/datatables.net/js/dataTables.min.js"></script>
     <script src="<?php echo BASE_URL; ?>/assets/vendor/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
     <script src="<?php echo BASE_URL; ?>/assets/vendor/datatables.net-responsive/js/dataTables.responsive.min.js"></script>

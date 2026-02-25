@@ -2,12 +2,11 @@
 /**
  * FILE: app/controllers/IndentController.php
  *
- * Fixes applied:
- *  1. institution_id & department_id read from session (not POST)
- *  2. Edit allowed only when status = CREATED (not yet verified)
- *  3. updation now also syncs indent_item_t rows
- *  4. index() list ordered by updated_at DESC; serial number is a PHP counter
- *  5. All session reads use $_SESSION['user_data'] consistently
+ * ENHANCEMENTS:
+ *  - Added getGroups() method to fetch group item names
+ *  - Added addGroupItem() method to insert new group if not exists
+ *  - Updated crudData() to handle group_id in items
+ *  - Updated _upsertItems() & _syncItems() to sync group_id
  */
 class IndentController extends Controller
 {
@@ -29,6 +28,7 @@ class IndentController extends Controller
 
         $items = $db->selectData('item_master_t', 'id, item_name', ['display' => 'Y'],'item_name ASC');
         $makes = $db->selectData('make_t',        'id, make_name', ['display' => 'Y'],'make_name ASC');
+        $groups = $db->selectData('group_item_name_master_t', 'id, group_name', ['display' => 'Y'], 'group_name ASC');
 
         /* Institution & dept names for display (from session IDs) */
         $instRow  = $db->selectData('college_t',           'college_name',    ['id' => $this->_instId()]);
@@ -75,12 +75,89 @@ class IndentController extends Controller
             'title'         => 'Indent Book Management',
             'items'         => $items,
             'makes'         => $makes,
+            'groups'        => $groups,
             'result'        => $result ?: [],
             'inst_name'     => $instRow[0]['college_name']      ?? '',
             'dept_name'     => $deptRow[0]['department_name']   ?? '',
         ];
 
         $this->viewWithLayout('stock/indent', $data);
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       GET GROUPS — Fetch all active groups
+    ═══════════════════════════════════════════════════════════ */
+    public function getGroups()
+    {
+        header('Content-Type: application/json');
+        $db = new Database();
+
+        $groups = $db->selectData('group_item_name_master_t', 
+            'id, group_name, group_code', 
+            ['display' => 'Y'], 
+            'group_name ASC'
+        );
+
+        echo json_encode([
+            'success' => true,
+            'data'    => $groups ?? []
+        ]);
+        exit;
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       ADD GROUP ITEM — Insert new group if not exists
+    ═══════════════════════════════════════════════════════════ */
+    public function addGroupItem()
+    {
+        header('Content-Type: application/json');
+        $db = new Database();
+
+        $groupName = trim($_POST['group_name'] ?? '');
+
+        if (empty($groupName)) {
+            echo json_encode(['success' => false, 'message' => 'Group name is required']);
+            exit;
+        }
+
+        /* Check if group already exists */
+        $existing = $db->selectData('group_item_name_master_t', 'id, group_name', 
+            ['group_name' => $groupName]
+        );
+
+        if (!empty($existing)) {
+            echo json_encode([
+                'success' => true,
+                'message' => 'Group already exists',
+                'data'    => $existing[0]
+            ]);
+            exit;
+        }
+
+        /* Insert new group */
+        $groupData = [
+            'group_name'  => htmlspecialchars($groupName, ENT_QUOTES),
+            'group_code'  => strtoupper(substr($groupName, 0, 3)), // Auto-generate code from first 3 chars
+            'created_by'  => $this->_userId(),
+            'display'     => 'Y'
+        ];
+
+        $groupId = $db->insertData('group_item_name_master_t', $groupData);
+
+        if ($groupId) {
+            echo json_encode([
+                'success' => true,
+                'message' => 'Group created successfully',
+                'data'    => [
+                    'id'         => $groupId,
+                    'group_name' => $groupName,
+                    'group_code' => $groupData['group_code']
+                ]
+            ]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Failed to create group']);
+        }
+        exit;
     }
 
     /* ═══════════════════════════════════════════════════════════
@@ -186,100 +263,115 @@ class IndentController extends Controller
                 exit;
             }
 
-            /* Soft-delete items first */
+            $del = $db->updateData('indent_master_t', ['display' => 'N'], ['id' => $id]);
             $db->updateData('indent_item_t', ['display' => 'N'], ['indent_id' => $id]);
-            $delete = $db->updateData('indent_master_t', ['display' => 'N'], ['id' => $id]);
 
-            if ($delete) {
-                echo json_encode(['success'=>true,'message'=>'Indent deleted successfully']);
-            } else {
-                echo json_encode(['success'=>false,'message'=>'Delete failed']);
-            }
+            echo json_encode($del
+                ? ['success'=>true, 'message'=>'Indent deleted successfully']
+                : ['success'=>false,'message'=>'Delete failed']);
             exit;
         }
     }
 
-    /* ─── Private: build a clean item field array ──────────── */
-    private function _itemFields(array $item, int $indentId): array
-    {
-        return [
-            'indent_id'          => $indentId,
-            'sl_no'              => (int)($item['sl_no'] ?? 0),
-            'item_id'            => (int)($item['item_id'] ?? 0),
-            'make_id'            => !empty($item['make_id'])  ? (int)$item['make_id']  : null,
-            'model_id'           => !empty($item['model_id']) ? (int)$item['model_id'] : null,
-            'item_description'   => htmlspecialchars(trim($item['item_description'] ?? ''), ENT_QUOTES),
-            'item_purpose'       => htmlspecialchars(trim($item['item_purpose']     ?? ''), ENT_QUOTES),
-            'qty_intended'       => (int)($item['qty_intended'] ?? 0),
-            'remarks'            => htmlspecialchars(trim($item['remarks'] ?? ''), ENT_QUOTES),
-            'stock_book_page_no' => !empty($item['stock_book_page_no']) ? (int)$item['stock_book_page_no'] : null,
-            'stock_book_volume'  => !empty($item['stock_book_volume'])  ? (int)$item['stock_book_volume']  : null,
-            'day_book_page_no'   => !empty($item['day_book_page_no'])   ? (int)$item['day_book_page_no']   : null,
-            'day_book_volume'    => !empty($item['day_book_volume'])     ? (int)$item['day_book_volume']    : null,
-            'display'            => 'Y',
-        ];
-    }
-
-    /* ─── Private: INSERT on first save ─────────────────────── */
-    private function _upsertItems(Database $db, int $indentId, array $items, string $mode): void
+    /* ═══════════════════════════════════════════════════════════
+       UPSERT ITEMS — Insert or update items (with group_id)
+    ═══════════════════════════════════════════════════════════ */
+    private function _upsertItems($db, $indentId, $items, $mode = 'insert')
     {
         if (empty($items)) return;
-        foreach ($items as $item) {
-            $row = $this->_itemFields($item, $indentId);
-            $row['qty_passed'] = 0;
-            $row['qty_issued'] = 0;
-            $db->insertData('indent_item_t', $row);
-        }
-    }
 
-    /* ─── Private: SYNC on update — no blanket delete/re-insert ─
-     *
-     *  Logic:
-     *   • Existing item  (item has id > 0 matching a live DB row) → UPDATE in place
-     *   • New item       (id absent / 0)                          → INSERT
-     *   • Removed item   (DB row whose id is not in the POST)     → soft-delete only that row
-     *
-     *  qty_passed and qty_issued are preserved on existing rows so
-     *  workflow progress is never lost.
-     * ────────────────────────────────────────────────────────── */
-    private function _syncItems(Database $db, int $indentId, array $items): void
-    {
-        /* Collect the IDs of every live DB row for this indent */
-        $existingRows = $db->customQuery(
-            "SELECT id FROM indent_item_t WHERE indent_id = $indentId AND display = 'Y'"
-        );
-        $existingIds = array_column($existingRows ?: [], 'id');
+        foreach ($items as $idx => $item) {
+            $item_id  = (int)($item['item_id']    ?? 0);
+            $group_id = (!empty($item['group_id'])) ? (int)$item['group_id'] : null;
+            $make_id  = (!empty($item['make_id']))  ? (int)$item['make_id']  : null;
+            $model_id = (!empty($item['model_id'])) ? (int)$item['model_id'] : null;
+            $qty      = (int)($item['qty_intended'] ?? 0);
 
-        /* Track which submitted IDs we actually touched */
-        $submittedIds = [];
+            if ($item_id <= 0 || $qty <= 0) continue;
 
-        foreach ($items as $item) {
-            $itemId = (int)($item['id'] ?? 0);
-            $fields = $this->_itemFields($item, $indentId);
+            $row = [
+                'indent_id'            => $indentId,
+                'sl_no'                => (int)($item['sl_no'] ?? ($idx + 1)),
+                'item_id'              => $item_id,
+                'group_id'             => $group_id,
+                'make_id'              => $make_id,
+                'model_id'             => $model_id,
+                'item_description'     => htmlspecialchars(trim($item['item_description'] ?? ''), ENT_QUOTES),
+                'item_purpose'         => htmlspecialchars(trim($item['item_purpose'] ?? ''), ENT_QUOTES),
+                'qty_intended'         => $qty,
+                'remarks'              => htmlspecialchars(trim($item['remarks'] ?? ''), ENT_QUOTES),
+                'stock_book_page_no'   => (!empty($item['stock_book_page_no'])) ? (int)$item['stock_book_page_no'] : null,
+                'stock_book_volume'    => (!empty($item['stock_book_volume']))  ? (int)$item['stock_book_volume']  : null,
+                'day_book_page_no'     => (!empty($item['day_book_page_no']))   ? (int)$item['day_book_page_no']   : null,
+                'day_book_volume'      => (!empty($item['day_book_volume']))    ? (int)$item['day_book_volume']    : null,
+            ];
 
-            if ($itemId > 0 && in_array($itemId, $existingIds)) {
-                /* ── UPDATE existing row in place ── */
-                /* Never overwrite qty_passed / qty_issued — those belong to workflow */
-                $db->updateData('indent_item_t', $fields, ['id' => $itemId]);
-                $submittedIds[] = $itemId;
-            } else {
-                /* ── INSERT brand-new row ── */
-                $fields['qty_passed'] = 0;
-                $fields['qty_issued'] = 0;
-                $newId = $db->insertData('indent_item_t', $fields);
-                if ($newId) $submittedIds[] = $newId;
+            if ($mode === 'insert') {
+                $db->insertData('indent_item_t', $row);
             }
-        }
-
-        /* Soft-delete only the rows the user removed (not in submitted list) */
-        $toDelete = array_diff($existingIds, $submittedIds);
-        foreach ($toDelete as $delId) {
-            $db->updateData('indent_item_t', ['display' => 'N'], ['id' => (int)$delId]);
         }
     }
 
     /* ═══════════════════════════════════════════════════════════
-       GET INDENT BY ID  (AJAX — for edit & workflow modals)
+       SYNC ITEMS — Update/Insert/Soft-delete items (with group_id)
+    ═══════════════════════════════════════════════════════════ */
+    private function _syncItems($db, $indentId, $items)
+    {
+        /* Collect IDs of items user submitted */
+        $submittedIds = [];
+        foreach ($items as $item) {
+            $rowId = (int)($item['id'] ?? 0);
+            if ($rowId > 0) $submittedIds[] = $rowId;
+        }
+
+        /* Mark all old rows not in the form as soft-deleted */
+        $oldRows = $db->selectData('indent_item_t', 'id', ['indent_id' => $indentId]);
+        foreach ($oldRows as $oldRow) {
+            if (!in_array($oldRow['id'], $submittedIds)) {
+                $db->updateData('indent_item_t', ['display' => 'N'], ['id' => $oldRow['id']]);
+            }
+        }
+
+        /* Update or insert each row in the form */
+        foreach ($items as $idx => $item) {
+            $rowId    = (int)($item['id']          ?? 0);
+            $item_id  = (int)($item['item_id']     ?? 0);
+            $group_id = (!empty($item['group_id'])) ? (int)$item['group_id'] : null;
+            $make_id  = (!empty($item['make_id']))  ? (int)$item['make_id']  : null;
+            $model_id = (!empty($item['model_id'])) ? (int)$item['model_id'] : null;
+            $qty      = (int)($item['qty_intended'] ?? 0);
+
+            if ($item_id <= 0 || $qty <= 0) continue;
+
+            $row = [
+                'sl_no'                => (int)($item['sl_no'] ?? ($idx + 1)),
+                'item_id'              => $item_id,
+                'group_id'             => $group_id,
+                'make_id'              => $make_id,
+                'model_id'             => $model_id,
+                'item_description'     => htmlspecialchars(trim($item['item_description'] ?? ''), ENT_QUOTES),
+                'item_purpose'         => htmlspecialchars(trim($item['item_purpose'] ?? ''), ENT_QUOTES),
+                'qty_intended'         => $qty,
+                'remarks'              => htmlspecialchars(trim($item['remarks'] ?? ''), ENT_QUOTES),
+                'stock_book_page_no'   => (!empty($item['stock_book_page_no'])) ? (int)$item['stock_book_page_no'] : null,
+                'stock_book_volume'    => (!empty($item['stock_book_volume']))  ? (int)$item['stock_book_volume']  : null,
+                'day_book_page_no'     => (!empty($item['day_book_page_no']))   ? (int)$item['day_book_page_no']   : null,
+                'day_book_volume'      => (!empty($item['day_book_volume']))    ? (int)$item['day_book_volume']    : null,
+            ];
+
+            if ($rowId > 0) {
+                /* Update existing row */
+                $db->updateData('indent_item_t', $row, ['id' => $rowId]);
+            } else {
+                /* Insert new row */
+                $row['indent_id'] = $indentId;
+                $db->insertData('indent_item_t', $row);
+            }
+        }
+    }
+
+    /* ═══════════════════════════════════════════════════════════
+       GET INDENT BY ID — Fetch for editing
     ═══════════════════════════════════════════════════════════ */
     public function getIndentById()
     {
@@ -287,47 +379,53 @@ class IndentController extends Controller
         $id = (int)($_GET['id'] ?? 0);
         if ($id <= 0) { echo json_encode(['success'=>false,'message'=>'Invalid ID']); exit; }
 
-        $db     = new Database();
-        $indent = $db->selectData('indent_master_t', '*', ['id' => $id]);
+        $db = new Database();
 
+        /* Fetch indent */
+        $indent = $db->selectData('indent_master_t', '*', ['id' => $id, 'display' => 'Y']);
         if (empty($indent)) { echo json_encode(['success'=>false,'message'=>'Indent not found']); exit; }
 
-        /* Items with names */
+        /* Fetch items (with group_id) */
         $items = $db->customQuery("
-            SELECT ii.*, i.item_name, mk.make_name, md.model_name
-            FROM   indent_item_t ii
-            LEFT JOIN item_master_t i  ON ii.item_id  = i.id
-            LEFT JOIN make_t        mk ON ii.make_id  = mk.id
-            LEFT JOIN model_t       md ON ii.model_id = md.id
-            WHERE  ii.indent_id = $id AND ii.display = 'Y'
-            ORDER BY ii.sl_no
+            SELECT id, sl_no, item_id, group_id, make_id, model_id,
+                   item_description, item_purpose, qty_intended, 
+                   remarks, stock_book_page_no, stock_book_volume,
+                   day_book_page_no, day_book_volume
+            FROM indent_item_t
+            WHERE indent_id = $id AND display = 'Y'
+            ORDER BY sl_no ASC
         ");
 
-        echo json_encode(['success'=>true,'data'=>['indent'=>$indent[0],'items'=>$items??[]]]);
+        echo json_encode([
+            'success' => true,
+            'data' => [
+                'indent' => $indent[0],
+                'items'  => $items ?? []
+            ]
+        ]);
         exit;
     }
 
     /* ═══════════════════════════════════════════════════════════
-       GET MODELS BY MAKE  (cascading dropdown)
+       GET MODELS BY MAKE
     ═══════════════════════════════════════════════════════════ */
     public function getModelsByMake()
     {
         header('Content-Type: application/json');
-        $make_id = (int)($_GET['make_id'] ?? 0);
-        if ($make_id <= 0) { echo json_encode(['success'=>false,'data'=>[]]); exit; }
+        $makeId = (int)($_GET['make_id'] ?? 0);
+        if ($makeId <= 0) { echo json_encode(['success'=>false,'data'=> []]); exit; }
 
-        $db     = new Database();
-        $models = $db->selectData('model_t', 'id, model_name', ['make_id' => $make_id, 'display' => 'Y']);
+        $db = new Database();
+        $models = $db->selectData('model_t', 'id, model_name', 
+            ['make_id' => $makeId, 'display' => 'Y'], 'model_name ASC');
 
-        echo json_encode(['success'=>true,'data'=>$models??[]]);
+        echo json_encode(['success'=>true, 'data'=>$models??[]]);
         exit;
     }
 
     /* ═══════════════════════════════════════════════════════════
-       WORKFLOW ACTIONS
+       VERIFY INDENT
     ═══════════════════════════════════════════════════════════ */
-
-    /* VERIFY */
     public function verifyIndent()
     {
         header('Content-Type: application/json');
@@ -335,11 +433,9 @@ class IndentController extends Controller
         if ($id <= 0) { echo json_encode(['success'=>false,'message'=>'Invalid Indent ID']); exit; }
 
         $db  = new Database();
-
-        /* Guard: must be CREATED */
         $cur = $db->selectData('indent_master_t', 'status', ['id' => $id]);
         if (empty($cur) || $cur[0]['status'] !== 'CREATED') {
-            echo json_encode(['success'=>false,'message'=>'Indent is not in CREATED status']);
+            echo json_encode(['success'=>false,'message'=>'Indent must be CREATED before verification']);
             exit;
         }
 
@@ -353,24 +449,18 @@ class IndentController extends Controller
         exit;
     }
 
-    /* PASS */
+    /* PASSED */
     public function passIndent()
     {
         header('Content-Type: application/json');
         $id = (int)($_POST['id'] ?? 0);
         if ($id <= 0) { echo json_encode(['success'=>false,'message'=>'Invalid Indent ID']); exit; }
 
-        $db   = new Database();
-        $cur  = $db->selectData('indent_master_t', 'status', ['id' => $id]);
+        $db  = new Database();
+        $cur = $db->selectData('indent_master_t', 'status', ['id' => $id]);
         if (empty($cur) || $cur[0]['status'] !== 'VERIFIED') {
             echo json_encode(['success'=>false,'message'=>'Indent must be VERIFIED before passing']);
             exit;
-        }
-
-        foreach ($_POST['items'] ?? [] as $item) {
-            $db->updateData('indent_item_t',
-                ['qty_passed' => (int)($item['qty_passed'] ?? 0)],
-                ['id' => (int)($item['id'] ?? 0)]);
         }
 
         $ok = $db->updateData('indent_master_t',
@@ -395,12 +485,6 @@ class IndentController extends Controller
         if (empty($cur) || $cur[0]['status'] !== 'PASSED') {
             echo json_encode(['success'=>false,'message'=>'Indent must be PASSED before issuing']);
             exit;
-        }
-
-        foreach ($_POST['items'] ?? [] as $item) {
-            $db->updateData('indent_item_t',
-                ['qty_issued' => (int)($item['qty_issued'] ?? 0)],
-                ['id' => (int)($item['id'] ?? 0)]);
         }
 
         $ok = $db->updateData('indent_master_t',
@@ -468,9 +552,10 @@ class IndentController extends Controller
         if (empty($indent)) { $this->redirect('indent'); return; }
 
         $items = $db->customQuery("
-            SELECT ii.*, i.item_name, mk.make_name, md.model_name
+            SELECT ii.*, i.item_name, g.group_name, mk.make_name, md.model_name
             FROM   indent_item_t ii
             LEFT JOIN item_master_t i  ON ii.item_id  = i.id
+            LEFT JOIN group_item_name_master_t g ON ii.group_id = g.id
             LEFT JOIN make_t        mk ON ii.make_id  = mk.id
             LEFT JOIN model_t       md ON ii.model_id = md.id
             WHERE  ii.indent_id = " . (int)$id . " AND ii.display = 'Y'
