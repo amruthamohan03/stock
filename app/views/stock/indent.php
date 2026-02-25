@@ -120,7 +120,7 @@
                     <th>Indent No</th>
                     <th>Type</th>
                     <th>Date</th>
-                    <th>Institution / Dept</th>
+                    <th>Items</th>
                     <th>Status</th>
                     <th>Created By</th>
                     <th>Action</th>
@@ -130,7 +130,7 @@
                 <?php if (!empty($result)): ?>
                     <?php
                     /* Serial number is a simple ascending counter regardless of sort order */
-                    $sl = 1;
+                    $sl = 1; 
                     foreach ($result as $row):
                         $statusColors = [
                             'CREATED'  => 'secondary',
@@ -156,10 +156,7 @@
                         </td>
                         <td><?= date('d-m-Y', strtotime($row['indent_date'])) ?></td>
                         <td>
-                            <span class="d-block"><?= htmlspecialchars($row['college_name'] ?? '—') ?></span>
-                            <?php if (!empty($row['department_name'])): ?>
-                                <small class="text-muted"><?= htmlspecialchars($row['department_name']) ?></small>
-                            <?php endif; ?>
+                            <?= !empty($row['item_names']) ? $row['item_names'] : 'No Items'; ?>
                         </td>
                         <td>
                             <span class="badge bg-<?= $statusColor ?>">

@@ -38,24 +38,37 @@ class IndentController extends Controller
 
         /* List ordered by updated_at DESC; sl_no assigned in PHP */
         $result = $db->customQuery("
-            SELECT im.*,
-                   c.college_name,
-                   dm.department_name,
-                   u1.full_name AS created_by_name,
-                   u2.full_name AS verified_by_name,
-                   u3.full_name AS passed_by_name,
-                   u4.full_name AS issued_by_name,
-                   u5.full_name AS received_by_name
-            FROM   indent_master_t im
-            LEFT JOIN college_t           c  ON im.institution_id = c.id
-            LEFT JOIN department_master_t dm ON im.department_id  = dm.id
-            LEFT JOIN users_t u1 ON im.created_by  = u1.id
-            LEFT JOIN users_t u2 ON im.verified_by = u2.id
-            LEFT JOIN users_t u3 ON im.passed_by   = u3.id
-            LEFT JOIN users_t u4 ON im.issued_by   = u4.id
-            LEFT JOIN users_t u5 ON im.received_by = u5.id
-            WHERE im.display = 'Y'
-            ORDER BY im.updated_at DESC
+                SELECT 
+                    im.*,
+                    u1.full_name AS created_by_name,
+                    u2.full_name AS verified_by_name,
+                    u3.full_name AS passed_by_name,
+                    u4.full_name AS issued_by_name,
+                    u5.full_name AS received_by_name,
+                    (
+                        SELECT GROUP_CONCAT(
+                                CONCAT(ii.sl_no, '. ', itm.item_name)
+                                ORDER BY ii.sl_no ASC
+                                SEPARATOR '<br>'
+                            )
+                        FROM indent_item_t ii
+                        INNER JOIN item_master_t itm 
+                                ON itm.id = ii.item_id
+                        WHERE ii.indent_id = im.id
+                    ) AS item_names
+
+                FROM indent_master_t im
+
+                LEFT JOIN users_t u1 ON im.created_by  = u1.id
+                LEFT JOIN users_t u2 ON im.verified_by = u2.id
+                LEFT JOIN users_t u3 ON im.passed_by   = u3.id
+                LEFT JOIN users_t u4 ON im.issued_by   = u4.id
+                LEFT JOIN users_t u5 ON im.received_by = u5.id
+
+                
+
+                WHERE im.display = 'Y'
+                ORDER BY im.id ASC;
         ");
 
         $data = [
