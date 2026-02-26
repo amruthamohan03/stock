@@ -49,6 +49,7 @@
                                         <option value="WORKING" <?= ($entry['item_status'] ?? 'WORKING') === 'WORKING' ? 'selected' : ''; ?>>Working</option>
                                         <option value="FAULTY" <?= ($entry['item_status'] ?? '') === 'FAULTY' ? 'selected' : ''; ?>>Faulty</option>
                                         <option value="UNDER_REPAIR" <?= ($entry['item_status'] ?? '') === 'UNDER_REPAIR' ? 'selected' : ''; ?>>Under Repair</option>
+                                        <option value="DELETED" <?= ($entry['item_status'] ?? '') === 'DELETED' ? 'selected' : ''; ?>>Entry Deleted From Stock Book</option>
                                     </select>
                                 </div>
                             </div>

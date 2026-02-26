@@ -138,33 +138,44 @@
                                             </td>
                                             <td>
                                                 <div class="btn-group btn-group-sm" role="group">
-                                                    <a href="<?= APP_URL; ?>stock/stock/view?id=<?= $entry['id']; ?>" 
+                                                    <a href="<?= APP_URL; ?>stock/viewSingle?id=<?= $entry['id']; ?>" 
                                                        class="btn btn-outline-info" title="View">
-                                                        <i class="mdi mdi-eye"></i>
+                                                        <i class="ti ti-eye"></i>
                                                     </a>
 
+                                                    <!-- ISSUE BUTTON (NEW) -->
+                                                    <?php if ($entry['verification_status'] === 'VERIFIED' && $entry['transaction_type'] === 'RECEIPT'): ?>
+                                                        <button type="button" class="btn btn-outline-success issueBtn" 
+                                                                onclick="showIssueModal(<?= $entry['id']; ?>, '<?= htmlspecialchars($entry['item_name']); ?>', <?= $entry['balance_qty'] ?? 0; ?>)" 
+                                                                title="Issue Item">
+                                                            <i class="ti ti-send"></i>
+                                                        </button>
+                                                    <?php endif; ?>
+
                                                     <?php if ($entry['verification_status'] === 'PENDING'): ?>
-                                                        <a href="<?= APP_URL; ?>stock/stock/edit?id=<?= $entry['id']; ?>" 
+                                                        <a href="<?= APP_URL; ?>stock/edit?id=<?= $entry['id']; ?>" 
                                                            class="btn btn-outline-warning" title="Edit">
-                                                            <i class="mdi mdi-pencil"></i>
+                                                            <i class="ti ti-pencil"></i>
                                                         </a>
 
                                                         <button type="button" class="btn btn-outline-success" 
                                                                 onclick="verifyEntry(<?= $entry['id']; ?>)" 
                                                                 title="Verify">
-                                                            <i class="mdi mdi-check-circle"></i>
+                                                            <i class="ti ti-check"></i>
                                                         </button>
 
                                                         <button type="button" class="btn btn-outline-danger" 
                                                                 onclick="showRejectModal(<?= $entry['id']; ?>)" 
                                                                 title="Reject">
-                                                            <i class="mdi mdi-close-circle"></i>
+                                                            <i class="ti ti-x"></i>
                                                         </button>
+                                                    <?php endif; ?>
 
-                                                        <button type="button" class="btn btn-outline-dark" 
+                                                    <?php if ($entry['verification_status'] === 'PENDING'): ?>
+                                                        <button type="button" class="btn btn-outline-danger" 
                                                                 onclick="deleteEntry(<?= $entry['id']; ?>)" 
                                                                 title="Delete">
-                                                            <i class="mdi mdi-delete"></i>
+                                                            <i class="ti ti-trash"></i>
                                                         </button>
                                                     <?php endif; ?>
                                                 </div>
@@ -173,24 +184,17 @@
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan="10" class="text-center text-muted py-4">
-                                            <i class="mdi mdi-inbox-outline" style="font-size: 2rem;"></i>
-                                            <p class="mt-2">No entries found</p>
-                                        </td>
+                                        <td colspan="10" class="text-center py-4 text-muted">No entries found</td>
                                     </tr>
                                 <?php endif; ?>
                             </tbody>
                         </table>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <!-- Pagination -->
-        <?php if ($totalPages > 1): ?>
-            <div class="row mt-4">
-                <div class="col-12">
-                    <nav>
+                <!-- Pagination -->
+                <?php if ($totalPages > 1): ?>
+                    <nav aria-label="Page navigation" class="mt-4">
                         <ul class="pagination justify-content-center">
                             <?php if ($currentPage > 1): ?>
                                 <li class="page-item">
@@ -265,8 +269,109 @@
     </div>
 </div>
 
+<!-- ISSUE MODAL (NEW) -->
+<div class="modal fade" id="issueModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success bg-opacity-10">
+                <h5 class="modal-title">
+                    <i class="mdi mdi-send text-success me-2"></i> Issue Item
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Item Information (Read-only) -->
+                <div class="alert alert-info mb-3">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <strong>Item Name:</strong> <span id="issueItemName">-</span>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Available Qty:</strong> <span id="issueAvailableQty" class="badge bg-primary">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Issue Form -->
+                <form id="issueForm">
+                    <input type="hidden" id="issueTransactionId" name="transaction_id" value="">
+
+                    <!-- Quantity Issued -->
+                    <div class="mb-3">
+                        <label for="issueQuantity" class="form-label"><strong>Quantity to Issue <span class="text-danger">*</span></strong></label>
+                        <input type="number" id="issueQuantity" class="form-control" min="1" required 
+                               placeholder="Enter quantity">
+                        <small class="form-text text-muted">Must not exceed available quantity</small>
+                    </div>
+
+                    <!-- Issued To Location -->
+                    <div class="mb-3">
+                        <label for="issueLocation" class="form-label"><strong>Issued To Location <span class="text-danger">*</span></strong></label>
+                        <select id="issueLocation" class="form-select" required>
+                            <option value="">-- Select Location --</option>
+                            <?php if (!empty($locations)): ?>
+                                <?php foreach ($locations as $location): ?>
+                                    <option value="<?= $location['id']; ?>">
+                                        <?= htmlspecialchars($location['location_name']); ?>
+                                        <?php if (!empty($location['contact_person'])): ?>
+                                            (<?= htmlspecialchars($location['contact_person']); ?>)
+                                        <?php endif; ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </select>
+                    </div>
+
+                    <!-- Issue Date -->
+                    <div class="mb-3">
+                        <label for="issueDate" class="form-label"><strong>Issue Date <span class="text-danger">*</span></strong></label>
+                        <input type="date" id="issueDate" class="form-control" required 
+                               value="<?= date('Y-m-d'); ?>">
+                    </div>
+
+                    <!-- Serial Number -->
+                    <div class="mb-3">
+                        <label for="issueSerialNo" class="form-label"><strong>Serial Number</strong></label>
+                        <input type="text" id="issueSerialNo" class="form-control" 
+                               placeholder="Enter serial number (if applicable)">
+                        <small class="form-text text-muted">Optional - only if item has a serial number</small>
+                    </div>
+
+                    <!-- Remarks -->
+                    <div class="mb-3">
+                        <label for="issueRemarks" class="form-label"><strong>Remarks</strong></label>
+                        <textarea id="issueRemarks" class="form-control" rows="3" 
+                                  placeholder="Any additional remarks..."></textarea>
+                    </div>
+
+                    <!-- Location Details Preview -->
+                    <div id="locationDetails" class="alert alert-light" style="display: none;">
+                        <h6 class="alert-heading">Selected Location Details</h6>
+                        <div id="locationContent"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="confirmIssue()">
+                    <i class="mdi mdi-check me-1"></i> Issue Item
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php include(VIEW_PATH . 'layouts/partials/footer.php'); ?>
+
 <script>
 let rejectEntryId = null;
+let issueTransactionId = null;
+let issueMaxQuantity = 0;
+const locations = <?= isset($locations) ? json_encode($locations) : '[]'; ?>;
+
+// ════════════════════════════════════════════════════════════════════
+// FILTER FUNCTIONS
+// ════════════════════════════════════════════════════════════════════
 
 function applyFilters() {
     const type = document.getElementById('filterType').value;
@@ -277,6 +382,10 @@ function applyFilters() {
 function resetFilters() {
     window.location.href = '<?= APP_URL; ?>stock/stock/viewAll';
 }
+
+// ════════════════════════════════════════════════════════════════════
+// VERIFY & REJECT FUNCTIONS
+// ════════════════════════════════════════════════════════════════════
 
 function verifyEntry(entryId) {
     if (confirm('Verify this entry?')) {
@@ -290,10 +399,9 @@ function verifyEntry(entryId) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                alert('✓ Entry verified successfully');
-                location.reload();
+                Swal.fire('Success', 'Entry verified successfully', 'success').then(() => location.reload());
             } else {
-                alert('✗ Error: ' + data.message);
+                Swal.fire('Error', data.message, 'error');
             }
         })
         .catch(error => console.error('Error:', error));
@@ -309,7 +417,7 @@ function confirmReject() {
     const reason = document.getElementById('rejectReason').value;
     
     if (!reason) {
-        alert('Please provide a reason for rejection');
+        Swal.fire('Warning', 'Please provide a reason for rejection', 'warning');
         return;
     }
 
@@ -323,36 +431,170 @@ function confirmReject() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('✓ Entry rejected successfully');
-            bootstrap.Modal.getInstance(document.getElementById('rejectModal')).hide();
-            location.reload();
+            Swal.fire('Success', 'Entry rejected successfully', 'success').then(() => {
+                bootstrap.Modal.getInstance(document.getElementById('rejectModal')).hide();
+                location.reload();
+            });
         } else {
-            alert('✗ Error: ' + data.message);
+            Swal.fire('Error', data.message, 'error');
         }
     })
     .catch(error => console.error('Error:', error));
 }
 
 function deleteEntry(entryId) {
-    if (confirm('Are you sure you want to delete this entry? This action cannot be undone.')) {
-        fetch('<?= APP_URL; ?>stock/stock/deleteEntry', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: 'entry_id=' + entryId + '&reason=Manual deletion'
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('✓ Entry deleted successfully');
-                location.reload();
-            } else {
-                alert('✗ Error: ' + data.message);
-            }
-        })
-        .catch(error => console.error('Error:', error));
+    Swal.fire({
+        title: 'Delete Entry?',
+        text: 'This action cannot be undone.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, delete it'
+    }).then(result => {
+        if (result.isConfirmed) {
+            fetch('<?= APP_URL; ?>stock/stock/deleteEntry', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'entry_id=' + entryId + '&reason=Manual deletion'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire('Success', 'Entry deleted successfully', 'success').then(() => location.reload());
+                } else {
+                    Swal.fire('Error', data.message, 'error');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    });
+}
+
+// ════════════════════════════════════════════════════════════════════
+// ISSUE FUNCTIONS (NEW)
+// ════════════════════════════════════════════════════════════════════
+
+function showIssueModal(transactionId, itemName, availableQty) {
+    issueTransactionId = transactionId;
+    issueMaxQuantity = availableQty;
+
+    // Set modal data
+    document.getElementById('issueTransactionId').value = transactionId;
+    document.getElementById('issueItemName').textContent = itemName;
+    document.getElementById('issueAvailableQty').textContent = availableQty;
+    document.getElementById('issueQuantity').value = '';
+    document.getElementById('issueQuantity').max = availableQty;
+    document.getElementById('issueLocation').value = '';
+    document.getElementById('issueDate').value = new Date().toISOString().split('T')[0];
+    document.getElementById('issueSerialNo').value = '';
+    document.getElementById('issueRemarks').value = '';
+    document.getElementById('locationDetails').style.display = 'none';
+
+    // Show modal
+    new bootstrap.Modal(document.getElementById('issueModal')).show();
+}
+
+// Update location details preview
+document.getElementById('issueLocation')?.addEventListener('change', function() {
+    if (!this.value) {
+        document.getElementById('locationDetails').style.display = 'none';
+        return;
     }
+
+    const location = locations.find(l => l.id == this.value);
+    if (location) {
+        let html = '<dl class="row">';
+        html += '<dt class="col-sm-4">Location Code:</dt>';
+        html += '<dd class="col-sm-8">' + location.location_code + '</dd>';
+        html += '<dt class="col-sm-4">Contact Person:</dt>';
+        html += '<dd class="col-sm-8">' + (location.contact_person || '-') + '</dd>';
+        html += '<dt class="col-sm-4">Phone:</dt>';
+        html += '<dd class="col-sm-8">' + (location.phone || '-') + '</dd>';
+        html += '<dt class="col-sm-4">Description:</dt>';
+        html += '<dd class="col-sm-8">' + (location.description || '-') + '</dd>';
+        html += '</dl>';
+        
+        document.getElementById('locationContent').innerHTML = html;
+        document.getElementById('locationDetails').style.display = 'block';
+    }
+});
+
+// Validate quantity on input
+document.getElementById('issueQuantity')?.addEventListener('input', function() {
+    const qty = parseInt(this.value) || 0;
+    if (qty > issueMaxQuantity) {
+        this.classList.add('is-invalid');
+        this.nextElementSibling.textContent = 'Quantity cannot exceed ' + issueMaxQuantity;
+    } else {
+        this.classList.remove('is-invalid');
+        this.nextElementSibling.textContent = 'Must not exceed available quantity';
+    }
+});
+
+function confirmIssue() {
+    const qty = parseInt(document.getElementById('issueQuantity').value) || 0;
+    const locationId = document.getElementById('issueLocation').value;
+    const issueDate = document.getElementById('issueDate').value;
+    const serialNo = document.getElementById('issueSerialNo').value;
+    const remarks = document.getElementById('issueRemarks').value;
+
+    // Validation
+    if (!qty || qty <= 0) {
+        Swal.fire('Error', 'Please enter a valid quantity', 'error');
+        return;
+    }
+
+    if (qty > issueMaxQuantity) {
+        Swal.fire('Error', 'Quantity exceeds available stock', 'error');
+        return;
+    }
+
+    if (!locationId) {
+        Swal.fire('Error', 'Please select a location', 'error');
+        return;
+    }
+
+    if (!issueDate) {
+        Swal.fire('Error', 'Please select an issue date', 'error');
+        return;
+    }
+
+    // Show loading
+    Swal.fire({
+        title: 'Processing...',
+        text: 'Issuing item...',
+        icon: 'info',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+    });
+
+    // Send request
+    fetch('<?= APP_URL; ?>stock/issueItem', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'transaction_id=' + issueTransactionId + 
+              '&quantity=' + qty + 
+              '&location_id=' + locationId + 
+              '&issue_date=' + issueDate + 
+              '&serial_no=' + encodeURIComponent(serialNo) + 
+              '&remarks=' + encodeURIComponent(remarks)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            bootstrap.Modal.getInstance(document.getElementById('issueModal')).hide();
+            Swal.fire('Success', 'Item issued successfully', 'success').then(() => location.reload());
+        } else {
+            Swal.fire('Error', data.message || 'Failed to issue item', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire('Error', 'An error occurred', 'error');
+    });
 }
 </script>
 
@@ -364,5 +606,18 @@ function deleteEntry(entryId) {
 
 .table-hover tbody tr:hover {
     background-color: #f8f9fa;
+}
+
+.modal-body .is-invalid {
+    border-color: #dc3545;
+}
+
+.alert-info {
+    background-color: #e7f3ff;
+    border-left: 4px solid #2196F3;
+}
+
+.alert-light {
+    border-left: 4px solid #dee2e6;
 }
 </style>

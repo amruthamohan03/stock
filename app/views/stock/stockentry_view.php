@@ -67,7 +67,7 @@
                         <div class="row mb-3">
                             <div class="col-md-12">
                                 <label class="form-label text-muted"><small>Description</small></label>
-                                <p><?= htmlspecialchars($entry['description'] ?? 'N/A'); ?></p>
+                                <p><?= htmlspecialchars($entry['item_description'] ?? 'N/A'); ?></p>
                             </div>
                         </div>
 
@@ -328,7 +328,7 @@ let currentEntryId = <?= $entry['id']; ?>;
 
 function verifyEntry(entryId) {
     if (confirm('Verify this entry?')) {
-        fetch('<?= APP_URL; ?>stock/stock/verifyEntry', {
+        fetch('<?= APP_URL; ?>stock/verifyEntry', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',

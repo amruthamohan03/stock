@@ -590,7 +590,221 @@ class StockController extends Controller
         }
         exit;
     }
+    public function viewAll()
+{
+    $entryType = isset($_GET['type']) ? $_GET['type'] : 'ALL';
+    $status = isset($_GET['status']) ? $_GET['status'] : 'ALL';
+    $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+    $limit = 20;
+    $offset = ($page - 1) * $limit;
 
+    $conditions = [];
+    if ($entryType !== 'ALL') {
+        $conditions['stock_entry_type'] = $entryType;
+    }
+    if ($status !== 'ALL') {
+        $conditions['verification_status'] = $status;
+    }
+
+    $query = "SELECT 
+                st.*, 
+                sb.item_id, 
+                i.item_name,
+                mk.make_name,
+                md.model_name,
+                u.username AS created_by_name,
+                u_ver.username AS verified_by_name
+            FROM stock_transaction_t st
+            LEFT JOIN stock_book_t sb 
+                ON st.stock_book_id = sb.id
+            LEFT JOIN item_master_t i 
+                ON sb.item_id = i.id
+            LEFT JOIN indent_item_t ii 
+                ON ii.indent_id = st.indent_id 
+                AND ii.item_id = st.indent_item_id
+            LEFT JOIN make_t mk 
+                ON mk.id = ii.make_id
+            LEFT JOIN model_t md 
+                ON md.id = ii.model_id
+            LEFT JOIN users_t u 
+                ON st.created_by = u.id
+            LEFT JOIN users_t u_ver 
+                ON st.verified_by = u_ver.id
+            WHERE 1=1";
+
+    if ($entryType !== 'ALL') {
+        $query .= " AND st.stock_entry_type = '$entryType'";
+    }
+    if ($status !== 'ALL') {
+        $query .= " AND st.verification_status = '$status'";
+    }
+
+    $query .= " ORDER BY st.created_at DESC LIMIT $limit OFFSET $offset";
+
+    $entries = $this->db->customQuery($query);
+
+    $countQuery = "SELECT COUNT(*) as total FROM stock_transaction_t st WHERE 1=1";
+    if ($entryType !== 'ALL') {
+        $countQuery .= " AND st.stock_entry_type = '$entryType'";
+    }
+    if ($status !== 'ALL') {
+        $countQuery .= " AND st.verification_status = '$status'";
+    }
+    $countResult = $this->db->customQuery($countQuery);
+    $total = $countResult[0]['total'];
+    $pages = ceil($total / $limit);
+
+    // ✓ ADD THIS: Fetch locations for the issue modal
+    $locations = $this->db->selectData('issued_to_master_t', '*', ['display' => 'Y']);
+
+    $data = [
+        'title' => 'View Stock Entries',
+        'entries' => $entries,
+        'entryType' => $entryType,
+        'status' => $status,
+        'currentPage' => $page,
+        'totalPages' => $pages,
+        'total' => $total,
+        'locations' => $locations  // ✓ ADD THIS
+    ];
+
+    $this->viewWithLayout('stock/stockentry_viewall', $data);
+}
+
+
+// ════════════════════════════════════════════════════════════════════════════
+// NEW METHOD: issueItem() - Handle item issue functionality
+// ════════════════════════════════════════════════════════════════════════════
+
+public function issueItem()
+{
+    header('Content-Type: application/json');
+
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        echo json_encode(['success' => false, 'message' => 'Invalid request']);
+        exit;
+    }
+
+    try {
+        $transaction_id = (int)($_POST['transaction_id'] ?? 0);
+        $quantity = (int)($_POST['quantity'] ?? 0);
+        $location_id = (int)($_POST['location_id'] ?? 0);
+        $issue_date = trim($_POST['issue_date'] ?? date('Y-m-d'));
+        $serial_no = !empty($_POST['serial_no']) ? trim($_POST['serial_no']) : null;
+        $remarks = !empty($_POST['remarks']) ? trim($_POST['remarks']) : null;
+
+        // Validation
+        if ($transaction_id <= 0) {
+            throw new Exception('Invalid transaction ID');
+        }
+        if ($quantity <= 0) {
+            throw new Exception('Quantity must be greater than 0');
+        }
+        if ($location_id <= 0) {
+            throw new Exception('Please select a valid location');
+        }
+
+        // Get current transaction record
+        $transaction = $this->db->selectData('stock_transaction_t', '*', ['id' => $transaction_id]);
+        if (empty($transaction)) {
+            throw new Exception('Transaction not found');
+        }
+
+        $trans = $transaction[0];
+
+        // Verify transaction is RECEIPT and VERIFIED
+        if ($trans['transaction_type'] !== 'RECEIPT') {
+            throw new Exception('Only RECEIPT transactions can be issued');
+        }
+        if ($trans['verification_status'] !== 'VERIFIED') {
+            throw new Exception('Transaction must be verified before issuing');
+        }
+
+        // Check balance quantity
+        $available_qty = (int)$trans['balance_qty'];
+        if ($quantity > $available_qty) {
+            throw new Exception('Quantity exceeds available stock. Available: ' . $available_qty);
+        }
+
+        // Verify location exists
+        $location = $this->db->selectData('issued_to_master_t', '*', ['id' => $location_id]);
+        if (empty($location)) {
+            throw new Exception('Invalid location selected');
+        }
+
+        // Begin transaction
+        $this->db->beginTransaction();
+
+        // Create ISSUE transaction record
+        $userId = $_SESSION['user_id'] ?? 1;
+        
+        $issueData = [
+            'institution_id' => $trans['institution_id'],
+            'department_id' => $trans['department_id'],
+            'stock_book_id' => $trans['stock_book_id'],
+            'transaction_date' => $issue_date,
+            'transaction_type' => 'ISSUE',
+            'stock_entry_type' => $trans['stock_entry_type'],
+            'item_type' => $trans['item_type'],
+            'item_category' => $trans['item_category'],
+            'book_volume' => $trans['book_volume'],
+            'indent_id' => $trans['indent_id'],
+            'indent_item_id' => $trans['indent_item_id'],
+            'issued_to_location_id' => $location_id,
+            'issued_to' => $location[0]['location_name'],
+            'issue_qty' => $quantity,
+            'balance_qty' => $available_qty - $quantity,
+            'item_status' => $trans['item_status'],
+            'make' => $trans['make'],
+            'model' => $trans['model'],
+            'description' => $trans['description'],
+            'serial_no' => $serial_no,
+            'remarks' => $remarks,
+            'verification_status' => 'VERIFIED',  // Auto-verify issue
+            'verified_by' => $userId,
+            'verified_at' => date('Y-m-d H:i:s'),
+            'created_by' => $userId,
+            'created_at' => date('Y-m-d H:i:s'),
+            'display' => 'Y'
+        ];
+
+        $issue_id = $this->db->insertData('stock_transaction_t', $issueData);
+
+        if (!$issue_id) {
+            throw new Exception('Failed to create issue transaction');
+        }
+
+        // Update original RECEIPT transaction balance
+        $updateData = [
+            'balance_qty' => $available_qty - $quantity,
+            'carried_over' => $available_qty - $quantity,
+            'updated_by' => $userId,
+            'updated_at' => date('Y-m-d H:i:s')
+        ];
+
+        $updated = $this->db->updateData('stock_transaction_t', $updateData, ['id' => $transaction_id]);
+        
+        if (!$updated) {
+            throw new Exception('Failed to update balance quantity');
+        }
+
+        $this->db->commit();
+
+        echo json_encode([
+            'success' => true,
+            'message' => 'Item issued successfully',
+            'issue_id' => $issue_id
+        ]);
+
+    } catch (Exception $e) {
+        $this->db->rollback();
+        echo json_encode([
+            'success' => false,
+            'message' => $e->getMessage()
+        ]);
+    }
+    exit;
+}
     // ========================================================================
     // CRUD OPERATIONS
     // ========================================================================
@@ -598,7 +812,7 @@ class StockController extends Controller
     /**
      * View all entries with filters
      */
-    public function viewAll()
+    public function viewAlls()
     {
         $entryType = isset($_GET['type']) ? $_GET['type'] : 'ALL';
         $status = isset($_GET['status']) ? $_GET['status'] : 'ALL';
@@ -614,15 +828,42 @@ class StockController extends Controller
             $conditions['verification_status'] = $status;
         }
 
-        $query = "SELECT st.*, sb.item_id, i.item_name, i.make, i.model,
-                         u.username as created_by_name,
-                         u_ver.username as verified_by_name
-                  FROM stock_transaction_t st
-                  LEFT JOIN stock_book_t sb ON st.stock_book_id = sb.id
-                  LEFT JOIN item_master_t i ON sb.item_id = i.id
-                  LEFT JOIN users_t u ON st.created_by = u.id
-                  LEFT JOIN users_t u_ver ON st.verified_by = u_ver.id
-                  WHERE 1=1";
+        $query = "SELECT 
+                    st.*, 
+                    sb.item_id, 
+                    i.item_name,
+
+                    mk.make_name,
+                    md.model_name,
+
+                    u.username AS created_by_name,
+                    u_ver.username AS verified_by_name
+
+                FROM stock_transaction_t st
+
+                LEFT JOIN stock_book_t sb 
+                    ON st.stock_book_id = sb.id
+
+                LEFT JOIN item_master_t i 
+                    ON sb.item_id = i.id
+
+                LEFT JOIN indent_item_t ii 
+                    ON ii.indent_id = st.indent_id 
+                    AND ii.item_id = st.indent_item_id
+
+                LEFT JOIN make_t mk 
+                    ON mk.id = ii.make_id
+
+                LEFT JOIN model_t md 
+                    ON md.id = ii.model_id
+
+                LEFT JOIN users_t u 
+                    ON st.created_by = u.id
+
+                LEFT JOIN users_t u_ver 
+                    ON st.verified_by = u_ver.id
+
+                WHERE 1=1";
 
         if ($entryType !== 'ALL') {
             $query .= " AND st.stock_entry_type = '$entryType'";
@@ -667,25 +908,52 @@ class StockController extends Controller
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
         if ($id <= 0) {
-            header('Location: ' . APP_URL . 'stock/stockentry/viewAll');
+            header('Location: ' . APP_URL . 'stock/stock/viewAll');
             exit;
         }
 
-        $query = "SELECT st.*, sb.item_id, sb.location, i.item_name, i.make, i.model,
-                         u.username as created_by_name,
-                         u_ver.username as verified_by_name,
-                         im.indent_no
-                  FROM stock_transaction_t st
-                  LEFT JOIN stock_book_t sb ON st.stock_book_id = sb.id
-                  LEFT JOIN item_master_t i ON sb.item_id = i.id
-                  LEFT JOIN users_t u ON st.created_by = u.id
-                  LEFT JOIN users_t u_ver ON st.verified_by = u_ver.id
-                  LEFT JOIN indent_master_t im ON st.indent_id = im.id
-                  WHERE st.id = $id";
+        $query = "SELECT 
+                        st.*, 
+                        sb.item_id, 
+                        sb.location, 
+                        i.item_name, 
+                        mk.make_name,
+                        md.model_name,
+                        u.username AS created_by_name,
+                        u_ver.username AS verified_by_name,
+                        im.indent_no,
+                        ii.item_description
+                    FROM stock_transaction_t st
+
+                    LEFT JOIN stock_book_t sb 
+                        ON st.stock_book_id = sb.id
+
+                    LEFT JOIN item_master_t i 
+                        ON sb.item_id = i.id
+
+                    LEFT JOIN indent_master_t im 
+                        ON st.indent_id = im.id
+
+                    LEFT JOIN indent_item_t ii 
+                        ON ii.indent_id = im.id
+
+                    LEFT JOIN make_t mk 
+                        ON ii.make_id = mk.id
+
+                    LEFT JOIN model_t md 
+                        ON ii.model_id = md.id
+
+                    LEFT JOIN users_t u 
+                        ON st.created_by = u.id
+
+                    LEFT JOIN users_t u_ver 
+                        ON st.verified_by = u_ver.id
+
+                    WHERE st.id = $id";
 
         $result = $this->db->customQuery($query);
         if (empty($result)) {
-            header('Location: ' . APP_URL . 'stock/stockentry/viewAll');
+            header('Location: ' . APP_URL . 'stock/stock/viewAll');
             exit;
         }
 
@@ -717,7 +985,7 @@ class StockController extends Controller
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
         if ($id <= 0) {
-            header('Location: ' . APP_URL . 'stock/stockentry/viewAll');
+            header('Location: ' . APP_URL . 'stock/stock/viewAll');
             exit;
         }
 
@@ -729,7 +997,7 @@ class StockController extends Controller
 
         $result = $this->db->customQuery($query);
         if (empty($result)) {
-            header('Location: ' . APP_URL . 'stock/stockentry/viewAll');
+            header('Location: ' . APP_URL . 'stock/stock/viewAll');
             exit;
         }
 
@@ -746,7 +1014,7 @@ class StockController extends Controller
             'categories' => $categories
         ];
 
-        $this->viewWithLayout('stock/stockentry_edit', $data);
+        $this->viewWithLayout('stock/stockentry_edit_and_summary', $data);
     }
 
     /**
