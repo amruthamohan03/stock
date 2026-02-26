@@ -10,7 +10,7 @@
                             <h4 class="header-title">Two-Type Stock Entry System</h4>
                             <p class="text-muted mb-0">Type 1: Indent-based Entry | Type 2: Transfer Entry</p>
                         </div>
-                        <a href="<?= APP_URL; ?>stock/stock/viewAll" class="btn btn-sm btn-info">
+                        <a href="<?= APP_URL; ?>stock/viewAll" class="btn btn-sm btn-info">
                             <i class="mdi mdi-eye"></i> View All Entries
                         </a>
                     </div>
@@ -75,7 +75,51 @@
                                 <div id="collapseIndent" class="accordion-collapse collapse" data-bs-parent="#stockEntryAccordion">
                                     <div class="accordion-body">
                                         <form id="indentEntryForm" method="POST" action="">
+                                            <!-- Row 1: Classification -->
+                                            <div class="row mb-4">
+                                                <div class="col-md-4">
+                                                    <label for="indentItemType" class="form-label">
+                                                        <strong>Item Type</strong>
+                                                        <span class="text-danger">*</span>
+                                                    </label>
+                                                    <select id="indentItemType" class="form-select" required>
+                                                        <option value="">-- Select Item Type --</option>
+                                                        <?php foreach ($itemTypes as $type): ?>
+                                                            <option value="<?= $type; ?>">
+                                                                <?= str_replace('_', ' ', $type); ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </div>
 
+                                                <div class="col-md-4">
+                                                    <label for="indentCategory" class="form-label">
+                                                        <strong>Category</strong>
+                                                        <span class="text-danger">*</span>
+                                                    </label>
+                                                    <select id="indentCategory" class="form-select" required>
+                                                        <option value="">-- Select Category --</option>
+                                                        <?php foreach ($categories as $category): ?>
+                                                            <option value="<?= $category; ?>">
+                                                                <?= str_replace('_', ' ', $category); ?>
+                                                            </option>
+                                                        <?php endforeach; ?>
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <label for="indentBookVolume" class="form-label">
+                                                        <strong>Book Volume</strong>
+                                                        <span class="text-danger">*</span>
+                                                    </label>
+                                                    <select id="indentBookVolume" class="form-select" required>
+                                                        <option value="">-- Select Volume --</option>
+                                                        <option value="1">Volume 1</option>
+                                                        <option value="2">Volume 2</option>
+                                                        <option value="3">Volume 3</option>
+                                                    </select>
+                                                </div>
+                                            </div>
                                             <!-- Row 1: Group and Indent Selection -->
                                             <div class="row mb-3">
                                                 <div class="col-md-6">
@@ -93,30 +137,6 @@
                                                     </select>
                                                     <small class="text-muted d-block mt-1">Choose the item group to see available indents</small>
                                                 </div>
-
-                                                <div class="col-md-6">
-                                                    <label for="indentId" class="form-label">
-                                                        <strong>Select Indent</strong>
-                                                        <span class="text-danger">*</span>
-                                                    </label>
-                                                    <select id="indentId" class="form-select" required disabled>
-                                                        <option value="">-- Select Indent --</option>
-                                                    </select>
-                                                    <small class="text-muted d-block mt-1">Indents with status pending/partial (status_id ≤ 2)</small>
-                                                </div>
-                                            </div>
-
-                                            <!-- Row 2: Location and Date -->
-                                            <div class="row mb-3">
-                                                <div class="col-md-6">
-                                                    <label for="indentLocation" class="form-label">
-                                                        <strong>Storage Location</strong>
-                                                        <span class="text-danger">*</span>
-                                                    </label>
-                                                    <input type="text" id="indentLocation" class="form-control" placeholder="e.g., Room 101" required>
-                                                    <small class="text-muted d-block mt-1">Physical location where stock will be stored</small>
-                                                </div>
-
                                                 <div class="col-md-6">
                                                     <label for="indentTransactionDate" class="form-label">
                                                         <strong>Transaction Date</strong>
@@ -482,25 +502,6 @@ document.getElementById('indentGroupId').addEventListener('change', function() {
         .catch(err => console.error(err));
 });
 
-// Get items when indent is selected
-document.getElementById('indentId').addEventListener('change', function() {
-    const indentId = this.value;
-    
-    if (!indentId) {
-        document.getElementById('indentItemsBody').innerHTML = 
-            '<tr><td colspan="7" class="text-center text-muted py-3">Select indent to load items</td></tr>';
-        return;
-    }
-
-    fetch('<?= APP_URL; ?>stock/getIndentItems?indent_id=' + indentId)
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                loadIndentItems(data.data);
-            }
-        })
-        .catch(error => console.error('Error:', error));
-});
 
 function loadIndentItems(items) {
     const tbody = document.getElementById('indentItemsBody');
@@ -516,12 +517,13 @@ function loadIndentItems(items) {
                 <input type="checkbox" class="item-checkbox" 
                        data-item-id="${item.item_id}" 
                        data-indent-item-id="${item.id}"
-                       data-quantity="${item.quantity}">
+                       data-quantity="${item.quantity}"
+                       data-indent-id="${item.indent_id}">
             </td>
             <td><strong>${item.item_name || 'N/A'}</strong></td>
             <td>${item.make_name || '-'}</td>
             <td>${item.model_name || '-'}</td>
-            <td><small>${item.description || '-'}</small></td>
+            <td><small>${item.itemdescription || '-'}</small></td>
             <td class="text-center">
                 <input type="number" class="form-control form-control-sm quantity-input" 
                        value="${item.quantity}" min="1" data-indent-item-id="${item.id}">
@@ -545,53 +547,138 @@ document.getElementById('selectAllIndentItems').addEventListener('change', funct
 });
 
 // Handle indent form submission
+// document.getElementById('indentEntryForm').addEventListener('submit', function(e) {
+//     e.preventDefault();
+
+//     const selectedItems = Array.from(document.querySelectorAll('#indentItemsTable .item-checkbox:checked'))
+//         .map(checkbox => ({
+//             item_id: checkbox.dataset.itemId,
+//             indent_item_id: checkbox.dataset.indentItemId,
+//             quantity: parseInt(document.querySelector(`.quantity-input[data-indent-item-id="${checkbox.dataset.indentItemId}"]`).value),
+//             item_status: document.querySelector(`.status-select[data-indent-item-id="${checkbox.dataset.indentItemId}"]`).value
+//         }));
+
+//     if (selectedItems.length === 0) {
+//         alert('Please select at least one item');
+//         return;
+//     }
+
+//     const formData = new FormData();
+//     formData.append('indent_id', document.getElementById('indentId').value);
+//     formData.append('location', document.getElementById('indentLocation').value);
+//     formData.append('transaction_date', document.getElementById('indentTransactionDate').value);
+//     formData.append('received_from', document.getElementById('indentReceivedFrom').value);
+//     formData.append('remarks', document.getElementById('indentRemarks').value);
+    
+//     selectedItems.forEach((item, index) => {
+//         formData.append(`items[${index}][item_id]`, item.item_id);
+//         formData.append(`items[${index}][indent_item_id]`, item.indent_item_id);
+//         formData.append(`items[${index}][quantity]`, item.quantity);
+//         formData.append(`items[${index}][item_status]`, item.item_status);
+//     });
+
+//     fetch('<?= APP_URL; ?>stock/stock/saveIndentEntry', {
+//         method: 'POST',
+//         body: formData
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         if (data.success) {
+//             alert('✓ Stock entry saved successfully!\nBatch Code: ' + data.batch_code);
+//             document.getElementById('indentEntryForm').reset();
+//             document.getElementById('indentId').disabled = true;
+//             document.getElementById('indentItemsBody').innerHTML = 
+//                 '<tr><td colspan="7" class="text-center text-muted py-3">Select indent to load items</td></tr>';
+//         } else {
+//             alert('✗ Error: ' + data.message);
+//         }
+//     })
+//     .catch(error => console.error('Error:', error));
+// });
+
 document.getElementById('indentEntryForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
-    const selectedItems = Array.from(document.querySelectorAll('#indentItemsTable .item-checkbox:checked'))
-        .map(checkbox => ({
-            item_id: checkbox.dataset.itemId,
-            indent_item_id: checkbox.dataset.indentItemId,
-            quantity: parseInt(document.querySelector(`.quantity-input[data-indent-item-id="${checkbox.dataset.indentItemId}"]`).value),
-            item_status: document.querySelector(`.status-select[data-indent-item-id="${checkbox.dataset.indentItemId}"]`).value
-        }));
+    const groupId = document.getElementById('indentGroupId').value;
+    const itemType = document.getElementById('indentItemType').value;
+    const category = document.getElementById('indentCategory').value;
+    const bookVolume = document.getElementById('indentBookVolume').value;
+    const transactionDate = document.getElementById('indentTransactionDate').value;
+    const receivedFrom = document.getElementById('indentReceivedFrom').value;
+    const remarks = document.getElementById('indentRemarks').value;
 
-    if (selectedItems.length === 0) {
-        alert('Please select at least one item');
+    // Get all checked items
+    const checkedItems = Array.from(document.querySelectorAll('#indentItemsTable .item-checkbox:checked'));
+    
+    if (!groupId) {
+        alert('❌ Please select Item Group');
+        return;
+    }
+    if (!itemType) {
+        alert('❌ Please select Item Type');
+        return;
+    }
+    if (!category) {
+        alert('❌ Please select Category');
+        return;
+    }
+    if (!bookVolume) {
+        alert('❌ Please select Book Volume');
+        return;
+    }
+    if (!location) {
+        alert('❌ Please enter Storage Location');
+        return;
+    }
+    if (checkedItems.length === 0) {
+        alert('❌ Please select at least one item');
         return;
     }
 
+    const items = checkedItems.map(checkbox => ({
+        indent_item_id: checkbox.dataset.indentItemId,
+        item_id: parseInt(checkbox.dataset.itemId),
+        indent_id: parseInt(checkbox.dataset.indentId),
+        quantity: parseInt(checkbox.dataset.quantity),
+        item_status: document.querySelector(`.status-select[data-indent-item-id="${checkbox.dataset.indentItemId}"]`).value
+    }));
+
     const formData = new FormData();
-    formData.append('indent_id', document.getElementById('indentId').value);
-    formData.append('location', document.getElementById('indentLocation').value);
-    formData.append('transaction_date', document.getElementById('indentTransactionDate').value);
-    formData.append('received_from', document.getElementById('indentReceivedFrom').value);
-    formData.append('remarks', document.getElementById('indentRemarks').value);
+    formData.append('group_id', groupId);
+    formData.append('item_type', itemType);
+    formData.append('category', category);
+    formData.append('book_volume', bookVolume);
+    formData.append('location', location);
+    formData.append('transaction_date', transactionDate);
+    formData.append('received_from', receivedFrom);
+    formData.append('remarks', remarks);
     
-    selectedItems.forEach((item, index) => {
-        formData.append(`items[${index}][item_id]`, item.item_id);
+    items.forEach((item, index) => {
         formData.append(`items[${index}][indent_item_id]`, item.indent_item_id);
+        formData.append(`items[${index}][item_id]`, item.item_id);
+        formData.append(`items[${index}][indent_id]`, item.indent_id);
         formData.append(`items[${index}][quantity]`, item.quantity);
         formData.append(`items[${index}][item_status]`, item.item_status);
     });
 
-    fetch('<?= APP_URL; ?>stock/stock/saveIndentEntry', {
+    fetch('<?= APP_URL; ?>stock/saveIndentEntry', {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
+    .then(r => {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+    })
     .then(data => {
         if (data.success) {
-            alert('✓ Stock entry saved successfully!\nBatch Code: ' + data.batch_code);
+            alert('✓ ' + items.length + ' items accepted!\nBatch: ' + data.batch_code);
             document.getElementById('indentEntryForm').reset();
-            document.getElementById('indentId').disabled = true;
-            document.getElementById('indentItemsBody').innerHTML = 
-                '<tr><td colspan="7" class="text-center text-muted py-3">Select indent to load items</td></tr>';
+            document.getElementById('indentItemsBody').innerHTML = '<tr><td colspan="8" class="text-center text-muted py-3">Select Item Group to load items</td></tr>';
         } else {
             alert('✗ Error: ' + data.message);
         }
     })
-    .catch(error => console.error('Error:', error));
+    .catch(e => alert('✗ Error: ' + e.message));
 });
 
 // ============================================================================
@@ -724,7 +811,7 @@ document.getElementById('transferEntryForm').addEventListener('submit', function
         formData.append(`items[${index}][item_status]`, item.item_status);
     });
 
-    fetch('<?= APP_URL; ?>stock/stock/saveTransferEntry', {
+    fetch('<?= APP_URL; ?>stock/saveTransferEntry', {
         method: 'POST',
         body: formData
     })
@@ -745,7 +832,7 @@ document.getElementById('transferEntryForm').addEventListener('submit', function
 
 // Load statistics on page load
 window.addEventListener('load', function() {
-    fetch('<?= APP_URL; ?>stock/stock/summary')
+    fetch('<?= APP_URL; ?>stock/summary')
         .then(response => response.text())
         .then(data => {
             // Parse and update statistics

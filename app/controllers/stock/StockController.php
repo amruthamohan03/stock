@@ -22,10 +22,7 @@ class StockController extends Controller
     {
         // FIXED: Changed 'group_item_name_master_t' to 'item_group_t'
         // If your table has a different name, update accordingly
-        $itemGroups = $this->db->selectData('group_item_name_master_t', '*', ['display' => 'Y']);
-        // Alternative if table is named differently:
-        // $itemGroups = $this->db->selectData('group_item_name_master_t', '*', ['display' => 'Y']);
-        
+        $itemGroups = $this->db->selectData('group_item_name_master_t', '*', ['display' => 'Y']);        
         $locations = $this->db->selectData('issued_to_master_t', '*', ['display' => 'Y']);
         $items = $this->db->selectData('item_master_t', '*', ['display' => 'Y']);
         $itemTypes = ['CONSUMABLE', 'NON_CONSUMABLE'];
@@ -42,7 +39,191 @@ class StockController extends Controller
 
         $this->viewWithLayout('stock/stock', $data);
     }
+    public function saveIndentEntry()
+    { 
+        header('Content-Type: application/json');
 
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['success' => false, 'message' => 'Invalid request']);
+            exit;
+        }
+
+        try {
+            $this->db->beginTransaction();
+
+            $group_id = isset($_POST['group_id']) ? (int)$_POST['group_id'] : 0;
+            $item_type = isset($_POST['item_type']) ? trim($_POST['item_type']) : '';
+            $category = isset($_POST['category']) ? trim($_POST['category']) : '';
+            $book_volume = isset($_POST['book_volume']) ? (int)$_POST['book_volume'] : 1;
+            $location = isset($_POST['location']) ? trim($_POST['location']) : '';
+            $transaction_date = isset($_POST['transaction_date']) ? trim($_POST['transaction_date']) : date('Y-m-d');
+            $received_from = isset($_POST['received_from']) ? trim($_POST['received_from']) : null;
+            $items_data = isset($_POST['items']) ? $_POST['items'] : [];
+            $remarks = isset($_POST['remarks']) ? trim($_POST['remarks']) : null;
+
+            // Validation
+            if ($group_id <= 0) throw new Exception('Invalid group ID');
+            if (empty($item_type)) throw new Exception('Item Type is required');
+            if (empty($category)) throw new Exception('Category is required');
+            if ($book_volume <= 0) throw new Exception('Book Volume is required');
+            if (empty($location)) throw new Exception('Location is required');
+            if (empty($items_data)) throw new Exception('Please select items');
+
+            $userId = $_SESSION['user_id'] ?? 1;
+            $batchCode = 'INDENT_' . date('Ymd_His');
+            
+            // Create batch record
+            // $this->db->insertData('stock_entry_batch_t', [
+            //     'batch_code' => $batchCode,
+            //     'entry_type' => 'INDENT_BASED',
+            //     'batch_status' => 'SUBMITTED',
+            //     'batch_date' => $transaction_date,
+            //     'notes' => $remarks,
+            //     'created_by' => $userId,
+            //     'item_count' => count($items_data)
+            // ]);
+
+            $totalQuantity = 0;
+            $successCount = 0;
+            $processedIndentItems = [];
+
+            // Process each item with COMMON classification
+            foreach ($items_data as $item) {
+                $indent_item_id = (int)$item['indent_item_id'];
+                $item_id = (int)$item['item_id'];
+                $indent_id = (int)$item['indent_id'];
+                $quantity = (int)$item['quantity'];
+                $item_status = isset($item['item_status']) ? $item['item_status'] : 'WORKING';
+
+                if ($item_id <= 0 || $quantity <= 0) {
+                    continue;
+                }
+
+                // Check if stock book exists
+                $stockBook = $this->db->selectData('stock_book_t', '*', 
+                    ['item_id' => $item_id, 'location' => $location]);
+
+                if (empty($stockBook)) {
+                    // Create new stock book
+                    $stock_book_id = $this->db->insertData('stock_book_t', [
+                        'item_id' => $item_id,
+                        'location' => $location,
+                        'opening_balance' => $quantity,
+                        'current_balance' => $quantity,
+                        'created_by' => $userId
+                    ]);
+                    $newBalance = $quantity;
+                } else {
+                    $stock_book_id = $stockBook[0]['id'];
+                    $oldBalance = $stockBook[0]['current_balance'];
+                    $newBalance = $oldBalance + $quantity;
+
+                    // Update stock book
+                    $this->db->updateData('stock_book_t',
+                        ['current_balance' => $newBalance],
+                        ['id' => $stock_book_id]
+                    );
+                }
+
+                // Create stock transaction with COMMON classification fields
+                $transactionId = $this->db->insertData('stock_transaction_t', [
+                    'stock_book_id' => $stock_book_id,
+                    'transaction_date' => $transaction_date,
+                    'transaction_type' => 'RECEIPT',
+                    'stock_entry_type' => 'INDENT_BASED',
+                    'indent_id' => $indent_id,
+                    'indent_item_id' => $indent_item_id,
+                    'receipt_qty' => $quantity,
+                    'balance_qty' => $newBalance,
+                    'item_status' => $item_status,
+                    'received_from' => $received_from,
+                    'item_type' => $item_type,              // COMMON - same for all items
+                    'item_category' => $category,           // COMMON - same for all items
+                    'book_volume' => $book_volume,          // COMMON - same for all items
+                    'verification_status' => 'PENDING',
+                    'created_by' => $userId,
+                ]);
+
+                // Update indent item status to 3 (Accepted)
+                $this->db->updateData('indent_item_t', 
+                    ['status_id' => 3], 
+                    ['id' => $indent_item_id]
+                );
+
+                $totalQuantity += $quantity;
+                $successCount++;
+                $processedIndentItems[] = $indent_item_id;
+            }
+
+            $this->db->commit();
+
+            echo json_encode([
+                'success' => true,
+                'message' => $successCount . ' items accepted',
+                'item_count' => $successCount,
+                'total_quantity' => $totalQuantity
+            ]);
+
+        } catch (Exception $e) {
+            $this->db->rollback();
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ]);
+        }
+        exit;
+    }
+    public function getAllIndentItemsFromGroup()
+    {
+        header('Content-Type: application/json');
+
+        try {
+            $group_id = isset($_GET['group_id']) ? (int)$_GET['group_id'] : 0;
+
+            if ($group_id <= 0) {
+                echo json_encode(['success' => false, 'message' => 'Invalid group ID']);
+                exit;
+            }
+
+            // Get ALL items from ALL indents in this group
+            // Using ii.group_id (not item_group_id) as per your schema
+            $query = "SELECT 
+                        ii.id,
+                        ii.indent_id,
+                        ii.item_id,
+                        ii.qty_issued AS quantity,
+                        ii.status_id,
+                        i.item_name,
+                        mk.make_name,
+                        md.model_name,
+                        ii.item_description,
+                        im.indent_no
+                    FROM indent_item_t ii
+                    LEFT JOIN item_master_t i ON ii.item_id = i.id
+                    LEFT JOIN indent_master_t im ON ii.indent_id = im.id
+                    LEFT JOIN make_t mk ON ii.make_id = mk.id
+                    LEFT JOIN model_t md ON ii.model_id = md.id
+                    WHERE ii.group_id = '$group_id'
+                    AND ii.status_id <= 2
+                    ORDER BY im.indent_no DESC, ii.sl_no ASC";
+
+            $items = $this->db->customQuery($query);
+
+            echo json_encode([
+                'success' => true,
+                'data' => $items ?: []
+            ]);
+            exit;
+
+        } catch (Exception $e) {
+            http_response_code(500);
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ]);
+            exit;
+        }
+    }
     // ========================================================================
     // TYPE 1: INDENT-BASED ENTRY
     // ========================================================================
@@ -139,149 +320,6 @@ class StockController extends Controller
             ]);
             exit;
         }
-    }
-
-    /**
-     * Save indent-based stock entry
-     */
-    public function saveIndentEntry()
-    {
-        header('Content-Type: application/json');
-
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            echo json_encode(['success' => false, 'message' => 'Invalid request method']);
-            exit;
-        }
-
-        try {
-            $this->db->beginTransaction();
-
-            $indent_id = isset($_POST['indent_id']) ? (int)$_POST['indent_id'] : 0;
-            $location = isset($_POST['location']) ? htmlspecialchars(trim($_POST['location'])) : '';
-            $transaction_date = isset($_POST['transaction_date']) ? trim($_POST['transaction_date']) : date('Y-m-d');
-            $received_from = isset($_POST['received_from']) ? htmlspecialchars(trim($_POST['received_from'])) : '';
-            $items_data = isset($_POST['items']) ? $_POST['items'] : [];
-            $remarks = isset($_POST['remarks']) ? htmlspecialchars(trim($_POST['remarks'])) : null;
-
-            // Validation
-            if ($indent_id <= 0) {
-                throw new Exception('Invalid indent ID');
-            }
-            if (empty($location)) {
-                throw new Exception('Location is required');
-            }
-            if (empty($items_data)) {
-                throw new Exception('Please select at least one item');
-            }
-
-            $userId = $_SESSION['user_id'] ?? 1;
-            $batchCode = 'INDENT_' . date('Ymd_His');
-            
-            // Create batch
-            $batchId = $this->db->insertData('stock_entry_batch_t', [
-                'batch_code' => $batchCode,
-                'entry_type' => 'INDENT_BASED',
-                'batch_status' => 'SUBMITTED',
-                'batch_date' => $transaction_date,
-                'notes' => $remarks,
-                'created_by' => $userId,
-                'item_count' => count($items_data)
-            ]);
-
-            $totalQuantity = 0;
-
-            // Process each item
-            foreach ($items_data as $item) {
-                $item_id = (int)$item['item_id'];
-                $indent_item_id = (int)$item['indent_item_id'];
-                $quantity = (int)$item['quantity'];
-                $item_status = isset($item['item_status']) ? $item['item_status'] : 'WORKING';
-
-                if ($item_id <= 0 || $quantity <= 0) {
-                    continue;
-                }
-
-                // Get or create stock book
-                $stockBook = $this->db->selectData('stock_book_t', '*', 
-                    ['item_id' => $item_id, 'location' => $location]);
-
-                if (empty($stockBook)) {
-                    $stock_book_id = $this->db->insertData('stock_book_t', [
-                        'item_id' => $item_id,
-                        'location' => $location,
-                        'opening_balance' => $quantity,
-                        'current_balance' => $quantity,
-                        'created_by' => $userId
-                    ]);
-                    $currentBalance = $quantity;
-                } else {
-                    $stock_book_id = $stockBook[0]['id'];
-                    $currentBalance = $stockBook[0]['current_balance'];
-                }
-
-                $newBalance = $currentBalance + $quantity;
-
-                // Create transaction record
-                $transactionId = $this->db->insertData('stock_transaction_t', [
-                    'stock_book_id' => $stock_book_id,
-                    'transaction_date' => $transaction_date,
-                    'transaction_type' => 'RECEIPT',
-                    'stock_entry_type' => 'INDENT_BASED',
-                    'indent_id' => $indent_id,
-                    'indent_item_id' => $indent_item_id,
-                    'receipt_qty' => $quantity,
-                    'balance_qty' => $newBalance,
-                    'item_status' => $item_status,
-                    'received_from' => $received_from,
-                    'verification_status' => 'PENDING',
-                    'created_by' => $userId,
-                    'batch_code' => $batchCode
-                ]);
-
-                // Update indent item status to 3 (Accepted)
-                $this->db->updateData('indent_item_t', 
-                    ['status_id' => 3], 
-                    ['id' => $indent_item_id, 'indent_id' => $indent_id]
-                );
-
-                // Update stock book balance
-                $this->db->updateData('stock_book_t',
-                    ['current_balance' => $newBalance],
-                    ['id' => $stock_book_id]
-                );
-
-                // Create log entry
-                $this->createEntryLog($transactionId, 'CREATED', null, [
-                    'item_id' => $item_id,
-                    'quantity' => $quantity,
-                    'balance' => $newBalance
-                ], $userId);
-
-                $totalQuantity += $quantity;
-            }
-
-            // Update batch
-            $this->db->updateData('stock_entry_batch_t',
-                ['total_quantity' => $totalQuantity],
-                ['id' => $batchId]
-            );
-
-            $this->db->commit();
-
-            echo json_encode([
-                'success' => true,
-                'message' => 'Stock entry saved successfully',
-                'batch_code' => $batchCode
-            ]);
-
-        } catch (Exception $e) {
-            $this->db->rollback();
-            echo json_encode([
-                'success' => false,
-                'message' => 'Error: ' . $e->getMessage()
-            ]);
-        }
-        exit;
     }
 
     // ========================================================================
