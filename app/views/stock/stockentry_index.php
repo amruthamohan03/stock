@@ -456,7 +456,7 @@
         </div>
     </div>
 </div>
-<?php include(VIEW_PATH . 'layouts/partials/footer.php'); ?>
+
 <script>
 // ============================================================================
 // TYPE 1: INDENT-BASED ENTRY JAVASCRIPT
@@ -465,21 +465,29 @@
 // Get indents when group is selected
 document.getElementById('indentGroupId').addEventListener('change', function() {
     const groupId = this.value;
-    const tbody = document.getElementById('indentItemsBody');
-
+    const indentSelect = document.getElementById('indentId');
+    
     if (!groupId) {
-        tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted py-3">Select group to load items</td></tr>';
+        indentSelect.disabled = true;
+        indentSelect.innerHTML = '<option value="">-- Select Indent --</option>';
         return;
     }
 
-    fetch('<?= APP_URL; ?>stock/getIndentsByGroup?group_id=' + groupId)
-        .then(res => res.json())
+    fetch('<?= APP_URL; ?>stock/stock/getIndentsByGroup?group_id=' + groupId)
+        .then(response => response.json())
         .then(data => {
             if (data.success) {
-                loadIndentItems(data.data); // ✅ directly load table
+                indentSelect.innerHTML = '<option value="">-- Select Indent --</option>';
+                data.data.forEach(indent => {
+                    const option = document.createElement('option');
+                    option.value = indent.id;
+                    option.textContent = `[${indent.indent_no}] - ${indent.college_name || 'N/A'} (${indent.item_count} items)`;
+                    indentSelect.appendChild(option);
+                });
+                indentSelect.disabled = false;
             }
         })
-        .catch(err => console.error(err));
+        .catch(error => console.error('Error:', error));
 });
 
 // Get items when indent is selected
@@ -492,7 +500,7 @@ document.getElementById('indentId').addEventListener('change', function() {
         return;
     }
 
-    fetch('<?= APP_URL; ?>stock/getIndentItems?indent_id=' + indentId)
+    fetch('<?= APP_URL; ?>stock/stock/getIndentItems?indent_id=' + indentId)
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -519,8 +527,8 @@ function loadIndentItems(items) {
                        data-quantity="${item.quantity}">
             </td>
             <td><strong>${item.item_name || 'N/A'}</strong></td>
-            <td>${item.make_name || '-'}</td>
-            <td>${item.model_name || '-'}</td>
+            <td>${item.make || '-'}</td>
+            <td>${item.model || '-'}</td>
             <td><small>${item.description || '-'}</small></td>
             <td class="text-center">
                 <input type="number" class="form-control form-control-sm quantity-input" 
