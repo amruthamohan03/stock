@@ -328,7 +328,7 @@ let currentEntryId = <?= $entry['id']; ?>;
 
 function verifyEntry(entryId) {
     if (confirm('Verify this entry?')) {
-        fetch('<?= APP_URL; ?>stock/stock/verifyEntry', {
+        fetch('<?= APP_URL; ?>stock/verifyEntry', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
