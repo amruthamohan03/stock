@@ -614,15 +614,42 @@ class StockController extends Controller
             $conditions['verification_status'] = $status;
         }
 
-        $query = "SELECT st.*, sb.item_id, i.item_name, i.make, i.model,
-                         u.username as created_by_name,
-                         u_ver.username as verified_by_name
-                  FROM stock_transaction_t st
-                  LEFT JOIN stock_book_t sb ON st.stock_book_id = sb.id
-                  LEFT JOIN item_master_t i ON sb.item_id = i.id
-                  LEFT JOIN users_t u ON st.created_by = u.id
-                  LEFT JOIN users_t u_ver ON st.verified_by = u_ver.id
-                  WHERE 1=1";
+        $query = "SELECT 
+                    st.*, 
+                    sb.item_id, 
+                    i.item_name,
+
+                    mk.make_name,
+                    md.model_name,
+
+                    u.username AS created_by_name,
+                    u_ver.username AS verified_by_name
+
+                FROM stock_transaction_t st
+
+                LEFT JOIN stock_book_t sb 
+                    ON st.stock_book_id = sb.id
+
+                LEFT JOIN item_master_t i 
+                    ON sb.item_id = i.id
+
+                LEFT JOIN indent_item_t ii 
+                    ON ii.indent_id = st.indent_id 
+                    AND ii.item_id = st.indent_item_id
+
+                LEFT JOIN make_t mk 
+                    ON mk.id = ii.make_id
+
+                LEFT JOIN model_t md 
+                    ON md.id = ii.model_id
+
+                LEFT JOIN users_t u 
+                    ON st.created_by = u.id
+
+                LEFT JOIN users_t u_ver 
+                    ON st.verified_by = u_ver.id
+
+                WHERE 1=1";
 
         if ($entryType !== 'ALL') {
             $query .= " AND st.stock_entry_type = '$entryType'";
@@ -667,25 +694,52 @@ class StockController extends Controller
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
         if ($id <= 0) {
-            header('Location: ' . APP_URL . 'stock/stockentry/viewAll');
+            header('Location: ' . APP_URL . 'stock/stock/viewAll');
             exit;
         }
 
-        $query = "SELECT st.*, sb.item_id, sb.location, i.item_name, i.make, i.model,
-                         u.username as created_by_name,
-                         u_ver.username as verified_by_name,
-                         im.indent_no
-                  FROM stock_transaction_t st
-                  LEFT JOIN stock_book_t sb ON st.stock_book_id = sb.id
-                  LEFT JOIN item_master_t i ON sb.item_id = i.id
-                  LEFT JOIN users_t u ON st.created_by = u.id
-                  LEFT JOIN users_t u_ver ON st.verified_by = u_ver.id
-                  LEFT JOIN indent_master_t im ON st.indent_id = im.id
-                  WHERE st.id = $id";
+        $query = "SELECT 
+                        st.*, 
+                        sb.item_id, 
+                        sb.location, 
+                        i.item_name, 
+                        mk.make_name,
+                        md.model_name,
+                        u.username AS created_by_name,
+                        u_ver.username AS verified_by_name,
+                        im.indent_no,
+                        ii.item_description
+                    FROM stock_transaction_t st
+
+                    LEFT JOIN stock_book_t sb 
+                        ON st.stock_book_id = sb.id
+
+                    LEFT JOIN item_master_t i 
+                        ON sb.item_id = i.id
+
+                    LEFT JOIN indent_master_t im 
+                        ON st.indent_id = im.id
+
+                    LEFT JOIN indent_item_t ii 
+                        ON ii.indent_id = im.id
+
+                    LEFT JOIN make_t mk 
+                        ON ii.make_id = mk.id
+
+                    LEFT JOIN model_t md 
+                        ON ii.model_id = md.id
+
+                    LEFT JOIN users_t u 
+                        ON st.created_by = u.id
+
+                    LEFT JOIN users_t u_ver 
+                        ON st.verified_by = u_ver.id
+
+                    WHERE st.id = $id";
 
         $result = $this->db->customQuery($query);
         if (empty($result)) {
-            header('Location: ' . APP_URL . 'stock/stockentry/viewAll');
+            header('Location: ' . APP_URL . 'stock/stock/viewAll');
             exit;
         }
 
@@ -717,7 +771,7 @@ class StockController extends Controller
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
         if ($id <= 0) {
-            header('Location: ' . APP_URL . 'stock/stockentry/viewAll');
+            header('Location: ' . APP_URL . 'stock/stock/viewAll');
             exit;
         }
 
@@ -729,7 +783,7 @@ class StockController extends Controller
 
         $result = $this->db->customQuery($query);
         if (empty($result)) {
-            header('Location: ' . APP_URL . 'stock/stockentry/viewAll');
+            header('Location: ' . APP_URL . 'stock/stock/viewAll');
             exit;
         }
 
@@ -746,7 +800,7 @@ class StockController extends Controller
             'categories' => $categories
         ];
 
-        $this->viewWithLayout('stock/stockentry_edit', $data);
+        $this->viewWithLayout('stock/stockentry_edit_and_summary', $data);
     }
 
     /**

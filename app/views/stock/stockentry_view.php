@@ -67,7 +67,7 @@
                         <div class="row mb-3">
                             <div class="col-md-12">
                                 <label class="form-label text-muted"><small>Description</small></label>
-                                <p><?= htmlspecialchars($entry['description'] ?? 'N/A'); ?></p>
+                                <p><?= htmlspecialchars($entry['item_description'] ?? 'N/A'); ?></p>
                             </div>
                         </div>
 

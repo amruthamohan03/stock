@@ -138,33 +138,33 @@
                                             </td>
                                             <td>
                                                 <div class="btn-group btn-group-sm" role="group">
-                                                    <a href="<?= APP_URL; ?>stock/stock/view?id=<?= $entry['id']; ?>" 
+                                                    <a href="<?= APP_URL; ?>stock/viewSingle?id=<?= $entry['id']; ?>" 
                                                        class="btn btn-outline-info" title="View">
-                                                        <i class="mdi mdi-eye"></i>
+                                                        <i class="ti ti-eye"></i>
                                                     </a>
 
                                                     <?php if ($entry['verification_status'] === 'PENDING'): ?>
-                                                        <a href="<?= APP_URL; ?>stock/stock/edit?id=<?= $entry['id']; ?>" 
+                                                        <a href="<?= APP_URL; ?>stock/edit?id=<?= $entry['id']; ?>" 
                                                            class="btn btn-outline-warning" title="Edit">
-                                                            <i class="mdi mdi-pencil"></i>
+                                                            <i class="ti ti-pencil"></i>
                                                         </a>
 
                                                         <button type="button" class="btn btn-outline-success" 
                                                                 onclick="verifyEntry(<?= $entry['id']; ?>)" 
                                                                 title="Verify">
-                                                            <i class="mdi mdi-check-circle"></i>
+                                                            <i class="ti ti-check"></i>
                                                         </button>
 
                                                         <button type="button" class="btn btn-outline-danger" 
                                                                 onclick="showRejectModal(<?= $entry['id']; ?>)" 
                                                                 title="Reject">
-                                                            <i class="mdi mdi-close-circle"></i>
+                                                            <i class="ti ti-circle-x"></i>
                                                         </button>
 
                                                         <button type="button" class="btn btn-outline-dark" 
                                                                 onclick="deleteEntry(<?= $entry['id']; ?>)" 
                                                                 title="Delete">
-                                                            <i class="mdi mdi-delete"></i>
+                                                            <i class="ti ti-trash "></i>
                                                         </button>
                                                     <?php endif; ?>
                                                 </div>
@@ -264,7 +264,7 @@
         </div>
     </div>
 </div>
-
+<?php include(VIEW_PATH . 'layouts/partials/footer.php'); ?>
 <script>
 let rejectEntryId = null;
 
