@@ -220,11 +220,11 @@
                             <div class="row">
                                 <div class="col-md-4">
                                     <label class="form-label text-muted"><small>Source Location ID</small></label>
-                                    <p><?= $transferDetail[0]['source_location_id']; ?></p>
+                                    <p><?= $transferDetail[0]['source_location']; ?></p>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label text-muted"><small>Destination Location ID</small></label>
-                                    <p><?= $transferDetail[0]['destination_location_id']; ?></p>
+                                    <p><?= $transferDetail[0]['destination_location']; ?></p>
                                 </div>
                                 <div class="col-md-4">
                                     <label class="form-label text-muted"><small>Quantity Transferred</small></label>

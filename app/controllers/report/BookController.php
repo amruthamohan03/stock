@@ -594,7 +594,8 @@ class BookController extends Controller
                    sb.location, sb.opening_balance,
                    imt.item_name, imt.category_id,
                    mk.make_name, md.model_name, ii.item_description,
-                   im_i.indent_no AS indent_ref
+                   im_i.indent_no AS indent_ref,
+                   group_name
             FROM stock_transaction_t st
             INNER JOIN stock_book_t       sb  ON sb.id  = st.stock_book_id
             INNER JOIN item_master_t      imt ON imt.id = sb.item_id
@@ -602,6 +603,7 @@ class BookController extends Controller
             LEFT JOIN  department_master_t dep ON dep.id = st.department_id
             LEFT JOIN  indent_master_t   im_i ON im_i.id = st.indent_id
             LEFT JOIN  indent_item_t       ii ON ii.indent_id = st.indent_id AND ii.item_id = sb.item_id
+            LEFT JOIN  group_item_name_master_t   gm ON gm.id = ii.group_id
             LEFT JOIN  make_t              mk ON mk.id  = ii.make_id
             LEFT JOIN  model_t             md ON md.id  = ii.model_id
             $where
@@ -616,6 +618,7 @@ class BookController extends Controller
                 $ledgers[$bid] = [
                     'page_no' => 'ST-' . str_pad($bid, 2, '0', STR_PAD_LEFT),
                     'item_name' => $r['item_name'],
+                    'group_name' => $r['group_name'],
                     'make_name' => $r['make_name'],
                     'model_name' => $r['model_name'],
                     'description' => $r['item_description'],
@@ -646,10 +649,7 @@ class BookController extends Controller
 
         foreach ($ledgers as $bid => $ledger) {
             $articleLine = implode(' / ', array_filter([
-                $ledger['item_name'],
-                $ledger['make_name'],
-                $ledger['model_name'],
-                $ledger['description'],
+                $ledger['group_name']
             ]));
 
             $pdf .= '<div class="lpage">';
