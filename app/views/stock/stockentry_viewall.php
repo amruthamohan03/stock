@@ -389,7 +389,7 @@ function resetFilters() {
 
 function verifyEntry(entryId) {
     if (confirm('Verify this entry?')) {
-        fetch('<?= APP_URL; ?>stock/stock/verifyEntry', {
+        fetch('<?= APP_URL; ?>stock/verifyEntry', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -421,7 +421,7 @@ function confirmReject() {
         return;
     }
 
-    fetch('<?= APP_URL; ?>stock/stock/rejectEntry', {
+    fetch('<?= APP_URL; ?>stock/rejectEntry', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -451,7 +451,7 @@ function deleteEntry(entryId) {
         confirmButtonText: 'Yes, delete it'
     }).then(result => {
         if (result.isConfirmed) {
-            fetch('<?= APP_URL; ?>stock/stock/deleteEntry', {
+            fetch('<?= APP_URL; ?>stock/deleteEntry', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',

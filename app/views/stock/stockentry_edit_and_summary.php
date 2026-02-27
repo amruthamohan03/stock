@@ -10,7 +10,7 @@
                             <h4 class="header-title">Edit Stock Entry #<?= $entry['id']; ?></h4>
                             <p class="text-muted mb-0">Modify pending entry details</p>
                         </div>
-                        <a href="<?= APP_URL; ?>stock/stock/viewSingle?id=<?= $entry['id']; ?>" class="btn btn-sm btn-secondary">
+                        <a href="<?= APP_URL; ?>stock/viewSingle?id=<?= $entry['id']; ?>" class="btn btn-sm btn-secondary">
                             <i class="mdi mdi-arrow-left"></i> Back
                         </a>
                     </div>
@@ -318,16 +318,16 @@ if (isset($_GET['view']) && $_GET['view'] === 'summary'):
                         <h5 class="mb-0">Quick Actions</h5>
                     </div>
                     <div class="card-body">
-                        <a href="<?= APP_URL; ?>stock/stock/viewAll?status=PENDING" class="btn btn-warning me-2">
+                        <a href="<?= APP_URL; ?>stock/viewAll?status=PENDING" class="btn btn-warning me-2">
                             <i class="mdi mdi-clock-outline"></i> View Pending Entries
                         </a>
-                        <a href="<?= APP_URL; ?>stock/stock/viewAll?type=INDENT_BASED" class="btn btn-primary me-2">
+                        <a href="<?= APP_URL; ?>stock/viewAll?type=INDENT_BASED" class="btn btn-primary me-2">
                             <i class="mdi mdi-checkbox-marked-circle"></i> Indent-Based Only
                         </a>
-                        <a href="<?= APP_URL; ?>stock/stock/viewAll?type=TRANSFER" class="btn btn-success me-2">
+                        <a href="<?= APP_URL; ?>stock/viewAll?type=TRANSFER" class="btn btn-success me-2">
                             <i class="mdi mdi-transfer"></i> Transfer Only
                         </a>
-                        <a href="<?= APP_URL; ?>stock/stock/viewByGroup" class="btn btn-info">
+                        <a href="<?= APP_URL; ?>stock/viewByGroup" class="btn btn-info">
                             <i class="mdi mdi-folder-multiple"></i> View by Group
                         </a>
                     </div>
