@@ -38,6 +38,7 @@ class App {
             'roleDashboardCard'     => 'mapping/',
             'dashboardCard'         => 'masters/',
             'live'                  => 'report/',
+            'custom'                => 'report/',
 
         ];
 

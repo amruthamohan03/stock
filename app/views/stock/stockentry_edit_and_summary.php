@@ -47,8 +47,7 @@
                                     </label>
                                     <select id="itemStatus" name="item_status" class="form-select">
                                         <option value="WORKING" <?= ($entry['item_status'] ?? 'WORKING') === 'WORKING' ? 'selected' : ''; ?>>Working</option>
-                                        <option value="FAULTY" <?= ($entry['item_status'] ?? '') === 'FAULTY' ? 'selected' : ''; ?>>Faulty</option>
-                                        <option value="UNDER_REPAIR" <?= ($entry['item_status'] ?? '') === 'UNDER_REPAIR' ? 'selected' : ''; ?>>Under Repair</option>
+                                        <option value="NOT WORKING" <?= ($entry['item_status'] ?? '') === 'NOT WORKING' ? 'selected' : ''; ?>>Not Working</option>                                        
                                         <option value="DELETED" <?= ($entry['item_status'] ?? '') === 'DELETED' ? 'selected' : ''; ?>>Entry Deleted From Stock Book</option>
                                     </select>
                                 </div>
@@ -126,7 +125,7 @@ document.getElementById('editEntryForm').addEventListener('submit', function(e) 
 
     const formData = new FormData(this);
 
-    fetch('<?= APP_URL; ?>stock/stock/updateEntry', {
+    fetch('<?= APP_URL; ?>stock/updateEntry', {
         method: 'POST',
         body: formData
     })
@@ -135,6 +134,7 @@ document.getElementById('editEntryForm').addEventListener('submit', function(e) 
         if (data.success) {
             document.getElementById('successMessage').textContent = data.message;
             new bootstrap.Modal(document.getElementById('successModal')).show();
+
         } else {
             alert('✗ Error: ' + data.message);
         }

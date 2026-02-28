@@ -595,6 +595,7 @@ class BookController extends Controller
                    imt.item_name, imt.category_id,
                    mk.make_name, md.model_name, ii.item_description,
                    im_i.indent_no AS indent_ref,
+                   im_i.indent_date,
                    group_name
             FROM stock_transaction_t st
             INNER JOIN stock_book_t       sb  ON sb.id  = st.stock_book_id
@@ -607,15 +608,27 @@ class BookController extends Controller
             LEFT JOIN  make_t              mk ON mk.id  = ii.make_id
             LEFT JOIN  model_t             md ON md.id  = ii.model_id
             $where
-            ORDER BY st.stock_book_id ASC, st.transaction_date ASC, st.id ASC
+            ORDER BY gm.group_name ASC, im_i.indent_no ASC, im_i.indent_date ASC, ii.stock_book_page_no ASC
         ");
 
-        /* Group by stock_book_id → one ledger page each */
+        /* Group by item group → one ledger page for each item group (with multiple items) */
         $ledgers = [];
         foreach ($rows as $r) {
+            $groupName = $r['group_name'] ?: 'Ungrouped Items';
             $bid = $r['stock_book_id'];
-            if (!isset($ledgers[$bid])) {
-                $ledgers[$bid] = [
+            
+            if (!isset($ledgers[$groupName])) {
+                $ledgers[$groupName] = [
+                    'group_name' => $groupName,
+                    'college' => $r['college_name'] ?: $collegeName,
+                    'dept' => $r['department_name'] ?: $deptName,
+                    'items' => [],
+                ];
+            }
+            
+            // Store each item with its transactions
+            if (!isset($ledgers[$groupName]['items'][$bid])) {
+                $ledgers[$groupName]['items'][$bid] = [
                     'page_no' => 'ST-' . str_pad($bid, 2, '0', STR_PAD_LEFT),
                     'item_name' => $r['item_name'],
                     'group_name' => $r['group_name'],
@@ -624,12 +637,11 @@ class BookController extends Controller
                     'description' => $r['item_description'],
                     'location' => $r['location'],
                     'opening_bal' => $r['opening_balance'],
-                    'college' => $r['college_name'] ?: $collegeName,
-                    'dept' => $r['department_name'] ?: $deptName,
                     'rows' => [],
                 ];
             }
-            $ledgers[$bid]['rows'][] = $r;
+            
+            $ledgers[$groupName]['items'][$bid]['rows'][] = $r;
         }
 
         $txnColors = [
@@ -647,131 +659,134 @@ class BookController extends Controller
             $pdf .= $this->_noDataPage();
         }
 
-        foreach ($ledgers as $bid => $ledger) {
-            $articleLine = implode(' / ', array_filter([
-                $ledger['group_name']
-            ]));
+        foreach ($ledgers as $groupName => $groupData) {
+            
+            foreach ($groupData['items'] as $bid => $ledger) {
+                $articleLine = implode(' / ', array_filter([
+                    $ledger['group_name']
+                ]));
 
-            $pdf .= '<div class="lpage">';
+                $pdf .= '<div class="lpage">';
 
-            /* ── Header (matches physical ST-77 book) ── */
-            $pdf .= '
-            <table style="width:100%;margin-bottom:3px">
-                <tr>
-                    <td style="width:75%">
-                        <div style="font-size:13px;font-weight:bold">' . htmlspecialchars($ledger['college'] ?: 'Government Polytechnic College') . '</div>
-                        ' . ($ledger['dept'] ? '<div style="font-size:10px;font-weight:bold;color:#333">' . htmlspecialchars($ledger['dept']) . '</div>' : '') . '
-                        ' . ($acyear ? '<div style="font-size:9px;color:#666">Academic Year: ' . htmlspecialchars($acyear) . '</div>' : '') . '
-                    </td>
-                    <td style="text-align:right;vertical-align:top">
-                        <div style="font-size:22px;font-weight:bold;color:#444;font-style:italic;letter-spacing:2px">
-                            ' . $ledger['page_no'] . '
-                        </div>
-                    </td>
-                </tr>
-            </table>
-
-            <div style="text-align:center;font-size:14px;font-weight:bold;letter-spacing:3px;
-                        border-top:2px solid #111;border-bottom:2px solid #111;padding:4px 0;margin-bottom:6px">
-                STOCK BOOK OF STORES
-            </div>
-
-            <table style="width:100%;font-size:10px;margin-bottom:6px">
-                <tr>
-                    <td>
-                        <b>Name of Article:</b>
-                        <span style="border-bottom:1px solid #555;display:inline;padding:0 8px;margin-left:6px">'
-                . htmlspecialchars($articleLine) . '</span>
-                    </td>
-                    ' . ($ledger['location'] ? '<td style="text-align:right;font-size:9px;color:#666">Location: <b>' . htmlspecialchars($ledger['location']) . '</b></td>' : '') . '
-                </tr>
-            </table>';
-
-            /* ── Ledger table ── */
-            $pdf .= '
-            <table class="register-table" style="font-size:10px">
-                <thead>
+                /* ── Header (matches physical ST-77 book) ── */
+                $pdf .= '
+                <table style="width:100%;margin-bottom:3px">
                     <tr>
-                        <th style="width:65px">Date</th>
-                        <th style="width:105px">No. and date of<br>voucher or invoice</th>
-                        <th>From whom received<br>or to whom issued</th>
-                        <th style="width:52px;text-align:center">Receipt</th>
-                        <th style="width:48px;text-align:center">Issued</th>
-                        <th style="width:60px;text-align:center">Balance after<br>each transaction</th>
-                        <th style="width:65px;text-align:center">Initials of<br>Receiver</th>
-                        <th>Remarks</th>
+                        <td style="width:75%">
+                            <div style="font-size:13px;font-weight:bold">' . htmlspecialchars($groupData['college'] ?: 'Government Polytechnic College') . '</div>
+                            ' . ($groupData['dept'] ? '<div style="font-size:10px;font-weight:bold;color:#333">' . htmlspecialchars($groupData['dept']) . '</div>' : '') . '
+                            ' . ($acyear ? '<div style="font-size:9px;color:#666">Academic Year: ' . htmlspecialchars($acyear) . '</div>' : '') . '
+                        </td>
+                        <td style="text-align:right;vertical-align:top">
+                            <div style="font-size:22px;font-weight:bold;color:#444;font-style:italic;letter-spacing:2px">
+                                ' . $ledger['page_no'] . '
+                            </div>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                <tr style="background:#f5f5f5">
+                </table>
+
+                <div style="text-align:center;font-size:14px;font-weight:bold;letter-spacing:3px;
+                            border-top:2px solid #111;border-bottom:2px solid #111;padding:4px 0;margin-bottom:6px">
+                    STOCK BOOK OF STORES
+                </div>
+
+                <table style="width:100%;font-size:10px;margin-bottom:6px">
+                    <tr>
+                        <td>
+                            <b>Name of Article:</b>
+                            <span style="border-bottom:1px solid #555;display:inline;padding:0 8px;margin-left:6px">'
+                    . htmlspecialchars($articleLine) . '</span>
+                        </td>
+                        ' . ($ledger['location'] ? '<td style="text-align:right;font-size:9px;color:#666">Location: <b>' . htmlspecialchars($ledger['location']) . '</b></td>' : '') . '
+                    </tr>
+                </table>';
+
+                /* ── Ledger table ── */
+                $pdf .= '
+                <table class="register-table" style="font-size:10px">
+                    <thead>
+                        <tr>
+                            <th style="width:65px">Date</th>
+                            <th style="width:105px">No. and date of<br>voucher or invoice</th>
+                            <th>From whom received<br>or to whom issued</th>
+                            <th style="width:52px;text-align:center">Receipt</th>
+                            <th style="width:48px;text-align:center">Issued</th>
+                            <th style="width:60px;text-align:center">Balance after<br>each transaction</th>
+                            <th style="width:65px;text-align:center">Initials of<br>Receiver</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <tr style="background:#f5f5f5">
+                        <td></td><td></td>
+                        <td style="font-style:italic"><b>Brought forward</b></td>
+                        <td style="text-align:center">' . ($ledger['opening_bal'] > 0 ? $ledger['opening_bal'] : '..') . '</td>
+                        <td></td>
+                        <td style="text-align:center;font-weight:bold">' . ($ledger['opening_bal'] ?: 0) . '</td>
+                        <td></td><td></td>
+                    </tr>';
+
+                foreach ($ledger['rows'] as $r) {
+                    $col = $txnColors[$r['transaction_type']] ?? '#333';
+                    $label = str_replace('_', ' ', $r['transaction_type']);
+                    $voucher = $r['voucher_no'] ?? '';
+                    if ($r['voucher_date'])
+                        $voucher .= "\n" . $r['voucher_date'];
+                    if ($r['indent_ref'])
+                        $voucher .= "\nIndent: " . $r['indent_ref'];
+                    $whom = $r['received_from'] ?: ($r['issued_to'] ?: '—');
+
+                    $pdf .= '<tr>
+                        <td>' . $r['transaction_date'] . '</td>
+                        <td style="font-size:9px">' . nl2br(htmlspecialchars($voucher)) . '</td>
+                        <td>' . htmlspecialchars($whom) . '
+                            <br><span style="color:' . $col . ';font-size:8px;font-weight:bold">' . $label . '</span>
+                        </td>
+                        <td style="text-align:center;font-weight:bold;color:#1a7f37">' . ($r['receipt_qty'] > 0 ? $r['receipt_qty'] : '') . '</td>
+                        <td style="text-align:center;font-weight:bold;color:#c62828">' . ($r['issue_qty'] > 0 ? $r['issue_qty'] : '') . '</td>
+                        <td style="text-align:center;font-weight:bold">' . $r['balance_qty'] . '</td>
+                        <td style="text-align:center;font-size:9px">' . htmlspecialchars($r['receiver_initial'] ?? '') . '</td>
+                        <td style="font-size:9px">' . htmlspecialchars($r['remarks'] ?? '') . '</td>
+                    </tr>';
+                }
+                for ($b = 0; $b < max(0, 8 - count($ledger['rows'])); $b++) {
+                    $pdf .= '<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';
+                }
+                $lastBalance = !empty($ledger['rows']) ? end($ledger['rows'])['balance_qty'] : $ledger['opening_bal'];
+                $pdf .= '<tr style="background:#f5f5f5">
                     <td></td><td></td>
-                    <td style="font-style:italic"><b>Brought forward</b></td>
-                    <td style="text-align:center">' . ($ledger['opening_bal'] > 0 ? $ledger['opening_bal'] : '..') . '</td>
-                    <td></td>
-                    <td style="text-align:center;font-weight:bold">' . ($ledger['opening_bal'] ?: 0) . '</td>
+                    <td style="font-style:italic"><b>Carried over</b></td>
+                    <td></td><td></td>
+                    <td style="text-align:center;font-weight:bold">' . ($lastBalance ?: 0) . '</td>
                     <td></td><td></td>
                 </tr>';
+                $pdf .= '</tbody></table>';
 
-            foreach ($ledger['rows'] as $r) {
-                $col = $txnColors[$r['transaction_type']] ?? '#333';
-                $label = str_replace('_', ' ', $r['transaction_type']);
-                $voucher = $r['voucher_no'] ?? '';
-                if ($r['voucher_date'])
-                    $voucher .= "\n" . $r['voucher_date'];
-                if ($r['indent_ref'])
-                    $voucher .= "\nIndent: " . $r['indent_ref'];
-                $whom = $r['received_from'] ?: ($r['issued_to'] ?: '—');
+                /* ── Signature strip ── */
+                $pdf .= '
+                <table style="width:100%;margin-top:18px;font-size:10px;border-collapse:collapse">
+                    <tr>
+                        <td style="width:50%">
+                            Store Keeper:<br>
+                            <span style="border-bottom:1px solid #555;display:inline-block;min-width:170px;margin-top:6px">
+                                ................................
+                            </span>
+                        </td>
+                        <td style="width:50%;text-align:right">
+                            Checked by:<br>
+                            <span style="border-bottom:1px solid #555;display:inline-block;min-width:170px;margin-top:6px">
+                                ................................
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+                <div style="margin-top:8px;font-size:7.5px;color:#888">
+                    Printed: ' . date('d M Y, h:i A') . '
+                    ' . ($from && $to ? ' &nbsp;|&nbsp; Period: ' . date('d M Y', strtotime($from)) . ' – ' . date('d M Y', strtotime($to)) : '') . '
+                </div>';
 
-                $pdf .= '<tr>
-                    <td>' . $r['transaction_date'] . '</td>
-                    <td style="font-size:9px">' . nl2br(htmlspecialchars($voucher)) . '</td>
-                    <td>' . htmlspecialchars($whom) . '
-                        <br><span style="color:' . $col . ';font-size:8px;font-weight:bold">' . $label . '</span>
-                    </td>
-                    <td style="text-align:center;font-weight:bold;color:#1a7f37">' . ($r['receipt_qty'] > 0 ? $r['receipt_qty'] : '') . '</td>
-                    <td style="text-align:center;font-weight:bold;color:#c62828">' . ($r['issue_qty'] > 0 ? $r['issue_qty'] : '') . '</td>
-                    <td style="text-align:center;font-weight:bold">' . $r['balance_qty'] . '</td>
-                    <td style="text-align:center;font-size:9px">' . htmlspecialchars($r['receiver_initial'] ?? '') . '</td>
-                    <td style="font-size:9px">' . htmlspecialchars($r['remarks'] ?? '') . '</td>
-                </tr>';
+                $pdf .= '</div>'; // .lpage
             }
-            for ($b = 0; $b < max(0, 8 - count($ledger['rows'])); $b++) {
-                $pdf .= '<tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>';
-            }
-            $lastBalance = !empty($ledger['rows']) ? end($ledger['rows'])['balance_qty'] : $ledger['opening_bal'];
-            $pdf .= '<tr style="background:#f5f5f5">
-                <td></td><td></td>
-                <td style="font-style:italic"><b>Carried over</b></td>
-                <td></td><td></td>
-                <td style="text-align:center;font-weight:bold">' . ($lastBalance ?: 0) . '</td>
-                <td></td><td></td>
-            </tr>';
-            $pdf .= '</tbody></table>';
-
-            /* ── Signature strip ── */
-            $pdf .= '
-            <table style="width:100%;margin-top:18px;font-size:10px;border-collapse:collapse">
-                <tr>
-                    <td style="width:50%">
-                        Store Keeper:<br>
-                        <span style="border-bottom:1px solid #555;display:inline-block;min-width:170px;margin-top:6px">
-                            ................................
-                        </span>
-                    </td>
-                    <td style="width:50%;text-align:right">
-                        Checked by:<br>
-                        <span style="border-bottom:1px solid #555;display:inline-block;min-width:170px;margin-top:6px">
-                            ................................
-                        </span>
-                    </td>
-                </tr>
-            </table>
-            <div style="margin-top:8px;font-size:7.5px;color:#888">
-                Printed: ' . date('d M Y, h:i A') . '
-                ' . ($from && $to ? ' &nbsp;|&nbsp; Period: ' . date('d M Y', strtotime($from)) . ' – ' . date('d M Y', strtotime($to)) : '') . '
-            </div>';
-
-            $pdf .= '</div>'; // .lpage
         }
         $pdf .= '</div>';
         $this->_renderPdf($pdf, 'stock_book', 'portrait');

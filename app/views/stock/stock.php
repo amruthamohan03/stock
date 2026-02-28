@@ -114,7 +114,7 @@
                                                     </label>
                                                     <select id="indentBookVolume" class="form-select" required>
                                                         <option value="">-- Select Volume --</option>
-                                                        <option value="1">Volume 1</option>
+                                                        <option value="1" selected >Volume 1</option>
                                                         <option value="2">Volume 2</option>
                                                         <option value="3">Volume 3</option>
                                                     </select>
@@ -456,8 +456,8 @@
                         <label for="modalItemStatus" class="form-label">Status</label>
                         <select id="modalItemStatus" class="form-select">
                             <option value="WORKING">Working</option>
-                            <option value="FAULTY">Faulty</option>
-                            <option value="UNDER_REPAIR">Under Repair</option>
+                            <option value="NOT WORKING">Not Working</option>
+                            <option value="DELETED">Deleted</option>
                         </select>
                     </div>
                 </div>
@@ -520,10 +520,10 @@ function loadIndentItems(items) {
                        data-quantity="${item.quantity}"
                        data-indent-id="${item.indent_id}">
             </td>
-            <td><strong>${item.item_name || 'N/A'}</strong></td>
+            <td><strong>${item.item_name ?? 'N/A'}${item.indent_no ? ' (Indent No : ' + item.indent_no + ')' : ''}</strong></td>
             <td>${item.make_name || '-'}</td>
             <td>${item.model_name || '-'}</td>
-            <td><small>${item.itemdescription || '-'}</small></td>
+            <td><small><br>${item.item_description || '-'}</small></td>
             <td class="text-center">
                 <input type="number" class="form-control form-control-sm quantity-input" 
                        value="${item.quantity}" min="1" data-indent-item-id="${item.id}">
@@ -531,8 +531,8 @@ function loadIndentItems(items) {
             <td>
                 <select class="form-select form-select-sm status-select" data-indent-item-id="${item.id}">
                     <option value="WORKING">Working</option>
-                    <option value="FAULTY">Faulty</option>
-                    <option value="UNDER_REPAIR">Under Repair</option>
+                    <option value="NOT WORKING">Not Working</option>
+                    <option value="DELETED">Deleted</option>
                 </select>
             </td>
         </tr>
@@ -674,6 +674,7 @@ document.getElementById('indentEntryForm').addEventListener('submit', function(e
             alert('✓ ' + items.length + ' items accepted!\nBatch: ' + data.batch_code);
             document.getElementById('indentEntryForm').reset();
             document.getElementById('indentItemsBody').innerHTML = '<tr><td colspan="8" class="text-center text-muted py-3">Select Item Group to load items</td></tr>';
+            document.location.reload();
         } else {
             alert('✗ Error: ' + data.message);
         }
