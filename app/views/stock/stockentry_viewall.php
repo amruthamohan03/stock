@@ -70,10 +70,10 @@
             <div class="col-12">
                 <div class="card">
                     <div class="table-responsive">
-                        <table class="table table-striped table-hover table-sm mb-0">
+                        <table id="stock-datatable" class="table table-striped dt-responsive nowrap w-100" >
                             <thead class="table-light">
                                 <tr>
-                                    <th>ID</th>
+                                    <th>#</th>
                                     <th>Entry Type</th>
                                     <th>Item</th>
                                     <th>Make/Model</th>
@@ -87,10 +87,12 @@
                             </thead>
                             <tbody>
                                 <?php if (!empty($entries)): ?>
-                                    <?php foreach ($entries as $entry): ?>
+                                    <?php 
+                                        $i=0;
+                                        foreach ($entries as $entry): ?>
                                         <tr>
                                             <td>
-                                                <strong>#<?= $entry['id']; ?></strong>
+                                                <strong><?= ++$i; ?></strong>
                                             </td>
                                             <td>
                                                 <?php if ($entry['stock_entry_type'] === 'INDENT_BASED'): ?>
@@ -110,8 +112,9 @@
                                             </td>
                                             <td class="text-center">
                                                 <?php 
+                                                    $quantity = ($entry['transaction_type']=='ISSUE') ? $entry['issue_qty']:$entry['receipt_qty'];
                                                     $qty = $entry['receipt_qty'] ?? $entry['issue_qty'] ?? 0;
-                                                    echo $qty;
+                                                    echo $quantity;
                                                 ?>
                                             </td>
                                             <td>
@@ -360,10 +363,10 @@
         </div>
     </div>
 </div>
-
-<?php include(VIEW_PATH . 'layouts/partials/footer.php'); ?>
-
 <script>
+    $(document).ready(function () {
+        $('#stock-datatable').DataTable();
+    });
 let rejectEntryId = null;
 let issueTransactionId = null;
 let issueMaxQuantity = 0;
