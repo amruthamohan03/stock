@@ -142,9 +142,9 @@ class CustomController extends Controller
                     LEFT JOIN indent_item_t ii 
                         ON ii.id = st.indent_item_id
                     LEFT JOIN item_master_t im 
-                        ON im.id = st.indent_item_id
+                        ON im.id = sb.item_id
                     LEFT JOIN group_item_name_master_t gm 
-                        ON gm.id = ii.group_id
+                        ON gm.id = im.group_id
                     $where
                     GROUP BY gm.id
                     ORDER BY group_name ASC;
@@ -309,25 +309,72 @@ class CustomController extends Controller
 
         $rows = $db->customQuery("
             SELECT 
-                COALESCE(gm.group_name, 'Ungrouped') AS group_name,
-                COUNT(DISTINCT sb.id) AS total_items,
-                COALESCE(SUM(CASE WHEN st.transaction_type IN ('RECEIPT', 'TRANSFER') THEN st.receipt_qty ELSE 0 END), 0) AS total_received,
-                COALESCE(SUM(CASE WHEN st.transaction_type = 'RECEIPT' AND st.stock_entry_type = 'INDENT_BASED' THEN st.receipt_qty ELSE 0 END), 0) AS indent_received,
-                COALESCE(SUM(CASE WHEN st.transaction_type = 'TRANSFER' THEN st.receipt_qty ELSE 0 END), 0) AS transfer_received,
-                COALESCE(SUM(CASE WHEN st.transaction_type = 'ISSUE' THEN st.issue_qty ELSE 0 END), 0) AS total_issued,
-                COALESCE(SUM(CASE WHEN st.item_status = 'DELETED' THEN 1 ELSE 0 END), 0) AS deleted_count,
-                COALESCE(SUM(st.balance_qty), 0) AS total_balance
-            FROM stock_book_t sb
-            LEFT JOIN indent_item_t ii ON ii.id = (
-                SELECT ii2.id FROM indent_item_t ii2 
-                WHERE ii2.item_id = sb.item_id 
-                ORDER BY ii2.created_at DESC LIMIT 1
-            )
-            LEFT JOIN group_item_name_master_t gm ON gm.id = ii.group_id
-            LEFT JOIN stock_transaction_t st ON st.stock_book_id = sb.id
-            $where
-            GROUP BY gm.id, gm.group_name
-            ORDER BY group_name ASC
+                        COALESCE(gm.group_name,'Ungrouped') AS group_name,
+                
+                        COUNT(DISTINCT sb.id) AS total_items,
+
+                        /* RECEIVED */
+                        SUM(CASE 
+                            WHEN st.transaction_type IN ('RECEIPT','TRANSFER')
+                            THEN st.receipt_qty ELSE 0 END
+                        ) AS total_received,
+
+                        /* INDENT RECEIVED */
+                        SUM(CASE 
+                            WHEN st.transaction_type='RECEIPT'
+                            AND st.stock_entry_type='INDENT_BASED'
+                            THEN st.receipt_qty ELSE 0 END
+                        ) AS indent_received,
+
+                        /* TRANSFER RECEIVED */
+                        SUM(CASE 
+                            WHEN st.transaction_type='TRANSFER'
+                            THEN st.receipt_qty ELSE 0 END
+                        ) AS transfer_received,
+
+                        /* ISSUED */
+                        SUM(CASE 
+                            WHEN st.transaction_type='ISSUE'
+                            AND st.item_status <> 'DELETED'
+                            THEN st.issue_qty ELSE 0 END
+                        ) AS total_issued,
+
+                        /* DELETED FROM INDENT */
+                        SUM(CASE 
+                            WHEN st.item_status='DELETED'
+                            THEN ii.qty_intended ELSE 0 END
+                        ) AS deleted_count,
+
+                        /* BALANCE */
+                        (
+                            SUM(CASE 
+                                WHEN st.transaction_type IN ('RECEIPT','TRANSFER')
+                                THEN st.receipt_qty ELSE 0 END)
+                            -
+                            SUM(CASE 
+                                WHEN st.transaction_type='ISSUE'
+                                AND st.item_status <> 'DELETED'
+                                THEN st.issue_qty ELSE 0 END)
+                            -
+                            SUM(CASE 
+                                WHEN st.item_status='DELETED'
+                                THEN ii.qty_intended ELSE 0 END)
+                        ) AS total_balance
+
+                    FROM stock_book_t sb
+
+                    LEFT JOIN stock_transaction_t st 
+                        ON st.stock_book_id = sb.id
+
+                    LEFT JOIN indent_item_t ii 
+                        ON ii.id = st.indent_item_id
+                    LEFT JOIN item_master_t im 
+                        ON im.id = sb.item_id
+                    LEFT JOIN group_item_name_master_t gm 
+                        ON gm.id = im.group_id
+                    $where
+                    GROUP BY gm.id
+                    ORDER BY group_name ASC;
         ");
 
         $pdf = $this->_pdfBaseStyles('landscape');
