@@ -611,24 +611,24 @@
         // Populate Detailed Table
         function populateDetailedTable(data) {
             detailedTable.clear();
-            
+            let total_balance;
             data.forEach((row, index) => {
                 const makeModel = (row.make_name ? row.make_name : '') + 
                     (row.model_name ? ' / ' + row.model_name : '');
-                
+                total_balance = row.total_received-(row.total_issued+row.total_deleted);
                 detailedTable.row.add([
                     index + 1,
-                    row.group_name,
+                    row.group_name+'<br>'+row.item_name,
                     row.indent_no,
                     row.indent_date,
                     row.stockbook_page_no || 'N/A',
-                    makeModel || 'N/A',
+                    makeModel+'<br>'+row.item_description || 'N/A',
                     row.indent_received,
                     row.transfer_received,
                     '<strong>' + row.total_received + '</strong>',
                     '<span style="color:#c62828">' + row.total_issued + '</span>',
-                    '<span style="color:#d32f2f">' + row.deleted_count + '</span>',
-                    '<span style="background:#e8f5e9;padding:2px 6px;border-radius:3px;font-weight:bold">' + row.balance_qty + '</span>'
+                    '<span style="color:#d32f2f">' + row.total_deleted + '</span>',
+                    '<span style="background:#e8f5e9;padding:2px 6px;border-radius:3px;font-weight:bold">' + total_balance + '</span>'
                 ]);
             });
             

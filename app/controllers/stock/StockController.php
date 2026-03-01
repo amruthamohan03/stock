@@ -73,15 +73,15 @@ class StockController extends Controller
             $batchCode = 'INDENT_' . date('Ymd_His');
             
             // Create batch record
-            // $this->db->insertData('stock_entry_batch_t', [
-            //     'batch_code' => $batchCode,
-            //     'entry_type' => 'INDENT_BASED',
-            //     'batch_status' => 'SUBMITTED',
-            //     'batch_date' => $transaction_date,
-            //     'notes' => $remarks,
-            //     'created_by' => $userId,
-            //     'item_count' => count($items_data)
-            // ]);
+            $this->db->insertData('stock_entry_batch_t', [
+                'batch_code' => $batchCode,
+                'entry_type' => 'INDENT_BASED',
+                'batch_status' => 'SUBMITTED',
+                'batch_date' => $transaction_date,
+                'notes' => $remarks,
+                'created_by' => $userId,
+                'item_count' => count($items_data)
+            ]);
 
             $totalQuantity = 0;
             $successCount = 0;
@@ -107,7 +107,7 @@ class StockController extends Controller
                     // Create new stock book
                     $stock_book_id = $this->db->insertData('stock_book_t', [
                         'item_id' => $item_id,
-                        'location' => $location,
+                        'location' => ($location)?$location:'CT LAB',
                         'opening_balance' => $quantity,
                         'current_balance' => $quantity,
                         'created_by' => $userId
@@ -142,6 +142,7 @@ class StockController extends Controller
                     'book_volume' => $book_volume,          // COMMON - same for all items
                     'verification_status' => 'PENDING',
                     'created_by' => $userId,
+                    'batch_code' => $batchCode,
                 ]);
 
                 // Update indent item status to 3 (Accepted)
@@ -161,7 +162,8 @@ class StockController extends Controller
                 'success' => true,
                 'message' => $successCount . ' items accepted',
                 'item_count' => $successCount,
-                'total_quantity' => $totalQuantity
+                'total_quantity' => $totalQuantity,
+                'batch_code' => $batchCode
             ]);
 
         } catch (Exception $e) {
@@ -607,30 +609,49 @@ class StockController extends Controller
     }
 
     $query = "SELECT 
-                st.*, 
-                sb.item_id, 
-                i.item_name,
-                mk.make_name,
-                md.model_name,
-                u.username AS created_by_name,
-                u_ver.username AS verified_by_name
-            FROM stock_transaction_t st
-            LEFT JOIN stock_book_t sb 
-                ON st.stock_book_id = sb.id
-            LEFT JOIN item_master_t i 
-                ON sb.item_id = i.id
-            LEFT JOIN indent_item_t ii 
-                ON ii.indent_id = st.indent_id 
-                AND ii.item_id = st.indent_item_id
-            LEFT JOIN make_t mk 
-                ON mk.id = ii.make_id
-            LEFT JOIN model_t md 
-                ON md.id = ii.model_id
-            LEFT JOIN users_t u 
-                ON st.created_by = u.id
-            LEFT JOIN users_t u_ver 
-                ON st.verified_by = u_ver.id
-            WHERE 1=1";
+    st.*, 
+    sb.item_id, 
+    i.item_name,
+    mk.make_name,
+    md.model_name,
+    gm.group_name,
+    ii.item_description,
+    im.indent_no,
+    im.indent_date,
+    u.username AS created_by_name,
+    u_ver.username AS verified_by_name
+
+FROM stock_transaction_t st
+
+LEFT JOIN stock_book_t sb 
+    ON st.stock_book_id = sb.id
+
+LEFT JOIN item_master_t i 
+    ON sb.item_id = i.id
+
+/* CORRECTED JOIN */
+LEFT JOIN indent_item_t ii 
+    ON ii.id = st.indent_item_id
+
+LEFT JOIN group_item_name_master_t gm 
+    ON gm.id = ii.group_id
+
+LEFT JOIN indent_master_t im 
+    ON im.id = st.indent_id
+
+LEFT JOIN make_t mk 
+    ON mk.id = ii.make_id
+
+LEFT JOIN model_t md 
+    ON md.id = ii.model_id
+
+LEFT JOIN users_t u 
+    ON st.created_by = u.id
+
+LEFT JOIN users_t u_ver 
+    ON st.verified_by = u_ver.id
+
+WHERE 1=1 ";
 
     if ($entryType !== 'ALL') {
         $query .= " AND st.stock_entry_type = '$entryType'";
@@ -908,7 +929,7 @@ public function issueItem()
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
         if ($id <= 0) {
-            header('Location: ' . APP_URL . 'stock/stock/viewAll');
+            header('Location: ' . APP_URL . 'stock/viewAll');
             exit;
         }
 
@@ -964,7 +985,7 @@ public function issueItem()
 
         $result = $this->db->customQuery($query);
         if (empty($result)) {
-            header('Location: ' . APP_URL . 'stock/stock/viewAll');
+            header('Location: ' . APP_URL . 'stock/viewAll');
             exit;
         }
 
@@ -1009,7 +1030,7 @@ public function issueItem()
         $id = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
         if ($id <= 0) {
-            header('Location: ' . APP_URL . 'stock/stock/viewAll');
+            header('Location: ' . APP_URL . 'stock/viewAll');
             exit;
         }
 
@@ -1021,7 +1042,7 @@ public function issueItem()
 
         $result = $this->db->customQuery($query);
         if (empty($result)) {
-            header('Location: ' . APP_URL . 'stock/stock/viewAll');
+            header('Location: ' . APP_URL . 'stock/viewAll');
             exit;
         }
 
