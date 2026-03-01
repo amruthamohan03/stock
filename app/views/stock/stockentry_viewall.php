@@ -69,14 +69,13 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <div class="table-responsive">
-                        <table id="stock-datatable" class="table table-striped dt-responsive nowrap w-100" >
+                    <div class="table-responsive-horizontal">
+                        <table id="stock-datatable" class="table table-striped w-100" >
                             <thead class="table-light">
                                 <tr>
                                     <th>#</th>
                                     <th>Entry Type</th>
                                     <th>Item</th>
-                                    <th>Make/Model</th>
                                     <th>Quantity</th>
                                     <th>Transaction Date</th>
                                     <th>Status</th>
@@ -91,36 +90,47 @@
                                         $i=0;
                                         foreach ($entries as $entry): ?>
                                         <tr>
-                                            <td>
+                                            <td class="align-middle">
                                                 <strong><?= ++$i; ?></strong>
                                             </td>
-                                            <td>
+                                            <td class="align-middle">
                                                 <?php if ($entry['stock_entry_type'] === 'INDENT_BASED'): ?>
                                                     <span class="badge bg-primary">Indent-Based</span>
+                                                    <span class="badge bg-warning"><?= htmlspecialchars($entry['indent_no'] ?? 'N/A'); ?></span>
                                                 <?php else: ?>
                                                     <span class="badge bg-success">Transfer</span>
                                                 <?php endif; ?>
                                             </td>
-                                            <td>
-                                                <strong><?= htmlspecialchars($entry['item_name'] ?? 'N/A'); ?></strong>
+                                            <td class="align-middle">
+                                                <div>
+                                                    <span class="badge bg-secondary mb-1">
+                                                        <?= htmlspecialchars($entry['group_name'] ?? 'Ungrouped'); ?>
+                                                    </span>
+
+                                                    <div class="fw-bold">
+                                                        <?= htmlspecialchars($entry['item_name'] ?? 'N/A'); ?>
+                                                    </div>
+
+                                                    <small class="text-primary">
+                                                        <?= htmlspecialchars(($entry['make_name'] ?? '') . ' ' . ($entry['model_name'] ?? '')); ?>
+                                                    </small>
+
+                                                    <div class="text-muted small">
+                                                        <?= nl2br(htmlspecialchars($entry['item_description'] ?? '')); ?>
+                                                    </div>
+                                                </div>
                                             </td>
-                                            <td>
-                                                <small>
-                                                    <?= htmlspecialchars($entry['make'] ?? ''); ?>
-                                                    <?= !empty($entry['model']) ? ' / ' . htmlspecialchars($entry['model']) : ''; ?>
-                                                </small>
-                                            </td>
-                                            <td class="text-center">
+                                            <td class="text-center align-middle">
                                                 <?php 
                                                     $quantity = ($entry['transaction_type']=='ISSUE') ? $entry['issue_qty']:$entry['receipt_qty'];
                                                     $qty = $entry['receipt_qty'] ?? $entry['issue_qty'] ?? 0;
                                                     echo $quantity;
                                                 ?>
                                             </td>
-                                            <td>
+                                            <td class="align-middle">
                                                 <small><?= date('d-m-Y', strtotime($entry['transaction_date'])); ?></small>
                                             </td>
-                                            <td>
+                                            <td class="align-middle">
                                                 <?php 
                                                     $statusClass = match($entry['verification_status']) {
                                                         'PENDING' => 'warning',
@@ -133,13 +143,13 @@
                                                     <?= $entry['verification_status']; ?>
                                                 </span>
                                             </td>
-                                            <td>
+                                            <td class="align-middle">
                                                 <small><?= htmlspecialchars($entry['verified_by_name'] ?? '-'); ?></small>
                                             </td>
-                                            <td>
+                                            <td class="align-middle">
                                                 <small><?= htmlspecialchars($entry['created_by_name'] ?? '-'); ?></small>
                                             </td>
-                                            <td>
+                                            <td class="align-middle">
                                                 <div class="btn-group btn-group-sm" role="group">
                                                     <a href="<?= APP_URL; ?>stock/viewSingle?id=<?= $entry['id']; ?>" 
                                                        class="btn btn-outline-info" title="View">
@@ -244,7 +254,6 @@
         <?php endif; ?>
 
     </div>
-    <?php include(VIEW_PATH . 'layouts/partials/footer.php'); ?>
 </div>
 
 <!-- Reject Modal -->
@@ -363,10 +372,31 @@
         </div>
     </div>
 </div>
+<?php include(VIEW_PATH . 'layouts/partials/footer.php'); ?>
 <script>
     $(document).ready(function () {
-        $('#stock-datatable').DataTable();
+        // DataTable with horizontal scroll
+        $('#stock-datatable').DataTable({
+            scrollX: true,
+            scrollCollapse: true,
+            responsive: false,
+            paging: false,
+            info: false,
+            searching: false,
+            columnDefs: [
+                { width: "40px", targets: 0 },      // #
+                { width: "120px", targets: 1 },     // Entry Type
+                { width: "280px", targets: 2 },     // Item
+                { width: "80px", targets: 3 },      // Quantity
+                { width: "110px", targets: 4 },     // Transaction Date
+                { width: "90px", targets: 5 },      // Status
+                { width: "120px", targets: 6 },     // Verified By
+                { width: "120px", targets: 7 },     // Created By
+                { width: "200px", targets: 8 }      // Actions
+            ]
+        });
     });
+
 let rejectEntryId = null;
 let issueTransactionId = null;
 let issueMaxQuantity = 0;
@@ -602,9 +632,19 @@ function confirmIssue() {
 </script>
 
 <style>
+.table-responsive-horizontal {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table {
+    min-width: 1200px;
+}
+
 .btn-group-sm .btn {
     padding: 0.25rem 0.5rem;
     font-size: 0.75rem;
+    white-space: nowrap;
 }
 
 .table-hover tbody tr:hover {
@@ -622,5 +662,26 @@ function confirmIssue() {
 
 .alert-light {
     border-left: 4px solid #dee2e6;
+}
+
+/* DataTables Scroll Fix */
+.dataTables_wrapper .dataTables_scroll {
+    clear: both;
+}
+
+.dataTables_wrapper .dataTables_scrollBody {
+    position: relative;
+    overflow: auto;
+    max-width: 100%;
+}
+
+/* Column alignment */
+th, td {
+    text-align: left;
+}
+
+th:nth-child(1), td:nth-child(1),
+th:nth-child(4), td:nth-child(4) {
+    text-align: center;
 }
 </style>

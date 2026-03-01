@@ -83,7 +83,7 @@ class CustomController extends Controller
         $rows = $db->customQuery("
                             SELECT 
                         COALESCE(gm.group_name,'Ungrouped') AS group_name,
-
+                
                         COUNT(DISTINCT sb.id) AS total_items,
 
                         /* RECEIVED */
@@ -141,9 +141,10 @@ class CustomController extends Controller
 
                     LEFT JOIN indent_item_t ii 
                         ON ii.id = st.indent_item_id
-
+                    LEFT JOIN item_master_t im 
+                        ON im.id = sb.item_id
                     LEFT JOIN group_item_name_master_t gm 
-                        ON gm.id = ii.group_id
+                        ON gm.id = im.group_id
                     $where
                     GROUP BY gm.id
                     ORDER BY group_name ASC;
@@ -188,10 +189,15 @@ class CustomController extends Controller
 
         $rows = $db->customQuery("
             SELECT 
-                ROW_NUMBER() OVER (PARTITION BY ii.group_id ORDER BY gm.group_name, im_i.indent_no, st.transaction_date) AS serial_no,
+                ROW_NUMBER() OVER (
+                    PARTITION BY ii.group_id 
+                    ORDER BY gm.group_name, im_i.indent_no, st.transaction_date
+                ) AS serial_no,
+
                 COALESCE(gm.group_name, 'Ungrouped') AS group_name,
                 COALESCE(im_i.indent_no, 'N/A') AS indent_no,
                 DATE_FORMAT(im_i.indent_date, '%d-%m-%Y') AS indent_date,
+
                 sb.id AS stock_book_id,
                 ii.stock_book_page_no AS stockbook_page_no,
                 sb.item_id,
@@ -199,29 +205,72 @@ class CustomController extends Controller
                 ii.item_description,
                 mk.make_name,
                 md.model_name,
-                COALESCE(SUM(CASE WHEN st.transaction_type IN ('RECEIPT', 'TRANSFER') THEN st.receipt_qty ELSE 0 END), 0) AS total_received,
-                COALESCE(SUM(CASE WHEN st.transaction_type = 'RECEIPT' AND st.stock_entry_type = 'INDENT_BASED' THEN st.receipt_qty ELSE 0 END), 0) AS indent_received,
-                COALESCE(SUM(CASE WHEN st.transaction_type = 'TRANSFER' THEN st.receipt_qty ELSE 0 END), 0) AS transfer_received,
-                COALESCE(SUM(CASE WHEN st.transaction_type = 'ISSUE' THEN st.issue_qty ELSE 0 END), 0) AS total_issued,
-                COALESCE(SUM(CASE WHEN st.item_status = 'DELETED' THEN 1 ELSE 0 END), 0) AS deleted_count,
-                COALESCE(MAX(st.balance_qty), 0) AS balance_qty,
-                st.location AS location,
-                st.remarks
+
+                /* RECEIVED */
+                COALESCE(SUM(CASE 
+                    WHEN st.transaction_type IN ('RECEIPT','TRANSFER') 
+                    THEN st.receipt_qty END),0) AS total_received,
+
+                /* INDENT RECEIVED */
+                COALESCE(SUM(CASE 
+                    WHEN st.transaction_type='RECEIPT'
+                    AND st.stock_entry_type='INDENT_BASED'
+                    THEN st.receipt_qty END),0) AS indent_received,
+
+                /* TRANSFER RECEIVED */
+                COALESCE(SUM(CASE 
+                    WHEN st.transaction_type='TRANSFER'
+                    THEN st.receipt_qty END),0) AS transfer_received,
+
+                /* ISSUED */
+                COALESCE(SUM(CASE 
+                    WHEN st.transaction_type='ISSUE'
+                    THEN st.issue_qty END),0) AS total_issued,
+
+                /* DELETED */
+                COALESCE(SUM(CASE 
+                    WHEN st.item_status='DELETED' AND st.transaction_type <> 'ISSUE'
+                    THEN ii.qty_intended 
+                    ELSE 0 
+                END),0) AS total_deleted,
+
+                /* BALANCE */
+                COALESCE(MAX(st.balance_qty),0) AS balance_qty,
+
+                /* FIXED COLUMN SOURCE */
+                sb.location AS location,
+
+                /* remarks should not be grouped raw → aggregate */
+                MAX(st.remarks) AS remarks
+
             FROM stock_book_t sb
-            LEFT JOIN indent_item_t ii ON ii.id = (
-                SELECT ii2.id FROM indent_item_t ii2 
-                WHERE ii2.item_id = sb.item_id 
-                ORDER BY ii2.created_at DESC LIMIT 1
-            )
+
+            LEFT JOIN indent_item_t ii 
+                ON ii.id = (
+                    SELECT ii2.id 
+                    FROM indent_item_t ii2
+                    WHERE ii2.item_id = sb.item_id
+                    ORDER BY ii2.created_at DESC
+                    LIMIT 1
+                )
+
             LEFT JOIN group_item_name_master_t gm ON gm.id = ii.group_id
             LEFT JOIN indent_master_t im_i ON im_i.id = ii.indent_id
             LEFT JOIN item_master_t imt ON imt.id = sb.item_id
             LEFT JOIN make_t mk ON mk.id = ii.make_id
             LEFT JOIN model_t md ON md.id = ii.model_id
             LEFT JOIN stock_transaction_t st ON st.stock_book_id = sb.id
+
             $where
-            GROUP BY sb.id, ii.id, gm.id, im_i.id, imt.id, mk.id, md.id
-            ORDER BY gm.group_name ASC, im_i.indent_no ASC, im_i.indent_date ASC, sb.id ASC
+
+            GROUP BY 
+                sb.id, ii.id, gm.id, im_i.id, imt.id, mk.id, md.id
+
+            ORDER BY 
+                gm.group_name ASC,
+                im_i.indent_no ASC,
+                im_i.indent_date ASC,
+                sb.id ASC;
         ");
 
         echo json_encode([
@@ -260,25 +309,72 @@ class CustomController extends Controller
 
         $rows = $db->customQuery("
             SELECT 
-                COALESCE(gm.group_name, 'Ungrouped') AS group_name,
-                COUNT(DISTINCT sb.id) AS total_items,
-                COALESCE(SUM(CASE WHEN st.transaction_type IN ('RECEIPT', 'TRANSFER') THEN st.receipt_qty ELSE 0 END), 0) AS total_received,
-                COALESCE(SUM(CASE WHEN st.transaction_type = 'RECEIPT' AND st.stock_entry_type = 'INDENT_BASED' THEN st.receipt_qty ELSE 0 END), 0) AS indent_received,
-                COALESCE(SUM(CASE WHEN st.transaction_type = 'TRANSFER' THEN st.receipt_qty ELSE 0 END), 0) AS transfer_received,
-                COALESCE(SUM(CASE WHEN st.transaction_type = 'ISSUE' THEN st.issue_qty ELSE 0 END), 0) AS total_issued,
-                COALESCE(SUM(CASE WHEN st.item_status = 'DELETED' THEN 1 ELSE 0 END), 0) AS deleted_count,
-                COALESCE(SUM(st.balance_qty), 0) AS total_balance
-            FROM stock_book_t sb
-            LEFT JOIN indent_item_t ii ON ii.id = (
-                SELECT ii2.id FROM indent_item_t ii2 
-                WHERE ii2.item_id = sb.item_id 
-                ORDER BY ii2.created_at DESC LIMIT 1
-            )
-            LEFT JOIN group_item_name_master_t gm ON gm.id = ii.group_id
-            LEFT JOIN stock_transaction_t st ON st.stock_book_id = sb.id
-            $where
-            GROUP BY gm.id, gm.group_name
-            ORDER BY group_name ASC
+                        COALESCE(gm.group_name,'Ungrouped') AS group_name,
+                
+                        COUNT(DISTINCT sb.id) AS total_items,
+
+                        /* RECEIVED */
+                        SUM(CASE 
+                            WHEN st.transaction_type IN ('RECEIPT','TRANSFER')
+                            THEN st.receipt_qty ELSE 0 END
+                        ) AS total_received,
+
+                        /* INDENT RECEIVED */
+                        SUM(CASE 
+                            WHEN st.transaction_type='RECEIPT'
+                            AND st.stock_entry_type='INDENT_BASED'
+                            THEN st.receipt_qty ELSE 0 END
+                        ) AS indent_received,
+
+                        /* TRANSFER RECEIVED */
+                        SUM(CASE 
+                            WHEN st.transaction_type='TRANSFER'
+                            THEN st.receipt_qty ELSE 0 END
+                        ) AS transfer_received,
+
+                        /* ISSUED */
+                        SUM(CASE 
+                            WHEN st.transaction_type='ISSUE'
+                            AND st.item_status <> 'DELETED'
+                            THEN st.issue_qty ELSE 0 END
+                        ) AS total_issued,
+
+                        /* DELETED FROM INDENT */
+                        SUM(CASE 
+                            WHEN st.item_status='DELETED'
+                            THEN ii.qty_intended ELSE 0 END
+                        ) AS deleted_count,
+
+                        /* BALANCE */
+                        (
+                            SUM(CASE 
+                                WHEN st.transaction_type IN ('RECEIPT','TRANSFER')
+                                THEN st.receipt_qty ELSE 0 END)
+                            -
+                            SUM(CASE 
+                                WHEN st.transaction_type='ISSUE'
+                                AND st.item_status <> 'DELETED'
+                                THEN st.issue_qty ELSE 0 END)
+                            -
+                            SUM(CASE 
+                                WHEN st.item_status='DELETED'
+                                THEN ii.qty_intended ELSE 0 END)
+                        ) AS total_balance
+
+                    FROM stock_book_t sb
+
+                    LEFT JOIN stock_transaction_t st 
+                        ON st.stock_book_id = sb.id
+
+                    LEFT JOIN indent_item_t ii 
+                        ON ii.id = st.indent_item_id
+                    LEFT JOIN item_master_t im 
+                        ON im.id = sb.item_id
+                    LEFT JOIN group_item_name_master_t gm 
+                        ON gm.id = im.group_id
+                    $where
+                    GROUP BY gm.id
+                    ORDER BY group_name ASC;
         ");
 
         $pdf = $this->_pdfBaseStyles('landscape');
@@ -485,13 +581,13 @@ class CustomController extends Controller
 
         $sno = 1;
         foreach ($rows as $row) {
-            $makeModel = ($row['make_name'] ? $row['make_name'] : '') . 
-                        ($row['model_name'] ? ' / ' . $row['model_name'] : '');
+            $makeModel = $row['item_name'].'-'.($row['make_name'] ? $row['make_name'] : '') . 
+                        ($row['model_name'] ? ' / ' . $row['model_name'] : '').'-'.$row['item_description'];
             
             $pdf .= '
             <tr>
                 <td style="border:1px solid #ccc;padding:4px;text-align:center">' . $sno++ . '</td>
-                <td style="border:1px solid #ccc;padding:4px">' . htmlspecialchars($row['group_name']) . '</td>
+                <td style="border:1px solid #ccc;padding:4px">' . htmlspecialchars($row['group_name']) .''. '</td>
                 <td style="border:1px solid #ccc;padding:4px;text-align:center">' . htmlspecialchars($row['indent_no']) . '</td>
                 <td style="border:1px solid #ccc;padding:4px;text-align:center">' . $row['indent_date'] . '</td>
                 <td style="border:1px solid #ccc;padding:4px;text-align:center">' . ($row['stockbook_page_no'] ?: 'N/A') . '</td>
