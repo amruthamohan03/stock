@@ -324,7 +324,18 @@
                         <option value="">-- Select Department --</option>
                     </select>
                 </div>
-
+                <!-- Stock Register Type (NEW - ADD THIS) -->
+                <div class="col-md-3">
+                    <label for="stockbook_type_id" class="form-label">Register Type</label>
+                    <select class="form-select" id="stockbook_type_id">
+                        <option value="">-- All Register Types --</option>
+                        <?php foreach ($stockbook_types ?? [] as $type): ?>
+                            <option value="<?php echo htmlspecialchars($type['id']); ?>">
+                                <?php echo htmlspecialchars($type['name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
                 <div class="col-md-2">
                     <label class="form-label">From Date</label>
                     <input type="date" id="from_date" class="form-control">
@@ -575,12 +586,14 @@
         function buildFilterParams() {
             const instId = document.getElementById('institution_id').value || '';
             const deptId = document.getElementById('dept_id').value || '';
+            const stockbookTypeId = document.getElementById('stockbook_type_id').value || '';  // ADD THIS LINE
             const fromDate = document.getElementById('from_date').value || '';
             const toDate = document.getElementById('to_date').value || '';
 
             let params = '';
             if (instId) params += 'institution_id=' + instId + '&';
             if (deptId) params += 'dept_id=' + deptId + '&';
+            if (stockbookTypeId) params += 'stockbook_type_id=' + stockbookTypeId + '&';  // ADD THIS LINE
             if (fromDate) params += 'from=' + fromDate + '&';
             if (toDate) params += 'to=' + toDate + '&';
 
@@ -685,13 +698,13 @@
         // Export Summary PDF
         function exportSummaryPdf() {
             const params = buildFilterParams();
-            window.location.href = baseUrl + 'custom/exportSummaryPdf?' + params;
+            window.open(baseUrl + 'custom/exportSummaryPdf?' + params, '_blank');  // CHANGE: window.open instead of window.location.href
         }
 
         // Export Detailed PDF
         function exportDetailedPdf() {
             const params = buildFilterParams();
-            window.location.href = baseUrl + 'custom/exportDetailedPdf?' + params;
+            window.open(baseUrl + 'custom/exportDetailedPdf?' + params, '_blank');  // CHANGE: window.open instead of window.location.href
         }
 
         // Switch Tab

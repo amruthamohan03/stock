@@ -25,10 +25,12 @@ class CustomController extends Controller
     {
         $db = new Database();
         $institutions = $db->selectData('college_t', 'id, college_name', ['display' => 'Y']);
+        $stockbook_types = $db->selectData('stockbook_type_t', 'id, name, code', ['display' => 'Y']);  // ADD THIS
 
         $data = [
             'title' => 'Custom Stock Reports',
             'institutions' => $institutions ?: [],
+            'stockbook_types' => $stockbook_types ?: [],  // ADD THIS
         ];
 
         $this->viewWithLayout('reports/custom_report_view', $data);
@@ -59,104 +61,135 @@ class CustomController extends Controller
        SUMMARY DATA  — Group-wise count
     ═════════════════════════════════════════════════════════════ */
     public function getSummaryData()
-    {
-        header('Content-Type: application/json');
+{
+    header('Content-Type: application/json');
+    
+    try {
         $db = new Database();
 
-        $from = $_GET['from'] ?? null;
-        $to = $_GET['to'] ?? null;
+        // Validate and sanitize inputs
+        $from = isset($_GET['from']) && !empty($_GET['from']) ? $_GET['from'] : null;
+        $to = isset($_GET['to']) && !empty($_GET['to']) ? $_GET['to'] : null;
         $instId = isset($_GET['institution_id']) ? (int) $_GET['institution_id'] : 0;
         $deptId = isset($_GET['dept_id']) ? (int) $_GET['dept_id'] : 0;
+        $stockbookTypeId = isset($_GET['stockbook_type_id']) ? (int) $_GET['stockbook_type_id'] : 0;
 
         $where = "WHERE sb.display='Y' AND st.display='Y'";
         
         if ($from && $to) {
+            // Validate date format (YYYY-MM-DD)
+            if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $from) || !preg_match('/^\d{4}-\d{2}-\d{2}$/', $to)) {
+                throw new Exception("Invalid date format. Use YYYY-MM-DD");
+            }
+            // $from = $db->escape($from);
+            // $to = $db->escape($to);
             $where .= " AND st.transaction_date BETWEEN '$from' AND '$to'";
         }
+        
         if ($instId > 0) {
             $where .= " AND st.institution_id = $instId";
         }
+        
         if ($deptId > 0) {
             $where .= " AND st.department_id = $deptId";
         }
+        
+        if ($stockbookTypeId > 0) {
+            $where .= " AND dm.stockbook_type_id = $stockbookTypeId";
+        }
 
-        $rows = $db->customQuery("
-                            SELECT 
-                        COALESCE(gm.group_name,'Ungrouped') AS group_name,
+        $query = "
+            SELECT 
+                COALESCE(gm.group_name, 'Ungrouped') AS group_name,
+                COUNT(DISTINCT sb.id) AS total_items,
                 
-                        COUNT(DISTINCT sb.id) AS total_items,
+                /* RECEIVED */
+                SUM(CASE 
+                    WHEN st.transaction_type IN ('RECEIPT','TRANSFER')
+                    THEN st.receipt_qty ELSE 0 END
+                ) AS total_received,
 
-                        /* RECEIVED */
-                        SUM(CASE 
-                            WHEN st.transaction_type IN ('RECEIPT','TRANSFER')
-                            THEN st.receipt_qty ELSE 0 END
-                        ) AS total_received,
+                /* INDENT RECEIVED */
+                SUM(CASE 
+                    WHEN st.transaction_type='RECEIPT'
+                    AND st.stock_entry_type='INDENT_BASED'
+                    THEN st.receipt_qty ELSE 0 END
+                ) AS indent_received,
 
-                        /* INDENT RECEIVED */
-                        SUM(CASE 
-                            WHEN st.transaction_type='RECEIPT'
-                            AND st.stock_entry_type='INDENT_BASED'
-                            THEN st.receipt_qty ELSE 0 END
-                        ) AS indent_received,
+                /* TRANSFER RECEIVED */
+                SUM(CASE 
+                    WHEN st.transaction_type='TRANSFER'
+                    THEN st.receipt_qty ELSE 0 END
+                ) AS transfer_received,
 
-                        /* TRANSFER RECEIVED */
-                        SUM(CASE 
-                            WHEN st.transaction_type='TRANSFER'
-                            THEN st.receipt_qty ELSE 0 END
-                        ) AS transfer_received,
+                /* ISSUED */
+                SUM(CASE 
+                    WHEN st.transaction_type='ISSUE'
+                    AND st.item_status <> 'DELETED'
+                    THEN st.issue_qty ELSE 0 END
+                ) AS total_issued,
 
-                        /* ISSUED */
-                        SUM(CASE 
-                            WHEN st.transaction_type='ISSUE'
-                            AND st.item_status <> 'DELETED'
-                            THEN st.issue_qty ELSE 0 END
-                        ) AS total_issued,
+                /* DELETED FROM INDENT */
+                SUM(CASE 
+                    WHEN st.item_status='DELETED'
+                    THEN ii.qty_intended ELSE 0 END
+                ) AS total_deleted,
 
-                        /* DELETED FROM INDENT */
-                        SUM(CASE 
-                            WHEN st.item_status='DELETED'
-                            THEN ii.qty_intended ELSE 0 END
-                        ) AS total_deleted,
+                /* BALANCE */
+                (
+                    SUM(CASE 
+                        WHEN st.transaction_type IN ('RECEIPT','TRANSFER')
+                        THEN st.receipt_qty ELSE 0 END)
+                    -
+                    SUM(CASE 
+                        WHEN st.transaction_type='ISSUE'
+                        AND st.item_status <> 'DELETED'
+                        THEN st.issue_qty ELSE 0 END)
+                    -
+                    SUM(CASE 
+                        WHEN st.item_status='DELETED'
+                        THEN ii.qty_intended ELSE 0 END)
+                ) AS total_balance
 
-                        /* BALANCE */
-                        (
-                            SUM(CASE 
-                                WHEN st.transaction_type IN ('RECEIPT','TRANSFER')
-                                THEN st.receipt_qty ELSE 0 END)
-                            -
-                            SUM(CASE 
-                                WHEN st.transaction_type='ISSUE'
-                                AND st.item_status <> 'DELETED'
-                                THEN st.issue_qty ELSE 0 END)
-                            -
-                            SUM(CASE 
-                                WHEN st.item_status='DELETED'
-                                THEN ii.qty_intended ELSE 0 END)
-                        ) AS total_balance
+            FROM stock_book_t sb
+            LEFT JOIN stock_transaction_t st ON st.stock_book_id = sb.id
+            LEFT JOIN indent_item_t ii ON ii.id = st.indent_item_id
+            LEFT JOIN item_master_t im ON im.id = sb.item_id
+            LEFT JOIN group_item_name_master_t gm ON gm.id = im.group_id
+            $where
+            GROUP BY gm.id
+            ORDER BY group_name ASC
+        ";
 
-                    FROM stock_book_t sb
+        // Execute query
+        $rows = $db->customQuery($query);
 
-                    LEFT JOIN stock_transaction_t st 
-                        ON st.stock_book_id = sb.id
-
-                    LEFT JOIN indent_item_t ii 
-                        ON ii.id = st.indent_item_id
-                    LEFT JOIN item_master_t im 
-                        ON im.id = sb.item_id
-                    LEFT JOIN group_item_name_master_t gm 
-                        ON gm.id = im.group_id
-                    $where
-                    GROUP BY gm.id
-                    ORDER BY group_name ASC;
-        ");
+        // Ensure rows is an array
+        if (!is_array($rows)) {
+            $rows = [];
+        }
 
         echo json_encode([
             'success' => true,
-            'data' => $rows ?: [],
-            'count' => count($rows ?? [])
+            'data' => $rows,
+            'count' => count($rows),
+            'message' => 'Summary data loaded successfully'
+        ]);
+        exit;
+
+    } catch (Exception $e) {
+        // Return error as valid JSON
+        http_response_code(400);
+        echo json_encode([
+            'success' => false,
+            'data' => [],
+            'count' => 0,
+            'message' => 'Error loading summary data: ' . $e->getMessage(),
+            'error' => true
         ]);
         exit;
     }
+}
 
     /* ═════════════════════════════════════════════════════════════
        DETAILED DATA  — Indent-wise with stock book page no
@@ -184,9 +217,12 @@ class CustomController extends Controller
             $where .= " AND st.department_id = $deptId";
         }
         if ($group && $group !== 'ALL') {
-            $where .= " AND COALESCE(gm.group_name, 'Ungrouped') = '" . $db->escape($group) . "'";
+            $where .= " AND COALESCE(gm.group_name, 'Ungrouped') = '" . $group . "'";
         }
-
+        $stockbookTypeId = isset($_GET['stockbook_type_id']) ? (int) $_GET['stockbook_type_id'] : 0;
+        if ($stockbookTypeId > 0) {
+            $where .= " AND dm.stockbook_type_id = $stockbookTypeId";
+        }
         $rows = $db->customQuery("
             SELECT 
                 ROW_NUMBER() OVER (
@@ -260,7 +296,6 @@ class CustomController extends Controller
             LEFT JOIN make_t mk ON mk.id = ii.make_id
             LEFT JOIN model_t md ON md.id = ii.model_id
             LEFT JOIN stock_transaction_t st ON st.stock_book_id = sb.id
-
             $where
 
             GROUP BY 
@@ -292,9 +327,25 @@ class CustomController extends Controller
         $to = $_GET['to'] ?? null;
         $instId = isset($_GET['institution_id']) ? (int) $_GET['institution_id'] : 0;
         $deptId = isset($_GET['dept_id']) ? (int) $_GET['dept_id'] : 0;
-
+        $stockbookTypeId = isset($_GET['stockbook_type_id']) ? (int) $_GET['stockbook_type_id'] : 0;
         [$collegeName, $deptName] = $this->_resolveInstDept($db);
+        // Get Institution, Department, and StockBook Type names
+        $collegeName = '';
+        $deptName = '';
+        $registerName = '';
 
+        if ($instId > 0) {
+            $inst = $db->selectData('college_t', 'college_name', ['id' => $instId]);
+            $collegeName = $inst[0]['college_name'] ?? '';
+        }
+        if ($deptId > 0) {
+            $dept = $db->selectData('department_master_t', 'department_name', ['id' => $deptId]);
+            $deptName = $dept[0]['department_name'] ?? '';
+        }
+        if ($stockbookTypeId > 0) {
+            $sbt = $db->selectData('stockbook_type_t', 'name', ['id' => $stockbookTypeId]);
+            $registerName = $sbt[0]['name'] ?? '';
+        }
         $where = "WHERE sb.display='Y' AND st.display='Y'";
         
         if ($from && $to) {
@@ -387,7 +438,8 @@ class CustomController extends Controller
                 <td>
                     <div style="font-size:14px;font-weight:bold">' . htmlspecialchars($collegeName ?: 'Government Polytechnic College') . '</div>
                     ' . ($deptName ? '<div style="font-size:11px;font-weight:bold;color:#333">' . htmlspecialchars($deptName) . '</div>' : '') . '
-                </td>
+                       
+                    </td>
                 <td style="text-align:right">
                     <div style="font-size:12px;color:#666">Period: ' . ($from && $to ? date('d M Y', strtotime($from)) . ' to ' . date('d M Y', strtotime($to)) : 'All') . '</div>
                 </td>
@@ -395,7 +447,7 @@ class CustomController extends Controller
         </table>
 
         <div style="text-align:center;font-size:13px;font-weight:bold;border-top:2px solid #111;border-bottom:2px solid #111;padding:6px 0;margin-bottom:12px">
-            STOCK SUMMARY REPORT
+            '.$registerName.'(SUMMARY REPORT)
         </div>
         ';
 
@@ -406,9 +458,6 @@ class CustomController extends Controller
                 <tr style="background:#f0f0f0;border-bottom:2px solid #111">
                     <th style="border:1px solid #ccc;padding:6px;text-align:center;width:40px">S.No</th>
                     <th style="border:1px solid #ccc;padding:6px;text-align:left">Group/Item Name</th>
-                    <th style="border:1px solid #ccc;padding:6px;text-align:center">Total Items</th>
-                    <th style="border:1px solid #ccc;padding:6px;text-align:center">Indent Received</th>
-                    <th style="border:1px solid #ccc;padding:6px;text-align:center">Transfer Received</th>
                     <th style="border:1px solid #ccc;padding:6px;text-align:center">Total Received</th>
                     <th style="border:1px solid #ccc;padding:6px;text-align:center">Total Issued</th>
                     <th style="border:1px solid #ccc;padding:6px;text-align:center">Deleted</th>
@@ -432,9 +481,6 @@ class CustomController extends Controller
             <tr>
                 <td style="border:1px solid #ccc;padding:6px;text-align:center">' . $sno++ . '</td>
                 <td style="border:1px solid #ccc;padding:6px">' . htmlspecialchars($row['group_name']) . '</td>
-                <td style="border:1px solid #ccc;padding:6px;text-align:center">' . $row['total_items'] . '</td>
-                <td style="border:1px solid #ccc;padding:6px;text-align:center">' . $row['indent_received'] . '</td>
-                <td style="border:1px solid #ccc;padding:6px;text-align:center">' . $row['transfer_received'] . '</td>
                 <td style="border:1px solid #ccc;padding:6px;text-align:center;font-weight:bold">' . $row['total_received'] . '</td>
                 <td style="border:1px solid #ccc;padding:6px;text-align:center;color:#c62828">' . $row['total_issued'] . '</td>
                 <td style="border:1px solid #ccc;padding:6px;text-align:center;color:#d32f2f;font-weight:bold">' . $row['deleted_count'] . '</td>
@@ -454,9 +500,6 @@ class CustomController extends Controller
         $pdf .= '
             <tr style="background:#f0f0f0;font-weight:bold;border-top:2px solid #111">
                 <td style="border:1px solid #ccc;padding:6px;text-align:center" colspan="2">TOTAL</td>
-                <td style="border:1px solid #ccc;padding:6px;text-align:center">' . $totalItems . '</td>
-                <td style="border:1px solid #ccc;padding:6px;text-align:center">' . $totalIndentRecv . '</td>
-                <td style="border:1px solid #ccc;padding:6px;text-align:center">' . $totalTransferRecv . '</td>
                 <td style="border:1px solid #ccc;padding:6px;text-align:center">' . $totalRecv . '</td>
                 <td style="border:1px solid #ccc;padding:6px;text-align:center">' . $totalIssued . '</td>
                 <td style="border:1px solid #ccc;padding:6px;text-align:center">' . $totalDeleted . '</td>
@@ -735,19 +778,5 @@ class CustomController extends Controller
             ['Attachment' => false]
         );
         exit;
-    }
-    private function _renderPdf2(string $html, string $filename, string $orientation = 'portrait'): void
-    {
-        $html .= '</body></html>';
-        
-        // Using DOMPDF or similar PDF generation library
-        // Assuming you have a PDF service configured
-        try {
-            $pdf = \PDF::loadHTML($html);
-            $pdf->setPaper('A4', $orientation);
-            $pdf->download($filename . '_' . date('YmdHis') . '.pdf');
-        } catch (\Exception $e) {
-            echo "Error generating PDF: " . $e->getMessage();
-        }
     }
 }
