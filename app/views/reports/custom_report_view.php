@@ -164,6 +164,60 @@
             background-color: #F9FAFB !important;
         }
 
+        /* Group Header Styling */
+        tr.group-header {
+            background: #f3f4f6 !important;
+            border: 2px solid #374151 !important;
+        }
+
+        tr.group-header td {
+            padding: 8px !important;
+            font-weight: bold;
+            color: #1f2937;
+            font-size: 1rem;
+        }
+
+        /* Item Group Header Styling */
+        tr.item-group-header {
+            background: #e3f2fd !important;
+            border: 1px solid #1976d2 !important;
+        }
+
+        tr.item-group-header td {
+            padding: 6px !important;
+            font-weight: bold;
+            color: #1565c0;
+            font-size: 0.95rem;
+        }
+
+        /* Item Subtotal Row Styling */
+        tr.item-subtotal {
+            background: #dbeafe !important;
+            font-weight: bold;
+            border-top: 1px solid #3b82f6 !important;
+            border-bottom: 1px solid #3b82f6 !important;
+        }
+
+        tr.item-subtotal td {
+            padding: 6px !important;
+            color: #1e40af;
+            font-size: 0.9rem;
+        }
+
+        /* Group Subtotal Row Styling */
+        tr.group-subtotal {
+            background: #fef3c7 !important;
+            font-weight: bold;
+            border-top: 1px solid #f59e0b !important;
+            border-bottom: 1px solid #f59e0b !important;
+        }
+
+        tr.group-subtotal td {
+            padding: 6px !important;
+            color: #92400e;
+            font-size: 0.9rem;
+        }
+
         .badge {
             font-size: 0.7rem;
             padding: 0.35rem 0.6rem;
@@ -621,28 +675,130 @@
             summaryTable.draw();
         }
 
-        // Populate Detailed Table
+        // Populate Detailed Table (GROUPED BY GROUP NAME, THEN ITEM NAME WITH SUBTOTALS)
         function populateDetailedTable(data) {
             detailedTable.clear();
-            let total_balance;
+            let currentGroupName = '';
+            let currentItemName = '';
+            let sno = 1;
+            
+            // Track group totals
+            let groupRecv = 0;
+            let groupIssued = 0;
+            let groupDeleted = 0;
+            let groupBalance = 0;
+            
+            // Track item totals
+            let itemRecv = 0;
+            let itemIssued = 0;
+            let itemDeleted = 0;
+            let itemBalance = 0;
+
             data.forEach((row, index) => {
+                const nextRow = index + 1 < data.length ? data[index + 1] : null;
+                
+                // Add Group Header when group changes
+                if (currentGroupName !== row.group_name) {
+                    currentGroupName = row.group_name;
+                    currentItemName = ''; // Reset item when group changes
+                    
+                    // Reset group totals
+                    groupRecv = 0;
+                    groupIssued = 0;
+                    groupDeleted = 0;
+                    groupBalance = 0;
+                    
+                    // Add group header row
+                    detailedTable.row.add([
+                        '<span style="font-weight:bold;color:#1f2937">📁 ' + htmlspecialchars(row.group_name || 'Ungrouped') + '</span>',
+                        '', '', '', '', '', '', '', '', '', '', ''
+                    ]).node().classList.add('group-header');
+                }
+
+                // Add Item Header when item changes (within group)
+                if (currentItemName !== row.item_name) {
+                    currentItemName = row.item_name;
+                    
+                    // Reset item totals
+                    itemRecv = 0;
+                    itemIssued = 0;
+                    itemDeleted = 0;
+                    itemBalance = 0;
+                    
+                    // Add item subheader row
+                    detailedTable.row.add([
+                        '<span style="font-weight:bold;color:#1565c0;margin-left:15px;">📦 ' + htmlspecialchars(row.item_name) + '</span>',
+                        '', '', '', '', '', '', '', '', '', '', ''
+                    ]).node().classList.add('item-group-header');
+                    
+                    sno = 1; // Reset serial for each item
+                }
+
                 const makeModel = (row.make_name ? row.make_name : '') + 
                     (row.model_name ? ' / ' + row.model_name : '');
-                total_balance = row.total_received-(row.total_issued+row.total_deleted);
+                const total_balance = row.balance || 0;
+
+                // Add data row
                 detailedTable.row.add([
-                    index + 1,
-                    row.group_name+'<br>'+row.item_name,
-                    row.indent_no,
-                    row.indent_date,
-                    row.stockbook_page_no || 'N/A',
-                    makeModel+'<br>'+row.item_description || 'N/A',
-                    row.indent_received,
-                    row.transfer_received,
-                    '<strong>' + row.total_received + '</strong>',
-                    '<span style="color:#c62828">' + row.total_issued + '</span>',
-                    '<span style="color:#d32f2f">' + row.total_deleted + '</span>',
-                    '<span style="background:#e8f5e9;padding:2px 6px;border-radius:3px;font-weight:bold">' + total_balance + '</span>'
+                    sno++,
+                    (row.item_description ? row.item_description : 'N/A'),
+                    row.indent_no || 'N/A',
+                    'N/A',
+                    'N/A',
+                    makeModel || 'N/A',
+                    row.receipt_qty || 0,
+                    row.issue_qty || 0,
+                    '<strong>' + (row.receipt_qty || 0) + '</strong>',
+                    '<span style="color:#c62828">' + (row.issue_qty || 0) + '</span>',
+                    '<span style="color:#d32f2f">' + (row.deleted_quantity || 0) + '</span>',
+                    '<span style="background:#e8f5e9;padding:2px 6px;border-radius:3px;font-weight:bold">' + parseInt(total_balance) + '</span>'
                 ]);
+                
+                // Add to item totals
+                itemRecv += (row.receipt_qty || 0);
+                itemIssued += (row.issue_qty || 0);
+                itemDeleted += (row.deleted_quantity || 0);
+                itemBalance += parseInt(total_balance);
+                
+                // Add to group totals
+                groupRecv += (row.receipt_qty || 0);
+                groupIssued += (row.issue_qty || 0);
+                groupDeleted += (row.deleted_quantity || 0);
+                groupBalance += parseInt(total_balance);
+                
+                // Check if next row is different item - if so, add item subtotal
+                if (nextRow === null || nextRow.item_name !== row.item_name) {
+                    // Add Item Subtotal row
+                    detailedTable.row.add([
+                        '<span style="font-weight:bold;color:#1e40af">Item Subtotal</span>',
+                        '<span style="font-weight:bold;color:#1e40af">' + htmlspecialchars(currentItemName) + '</span>',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '<span style="background:#dbeafe;font-weight:bold;color:#1e40af">' + itemRecv + '</span>',
+                        '<span style="background:#dbeafe;font-weight:bold;color:#1e40af">' + itemIssued + '</span>',
+                        '<span style="background:#dbeafe;font-weight:bold;color:#1e40af">' + itemDeleted + '</span>',
+                        '<span style="background:#bfdbfe;font-weight:bold;color:#1e40af">' + itemBalance + '</span>'
+                    ]).node().classList.add('item-subtotal');
+                }
+                
+                // Check if next row is different group - if so, add group subtotal
+                if (nextRow === null || nextRow.group_name !== row.group_name) {
+                    // Add Group Subtotal row
+                    detailedTable.row.add([
+                        '<span style="font-weight:bold;color:#92400e">Subtotal</span>',
+                        '<span style="font-weight:bold;color:#92400e">' + htmlspecialchars(currentGroupName || 'Ungrouped') + '</span>',
+                        '',
+                        '',
+                        '',
+                        '',
+                        '<span style="background:#fef3c7;font-weight:bold">' + groupRecv + '</span>',
+                        '<span style="background:#fef3c7;font-weight:bold;color:#c62828">' + groupIssued + '</span>',
+                        '<span style="background:#fef3c7;font-weight:bold;color:#d32f2f">' + groupDeleted + '</span>',
+                        '<span style="background:#fcd34d;font-weight:bold">' + groupBalance + '</span>'
+                    ]).node().classList.add('group-subtotal');
+                }
             });
             
             detailedTable.draw();
