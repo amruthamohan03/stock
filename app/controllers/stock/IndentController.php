@@ -184,7 +184,7 @@ class IndentController extends Controller
 
             /* Duplicate check */
             $existing = $db->selectData('indent_master_t', 'id',
-                ['book_no' => $book_no, 'indent_no' => $indent_no]);
+                ['book_no' => $book_no, 'indent_no' => $indent_no,'item_type'=>$item_type]);
             if (!empty($existing)) {
                 echo json_encode(['success'=>false,'message'=>'Book No. + Indent No. already exists']);
                 exit;

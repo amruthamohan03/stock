@@ -192,7 +192,7 @@ class CustomController extends Controller
 }
 
     /* ═════════════════════════════════════════════════════════════
-       DETAILED DATA  — Indent-wise with stock book page no
+       DETAILED DATA  — Using your custom query with group & item name grouping
     ═════════════════════════════════════════════════════════════ */
     public function getDetailedData()
     {
@@ -203,9 +203,9 @@ class CustomController extends Controller
         $to = $_GET['to'] ?? null;
         $instId = isset($_GET['institution_id']) ? (int) $_GET['institution_id'] : 0;
         $deptId = isset($_GET['dept_id']) ? (int) $_GET['dept_id'] : 0;
-        $group = $_GET['group'] ?? null;
+        $stockbookTypeId = isset($_GET['stockbook_type_id']) ? (int) $_GET['stockbook_type_id'] : 0;
 
-        $where = "WHERE sb.display='Y' AND st.display='Y'";
+        $where = "WHERE st.display='Y'";
         
         if ($from && $to) {
             $where .= " AND st.transaction_date BETWEEN '$from' AND '$to'";
@@ -216,96 +216,57 @@ class CustomController extends Controller
         if ($deptId > 0) {
             $where .= " AND st.department_id = $deptId";
         }
-        if ($group && $group !== 'ALL') {
-            $where .= " AND COALESCE(gm.group_name, 'Ungrouped') = '" . $group . "'";
-        }
-        $stockbookTypeId = isset($_GET['stockbook_type_id']) ? (int) $_GET['stockbook_type_id'] : 0;
-        if ($stockbookTypeId > 0) {
-            $where .= " AND dm.stockbook_type_id = $stockbookTypeId";
-        }
+        // if ($stockbookTypeId > 0) {
+        //     $where .= " AND sb.stockbook_type_id = $stockbookTypeId";
+        // }
+
         $rows = $db->customQuery("
             SELECT 
-                ROW_NUMBER() OVER (
-                    PARTITION BY ii.group_id 
-                    ORDER BY gm.group_name, im_i.indent_no, st.transaction_date
-                ) AS serial_no,
-
-                COALESCE(gm.group_name, 'Ungrouped') AS group_name,
-                COALESCE(im_i.indent_no, 'N/A') AS indent_no,
-                DATE_FORMAT(im_i.indent_date, '%d-%m-%Y') AS indent_date,
-
-                sb.id AS stock_book_id,
-                ii.stock_book_page_no AS stockbook_page_no,
-                sb.item_id,
-                imt.item_name,
+                gm.group_name,
+                idm.indent_no,
+                im.item_name,
                 ii.item_description,
                 mk.make_name,
                 md.model_name,
-
-                /* RECEIVED */
-                COALESCE(SUM(CASE 
-                    WHEN st.transaction_type IN ('RECEIPT','TRANSFER') 
-                    THEN st.receipt_qty END),0) AS total_received,
-
-                /* INDENT RECEIVED */
-                COALESCE(SUM(CASE 
-                    WHEN st.transaction_type='RECEIPT'
-                    AND st.stock_entry_type='INDENT_BASED'
-                    THEN st.receipt_qty END),0) AS indent_received,
-
-                /* TRANSFER RECEIVED */
-                COALESCE(SUM(CASE 
-                    WHEN st.transaction_type='TRANSFER'
-                    THEN st.receipt_qty END),0) AS transfer_received,
-
-                /* ISSUED */
-                COALESCE(SUM(CASE 
-                    WHEN st.transaction_type='ISSUE'
-                    THEN st.issue_qty END),0) AS total_issued,
-
-                /* DELETED */
-                COALESCE(SUM(CASE 
-                    WHEN st.item_status='DELETED' AND st.transaction_type <> 'ISSUE'
-                    THEN ii.qty_intended 
-                    ELSE 0 
-                END),0) AS total_deleted,
-
-                /* BALANCE */
-                COALESCE(MAX(st.balance_qty),0) AS balance_qty,
-
-                /* FIXED COLUMN SOURCE */
-                sb.location AS location,
-
-                /* remarks should not be grouped raw → aggregate */
-                MAX(st.remarks) AS remarks
-
-            FROM stock_book_t sb
-
+                st.transaction_type,
+                st.stock_entry_type,
+                st.department_id,
+                st.receipt_qty,
+                st.issue_qty,
+                /* Deleted quantity */
+                CASE 
+                    WHEN st.item_status = 'DELETED' 
+                    THEN st.receipt_qty
+                    ELSE 0
+                END AS deleted_quantity,
+                /* Balance */
+                GREATEST(
+                    st.receipt_qty - (st.issue_qty
+                        +
+                        CASE 
+                            WHEN st.item_status = 'DELETED' 
+                            THEN st.receipt_qty
+                            ELSE 0
+                        END
+                    ),
+                0) AS balance
+            FROM stock_transaction_t st
+            LEFT JOIN stock_book_t sb 
+                ON st.stock_book_id = sb.id 
+            LEFT JOIN indent_master_t idm 
+                ON st.indent_id = idm.id
+            LEFT JOIN item_master_t im 
+                ON sb.item_id = im.id
+            LEFT JOIN group_item_name_master_t gm 
+                ON im.group_id = gm.id
             LEFT JOIN indent_item_t ii 
-                ON ii.id = (
-                    SELECT ii2.id 
-                    FROM indent_item_t ii2
-                    WHERE ii2.item_id = sb.item_id
-                    ORDER BY ii2.created_at DESC
-                    LIMIT 1
-                )
-
-            LEFT JOIN group_item_name_master_t gm ON gm.id = ii.group_id
-            LEFT JOIN indent_master_t im_i ON im_i.id = ii.indent_id
-            LEFT JOIN item_master_t imt ON imt.id = sb.item_id
-            LEFT JOIN make_t mk ON mk.id = ii.make_id
-            LEFT JOIN model_t md ON md.id = ii.model_id
-            LEFT JOIN stock_transaction_t st ON st.stock_book_id = sb.id
+                ON st.indent_item_id = ii.id
+            LEFT JOIN make_t mk
+                ON ii.make_id = mk.id
+            LEFT JOIN model_t md
+                ON ii.model_id = md.id
             $where
-
-            GROUP BY 
-                sb.id, ii.id, gm.id, im_i.id, imt.id, mk.id, md.id
-
-            ORDER BY 
-                gm.group_name ASC,
-                im_i.indent_no ASC,
-                im_i.indent_date ASC,
-                sb.id ASC;
+            ORDER BY gm.group_name ASC, ii.indent_id ASC, im.item_name ASC
         ");
 
         echo json_encode([
@@ -357,75 +318,71 @@ class CustomController extends Controller
         if ($deptId > 0) {
             $where .= " AND st.department_id = $deptId";
         }
+        // if ($stockbookTypeId > 0) {
+        //     $where .= " AND dm.stockbook_type_id = $stockbookTypeId";
+        // }
 
         $rows = $db->customQuery("
             SELECT 
-                        COALESCE(gm.group_name,'Ungrouped') AS group_name,
+                COALESCE(gm.group_name, 'Ungrouped') AS group_name,
+                COUNT(DISTINCT sb.id) AS total_items,
                 
-                        COUNT(DISTINCT sb.id) AS total_items,
+                /* RECEIVED */
+                SUM(CASE 
+                    WHEN st.transaction_type IN ('RECEIPT','TRANSFER')
+                    THEN st.receipt_qty ELSE 0 END
+                ) AS total_received,
 
-                        /* RECEIVED */
-                        SUM(CASE 
-                            WHEN st.transaction_type IN ('RECEIPT','TRANSFER')
-                            THEN st.receipt_qty ELSE 0 END
-                        ) AS total_received,
+                /* INDENT RECEIVED */
+                SUM(CASE 
+                    WHEN st.transaction_type='RECEIPT'
+                    AND st.stock_entry_type='INDENT_BASED'
+                    THEN st.receipt_qty ELSE 0 END
+                ) AS indent_received,
 
-                        /* INDENT RECEIVED */
-                        SUM(CASE 
-                            WHEN st.transaction_type='RECEIPT'
-                            AND st.stock_entry_type='INDENT_BASED'
-                            THEN st.receipt_qty ELSE 0 END
-                        ) AS indent_received,
+                /* TRANSFER RECEIVED */
+                SUM(CASE 
+                    WHEN st.transaction_type='TRANSFER'
+                    THEN st.receipt_qty ELSE 0 END
+                ) AS transfer_received,
 
-                        /* TRANSFER RECEIVED */
-                        SUM(CASE 
-                            WHEN st.transaction_type='TRANSFER'
-                            THEN st.receipt_qty ELSE 0 END
-                        ) AS transfer_received,
+                /* ISSUED */
+                SUM(CASE 
+                    WHEN st.transaction_type='ISSUE'
+                    AND st.item_status <> 'DELETED'
+                    THEN st.issue_qty ELSE 0 END
+                ) AS total_issued,
 
-                        /* ISSUED */
-                        SUM(CASE 
-                            WHEN st.transaction_type='ISSUE'
-                            AND st.item_status <> 'DELETED'
-                            THEN st.issue_qty ELSE 0 END
-                        ) AS total_issued,
+                /* DELETED FROM INDENT */
+                SUM(CASE 
+                    WHEN st.item_status='DELETED'
+                    THEN ii.qty_intended ELSE 0 END
+                ) AS total_deleted,
 
-                        /* DELETED FROM INDENT */
-                        SUM(CASE 
-                            WHEN st.item_status='DELETED'
-                            THEN ii.qty_intended ELSE 0 END
-                        ) AS deleted_count,
+                /* BALANCE */
+                (
+                    SUM(CASE 
+                        WHEN st.transaction_type IN ('RECEIPT','TRANSFER')
+                        THEN st.receipt_qty ELSE 0 END)
+                    -
+                    SUM(CASE 
+                        WHEN st.transaction_type='ISSUE'
+                        AND st.item_status <> 'DELETED'
+                        THEN st.issue_qty ELSE 0 END)
+                    -
+                    SUM(CASE 
+                        WHEN st.item_status='DELETED'
+                        THEN ii.qty_intended ELSE 0 END)
+                ) AS total_balance
 
-                        /* BALANCE */
-                        (
-                            SUM(CASE 
-                                WHEN st.transaction_type IN ('RECEIPT','TRANSFER')
-                                THEN st.receipt_qty ELSE 0 END)
-                            -
-                            SUM(CASE 
-                                WHEN st.transaction_type='ISSUE'
-                                AND st.item_status <> 'DELETED'
-                                THEN st.issue_qty ELSE 0 END)
-                            -
-                            SUM(CASE 
-                                WHEN st.item_status='DELETED'
-                                THEN ii.qty_intended ELSE 0 END)
-                        ) AS total_balance
-
-                    FROM stock_book_t sb
-
-                    LEFT JOIN stock_transaction_t st 
-                        ON st.stock_book_id = sb.id
-
-                    LEFT JOIN indent_item_t ii 
-                        ON ii.id = st.indent_item_id
-                    LEFT JOIN item_master_t im 
-                        ON im.id = sb.item_id
-                    LEFT JOIN group_item_name_master_t gm 
-                        ON gm.id = im.group_id
-                    $where
-                    GROUP BY gm.id
-                    ORDER BY group_name ASC;
+            FROM stock_book_t sb
+            LEFT JOIN stock_transaction_t st ON st.stock_book_id = sb.id
+            LEFT JOIN indent_item_t ii ON ii.id = st.indent_item_id
+            LEFT JOIN item_master_t im ON im.id = sb.item_id
+            LEFT JOIN group_item_name_master_t gm ON gm.id = im.group_id
+            $where
+            GROUP BY gm.id
+            ORDER BY group_name ASC
         ");
 
         $pdf = $this->_pdfBaseStyles('landscape');
@@ -438,8 +395,7 @@ class CustomController extends Controller
                 <td>
                     <div style="font-size:14px;font-weight:bold">' . htmlspecialchars($collegeName ?: 'Government Polytechnic College') . '</div>
                     ' . ($deptName ? '<div style="font-size:11px;font-weight:bold;color:#333">' . htmlspecialchars($deptName) . '</div>' : '') . '
-                       
-                    </td>
+                </td>
                 <td style="text-align:right">
                     <div style="font-size:12px;color:#666">Period: ' . ($from && $to ? date('d M Y', strtotime($from)) . ' to ' . date('d M Y', strtotime($to)) : 'All') . '</div>
                 </td>
@@ -483,7 +439,7 @@ class CustomController extends Controller
                 <td style="border:1px solid #ccc;padding:6px">' . htmlspecialchars($row['group_name']) . '</td>
                 <td style="border:1px solid #ccc;padding:6px;text-align:center;font-weight:bold">' . $row['total_received'] . '</td>
                 <td style="border:1px solid #ccc;padding:6px;text-align:center;color:#c62828">' . $row['total_issued'] . '</td>
-                <td style="border:1px solid #ccc;padding:6px;text-align:center;color:#d32f2f;font-weight:bold">' . $row['deleted_count'] . '</td>
+                <td style="border:1px solid #ccc;padding:6px;text-align:center;color:#d32f2f;font-weight:bold">' . $row['total_deleted'] . '</td>
                 <td style="border:1px solid #ccc;padding:6px;text-align:center;font-weight:bold;background:#e8f5e9">' . $row['total_balance'] . '</td>
             </tr>
             ';
@@ -493,7 +449,7 @@ class CustomController extends Controller
             $totalTransferRecv += $row['transfer_received'];
             $totalRecv += $row['total_received'];
             $totalIssued += $row['total_issued'];
-            $totalDeleted += $row['deleted_count'];
+            $totalDeleted += $row['total_deleted'];
             $totalBalance += $row['total_balance'];
         }
 
@@ -517,7 +473,7 @@ class CustomController extends Controller
     }
 
     /* ═════════════════════════════════════════════════════════════
-       EXPORT DETAILED PDF
+       EXPORT DETAILED PDF — Grouped by Group Name then Item Name
     ═════════════════════════════════════════════════════════════ */
     public function exportDetailedPdf()
     {
@@ -527,10 +483,11 @@ class CustomController extends Controller
         $to = $_GET['to'] ?? null;
         $instId = isset($_GET['institution_id']) ? (int) $_GET['institution_id'] : 0;
         $deptId = isset($_GET['dept_id']) ? (int) $_GET['dept_id'] : 0;
+        $stockbookTypeId = isset($_GET['stockbook_type_id']) ? (int) $_GET['stockbook_type_id'] : 0;
 
         [$collegeName, $deptName] = $this->_resolveInstDept($db);
 
-        $where = "WHERE sb.display='Y' AND st.display='Y'";
+        $where = "WHERE st.display='Y' AND item_status !='DELETED'";
         
         if ($from && $to) {
             $where .= " AND st.transaction_date BETWEEN '$from' AND '$to'";
@@ -541,41 +498,57 @@ class CustomController extends Controller
         if ($deptId > 0) {
             $where .= " AND st.department_id = $deptId";
         }
+        if ($stockbookTypeId > 0) {
+            $where .= " AND sb.stockbook_type_id = $stockbookTypeId";
+        }
 
         $rows = $db->customQuery("
             SELECT 
-                ROW_NUMBER() OVER (PARTITION BY ii.group_id ORDER BY gm.group_name, im_i.indent_no, st.transaction_date) AS serial_no,
-                COALESCE(gm.group_name, 'Ungrouped') AS group_name,
-                COALESCE(im_i.indent_no, 'N/A') AS indent_no,
-                DATE_FORMAT(im_i.indent_date, '%d-%m-%Y') AS indent_date,
-                sb.id AS stock_book_id,
-                ii.stock_book_page_no AS stockbook_page_no,
-                sb.item_id,
-                imt.item_name,
+                gm.group_name,
+                idm.indent_no,
+                im.item_name,
                 ii.item_description,
                 mk.make_name,
                 md.model_name,
-                COALESCE(SUM(CASE WHEN st.transaction_type IN ('RECEIPT', 'TRANSFER') THEN st.receipt_qty ELSE 0 END), 0) AS total_received,
-                COALESCE(SUM(CASE WHEN st.transaction_type = 'RECEIPT' AND st.stock_entry_type = 'INDENT_BASED' THEN st.receipt_qty ELSE 0 END), 0) AS indent_received,
-                COALESCE(SUM(CASE WHEN st.transaction_type = 'TRANSFER' THEN st.receipt_qty ELSE 0 END), 0) AS transfer_received,
-                COALESCE(SUM(CASE WHEN st.transaction_type = 'ISSUE' THEN st.issue_qty ELSE 0 END), 0) AS total_issued,
-                COALESCE(SUM(CASE WHEN st.item_status = 'DELETED' THEN 1 ELSE 0 END), 0) AS deleted_count,
-                COALESCE(MAX(st.balance_qty), 0) AS balance_qty
-            FROM stock_book_t sb
-            LEFT JOIN indent_item_t ii ON ii.id = (
-                SELECT ii2.id FROM indent_item_t ii2 
-                WHERE ii2.item_id = sb.item_id 
-                ORDER BY ii2.created_at DESC LIMIT 1
-            )
-            LEFT JOIN group_item_name_master_t gm ON gm.id = ii.group_id
-            LEFT JOIN indent_master_t im_i ON im_i.id = ii.indent_id
-            LEFT JOIN item_master_t imt ON imt.id = sb.item_id
-            LEFT JOIN make_t mk ON mk.id = ii.make_id
-            LEFT JOIN model_t md ON md.id = ii.model_id
-            LEFT JOIN stock_transaction_t st ON st.stock_book_id = sb.id
+                st.transaction_type,
+                st.stock_entry_type,
+                st.department_id,
+                st.receipt_qty,
+                st.issue_qty,
+                /* Deleted quantity */
+                CASE 
+                    WHEN st.item_status = 'DELETED' 
+                    THEN st.receipt_qty
+                    ELSE 0
+                END AS deleted_quantity,
+                /* Balance */
+                GREATEST(
+                    st.receipt_qty - (st.issue_qty
+                        +
+                        CASE 
+                            WHEN st.item_status = 'DELETED' 
+                            THEN st.receipt_qty
+                            ELSE 0
+                        END
+                    ),
+                0) AS balance
+            FROM stock_transaction_t st
+            LEFT JOIN stock_book_t sb 
+                ON st.stock_book_id = sb.id 
+            LEFT JOIN indent_master_t idm 
+                ON st.indent_id = idm.id
+            LEFT JOIN item_master_t im 
+                ON sb.item_id = im.id
+            LEFT JOIN group_item_name_master_t gm 
+                ON im.group_id = gm.id
+            LEFT JOIN indent_item_t ii 
+                ON st.indent_item_id = ii.id
+            LEFT JOIN make_t mk
+                ON ii.make_id = mk.id
+            LEFT JOIN model_t md
+                ON ii.model_id = md.id
             $where
-            GROUP BY sb.id, ii.id, gm.id, im_i.id, imt.id, mk.id, md.id
-            ORDER BY gm.group_name ASC, im_i.indent_no ASC, im_i.indent_date ASC, sb.id ASC
+            ORDER BY gm.group_name ASC, ii.indent_id ASC, im.item_name ASC
         ");
 
         $pdf = $this->_pdfBaseStyles('landscape');
@@ -596,24 +569,22 @@ class CustomController extends Controller
         </table>
 
         <div style="text-align:center;font-size:13px;font-weight:bold;border-top:2px solid #111;border-bottom:2px solid #111;padding:6px 0;margin-bottom:12px">
-            STOCK DETAILED REPORT
+            STOCK DETAILED REPORT (GROUPED BY GROUP & ITEM NAME)
         </div>
         ';
 
-        /* Detailed Table */
+        /* Detailed Table with Group & Item Grouping */
         $pdf .= '
         <table style="width:100%;border-collapse:collapse;font-size:9px">
             <thead>
                 <tr style="background:#f0f0f0;border-bottom:2px solid #111">
                     <th style="border:1px solid #ccc;padding:4px;text-align:center;width:35px">S.No</th>
-                    <th style="border:1px solid #ccc;padding:4px;text-align:left">Group/Item</th>
+                    <th style="border:1px solid #ccc;padding:4px;text-align:left">Item Name</th>
+                    <th style="border:1px solid #ccc;padding:4px;text-align:left">Description</th>
                     <th style="border:1px solid #ccc;padding:4px;text-align:center">Indent No</th>
-                    <th style="border:1px solid #ccc;padding:4px;text-align:center">Indent Date</th>
-                    <th style="border:1px solid #ccc;padding:4px;text-align:center">SB Page</th>
                     <th style="border:1px solid #ccc;padding:4px;text-align:center">Make/Model</th>
-                    <th style="border:1px solid #ccc;padding:4px;text-align:center">Rcvd(I)</th>
-                    <th style="border:1px solid #ccc;padding:4px;text-align:center">Rcvd(T)</th>
-                    <th style="border:1px solid #ccc;padding:4px;text-align:center">Total Rcvd</th>
+                    <th style="border:1px solid #ccc;padding:4px;text-align:center">Type</th>
+                    <th style="border:1px solid #ccc;padding:4px;text-align:center">Received</th>
                     <th style="border:1px solid #ccc;padding:4px;text-align:center">Issued</th>
                     <th style="border:1px solid #ccc;padding:4px;text-align:center">Deleted</th>
                     <th style="border:1px solid #ccc;padding:4px;text-align:center;font-weight:bold">Balance</th>
@@ -623,30 +594,150 @@ class CustomController extends Controller
         ';
 
         $sno = 1;
-        foreach ($rows as $row) {
-            $makeModel = $row['item_name'].'-'.($row['make_name'] ? $row['make_name'] : '') . 
-                        ($row['model_name'] ? ' / ' . $row['model_name'] : '').'-'.$row['item_description'];
+        $currentGroup = '';
+        $currentItem = '';
+        $totalRecvGrand = 0;
+        $totalIssuedGrand = 0;
+        $totalDeletedGrand = 0;
+        $totalBalanceGrand = 0;
+        
+        // Track group totals
+        $groupRecv = 0;
+        $groupIssued = 0;
+        $groupDeleted = 0;
+        $groupBalance = 0;
+        
+        // Track item totals
+        $itemRecv = 0;
+        $itemIssued = 0;
+        $itemDeleted = 0;
+        $itemBalance = 0;
+        
+        // Convert to array to check next element
+        $rowsArray = is_array($rows) ? $rows : [];
+        $totalRows = count($rowsArray);
+
+        foreach ($rowsArray as $currentRowIndex => $row) {
+            $nextRow = $currentRowIndex + 1 < $totalRows ? $rowsArray[$currentRowIndex + 1] : null;
+            
+            // Add Group Header when group changes
+            if ($currentGroup !== $row['group_name']) {
+                $currentGroup = $row['group_name'];
+                $currentItem = ''; // Reset item when group changes
+                
+                // Reset group totals
+                $groupRecv = 0;
+                $groupIssued = 0;
+                $groupDeleted = 0;
+                $groupBalance = 0;
+                
+                // Add group header
+                $pdf .= '
+                <tr style="background:#f3f4f6;border:2px solid #374151">
+                    <td colspan="10" style="border:2px solid #374151;padding:6px;font-weight:bold;color:#1f2937;font-size:11px">
+                        📁 ' . htmlspecialchars($currentGroup ?: 'Ungrouped') . '
+                    </td>
+                </tr>
+                ';
+            }
+
+            // Add Item Header when item changes (within the group)
+            if ($currentItem !== $row['item_name']) {
+                $currentItem = $row['item_name'];
+                
+                // Reset item totals
+                $itemRecv = 0;
+                $itemIssued = 0;
+                $itemDeleted = 0;
+                $itemBalance = 0;
+                
+                // Add item subheader
+                $pdf .= '
+                <tr style="background:#e3f2fd;border:1px solid #1976d2">
+                    <td colspan="10" style="border:1px solid #1976d2;padding:5px;font-weight:bold;color:#1565c0;font-size:10px">
+                        &nbsp;&nbsp;📦 ' . htmlspecialchars($currentItem) . '
+                    </td>
+                </tr>
+                ';
+            }
+
+            $makeModel = ($row['make_name'] ? $row['make_name'] : '') . 
+                        ($row['model_name'] ? ' / ' . $row['model_name'] : '');
             
             $pdf .= '
             <tr>
                 <td style="border:1px solid #ccc;padding:4px;text-align:center">' . $sno++ . '</td>
-                <td style="border:1px solid #ccc;padding:4px">' . htmlspecialchars($row['group_name']) .''. '</td>
-                <td style="border:1px solid #ccc;padding:4px;text-align:center">' . htmlspecialchars($row['indent_no']) . '</td>
-                <td style="border:1px solid #ccc;padding:4px;text-align:center">' . $row['indent_date'] . '</td>
-                <td style="border:1px solid #ccc;padding:4px;text-align:center">' . ($row['stockbook_page_no'] ?: 'N/A') . '</td>
+                <td style="border:1px solid #ccc;padding:4px;font-size:9px">' . htmlspecialchars($row['item_name']) . '</td>
+                <td style="border:1px solid #ccc;padding:4px;font-size:8px">' . htmlspecialchars($row['item_description'] ?: 'N/A') . '</td>
+                <td style="border:1px solid #ccc;padding:4px;text-align:center;font-size:9px">' . htmlspecialchars($row['indent_no'] ?: 'N/A') . '</td>
                 <td style="border:1px solid #ccc;padding:4px;font-size:8px">' . htmlspecialchars($makeModel ?: 'N/A') . '</td>
-                <td style="border:1px solid #ccc;padding:4px;text-align:center">' . $row['indent_received'] . '</td>
-                <td style="border:1px solid #ccc;padding:4px;text-align:center">' . $row['transfer_received'] . '</td>
-                <td style="border:1px solid #ccc;padding:4px;text-align:center;font-weight:bold">' . $row['total_received'] . '</td>
-                <td style="border:1px solid #ccc;padding:4px;text-align:center;color:#c62828">' . $row['total_issued'] . '</td>
-                <td style="border:1px solid #ccc;padding:4px;text-align:center;color:#d32f2f">' . $row['deleted_count'] . '</td>
-                <td style="border:1px solid #ccc;padding:4px;text-align:center;font-weight:bold;background:#e8f5e9">' . $row['balance_qty'] . '</td>
+                <td style="border:1px solid #ccc;padding:4px;text-align:center;font-size:8px">' . htmlspecialchars($row['transaction_type'] ?: 'N/A') . '</td>
+                <td style="border:1px solid #ccc;padding:4px;text-align:center">' . (int)$row['receipt_qty'] . '</td>
+                <td style="border:1px solid #ccc;padding:4px;text-align:center;color:#c62828">' . (int)$row['issue_qty'] . '</td>
+                <td style="border:1px solid #ccc;padding:4px;text-align:center;color:#d32f2f">' . (int)$row['deleted_quantity'] . '</td>
+                <td style="border:1px solid #ccc;padding:4px;text-align:center;font-weight:bold;background:#e8f5e9">' . (int)$row['balance'] . '</td>
             </tr>
             ';
+
+            $totalRecvGrand += (int)$row['receipt_qty'];
+            $totalIssuedGrand += (int)$row['issue_qty'];
+            $totalDeletedGrand += (int)$row['deleted_quantity'];
+            $totalBalanceGrand += (int)$row['balance'];
+            
+            // Add to item totals
+            $itemRecv += (int)$row['receipt_qty'];
+            $itemIssued += (int)$row['issue_qty'];
+            $itemDeleted += (int)$row['deleted_quantity'];
+            $itemBalance += (int)$row['balance'];
+            
+            // Add to group totals
+            $groupRecv += (int)$row['receipt_qty'];
+            $groupIssued += (int)$row['issue_qty'];
+            $groupDeleted += (int)$row['deleted_quantity'];
+            $groupBalance += (int)$row['balance'];
+            
+            // Check if next row is different item - if so, add item subtotal
+            if ($nextRow === null || $nextRow['item_name'] !== $row['item_name']) {
+                // Add Item Subtotal
+                $pdf .= '
+                <tr style="background:#dbeafe;font-weight:bold;border-top:1px solid #3b82f6;border-bottom:1px solid #3b82f6">
+                    <td colspan="2" style="border:1px solid #ccc;padding:4px;text-align:center;font-size:9px;color:#1e40af">Item Subtotal: ' . htmlspecialchars($currentItem) . '</td>
+                    <td colspan="4" style="border:1px solid #ccc;padding:4px;text-align:center"></td>
+                    <td style="border:1px solid #ccc;padding:4px;text-align:center;color:#1e40af">' . $itemRecv . '</td>
+                    <td style="border:1px solid #ccc;padding:4px;text-align:center;color:#1e40af">' . $itemIssued . '</td>
+                    <td style="border:1px solid #ccc;padding:4px;text-align:center;color:#1e40af">' . $itemDeleted . '</td>
+                    <td style="border:1px solid #ccc;padding:4px;text-align:center;background:#bfdbfe;color:#1e40af">' . $itemBalance . '</td>
+                </tr>
+                ';
+            }
+            
+            // Check if next row is different group - if so, add group subtotal
+            if ($nextRow === null || $nextRow['group_name'] !== $row['group_name']) {
+                // Add Group Subtotal
+                $pdf .= '
+                <tr style="background:#fef3c7;font-weight:bold;border-top:1px solid #f59e0b;border-bottom:1px solid #f59e0b">
+                    <td colspan="2" style="border:1px solid #ccc;padding:4px;text-align:center;font-size:9px">Subtotal: ' . htmlspecialchars($currentGroup ?: 'Ungrouped') . '</td>
+                    <td colspan="4" style="border:1px solid #ccc;padding:4px;text-align:center"></td>
+                    <td style="border:1px solid #ccc;padding:4px;text-align:center">' . $groupRecv . '</td>
+                    <td style="border:1px solid #ccc;padding:4px;text-align:center">' . $groupIssued . '</td>
+                    <td style="border:1px solid #ccc;padding:4px;text-align:center">' . $groupDeleted . '</td>
+                    <td style="border:1px solid #ccc;padding:4px;text-align:center;background:#fcd34d">' . $groupBalance . '</td>
+                </tr>
+                ';
+            }
         }
 
+        // Add Grand Total
         $pdf .= '
-            </tbody>
+            <tr style="background:#f0f0f0;font-weight:bold;border-top:2px solid #111">
+                <td style="border:1px solid #ccc;padding:6px;text-align:center" colspan="2">GRAND TOTAL</td>
+                <td colspan="4" style="border:1px solid #ccc;padding:6px;text-align:center"></td>
+                <td style="border:1px solid #ccc;padding:6px;text-align:center">' . $totalRecvGrand . '</td>
+                <td style="border:1px solid #ccc;padding:6px;text-align:center">' . $totalIssuedGrand . '</td>
+                <td style="border:1px solid #ccc;padding:6px;text-align:center">' . $totalDeletedGrand . '</td>
+                <td style="border:1px solid #ccc;padding:6px;text-align:center;background:#c8e6c9">' . $totalBalanceGrand . '</td>
+            </tr>
+        </tbody>
         </table>
 
         <div style="margin-top:15px;font-size:9px;color:#666">
