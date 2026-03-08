@@ -1,0 +1,1053 @@
+<div class="page-content">
+    <div class="page-container">
+
+        <style>
+            :root {
+                --primary: #4F46E5;
+                --success: #10B981;
+                --danger: #EF4444;
+                --warning: #F59E0B;
+            }
+
+            body {
+                background-color: #F9FAFB;
+            }
+
+            .page-container {
+                padding: 2rem 0;
+            }
+
+            .header-section {
+                background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+                color: white;
+                padding: 2rem;
+                border-radius: 0.75rem;
+                margin-bottom: 2rem;
+            }
+
+            .header-section h2 {
+                margin: 0;
+                font-weight: 700;
+                font-size: 1.75rem;
+            }
+
+            .header-section p {
+                margin: 0.5rem 0 0 0;
+                opacity: 0.95;
+            }
+
+            .filter-section {
+                background: white;
+                padding: 2rem;
+                border-radius: 0.75rem;
+                margin-bottom: 2rem;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            }
+
+            .filter-section h5 {
+                color: var(--primary);
+                font-weight: 600;
+                margin-bottom: 1.5rem;
+            }
+
+            .form-label {
+                font-size: 0.85rem;
+                font-weight: 600;
+                color: #6B7280;
+                text-transform: uppercase;
+            }
+
+            .form-control,
+            .form-select {
+                border: 1px solid #E5E7EB;
+                border-radius: 0.5rem;
+                padding: 0.6rem;
+            }
+
+            .form-control:focus,
+            .form-select:focus {
+                border-color: var(--primary);
+                box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+            }
+
+            .btn-apply {
+                background: linear-gradient(135deg, var(--primary) 0%, #667eea 100%);
+                color: white;
+                border: none;
+                padding: 0.6rem 1.5rem;
+                border-radius: 0.5rem;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .btn-apply:hover {
+                background: linear-gradient(135deg, #3f37e5 0%, #5568ea 100%);
+                transform: translateY(-2px);
+            }
+
+            .btn-export {
+                background: var(--success);
+                color: white;
+                border: none;
+                padding: 0.6rem 1.5rem;
+                border-radius: 0.5rem;
+                font-weight: 600;
+                cursor: pointer;
+                font-size: 0.85rem;
+                transition: all 0.3s ease;
+            }
+
+            .btn-export:hover {
+                background: #059669;
+                transform: translateY(-2px);
+            }
+
+            .report-section {
+                background: white;
+                padding: 2rem;
+                border-radius: 0.75rem;
+                margin-bottom: 2rem;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            }
+
+            .report-section h5 {
+                color: var(--primary);
+                font-weight: 700;
+                margin-bottom: 1.5rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .report-section h5 i {
+                font-size: 1.25rem;
+            }
+
+            .datatable-wrapper {
+                overflow-x: auto;
+            }
+
+            table.dataTable {
+                font-size: 0.85rem;
+            }
+
+            table.dataTable thead th {
+                background-color: #F3F4F6;
+                color: #111827;
+                font-weight: 600;
+                border-bottom: 2px solid #E5E7EB;
+                padding: 0.75rem !important;
+            }
+
+            table.dataTable tbody td {
+                padding: 0.6rem !important;
+                color: #374151;
+            }
+
+            table.dataTable tbody tr:hover {
+                background-color: #F9FAFB !important;
+            }
+
+            tr.group-header {
+                background: #f3f4f6 !important;
+                border: 2px solid #374151 !important;
+            }
+
+            tr.group-header td {
+                padding: 8px !important;
+                font-weight: bold;
+                color: #1f2937;
+                font-size: 1rem;
+            }
+
+            tr.item-group-header {
+                background: #e3f2fd !important;
+                border: 1px solid #1976d2 !important;
+            }
+
+            tr.item-group-header td {
+                padding: 6px !important;
+                font-weight: bold;
+                color: #1565c0;
+                font-size: 0.95rem;
+            }
+
+            tr.item-subtotal {
+                background: #dbeafe !important;
+                font-weight: bold;
+                border-top: 1px solid #3b82f6 !important;
+                border-bottom: 1px solid #3b82f6 !important;
+            }
+
+            tr.item-subtotal td {
+                padding: 6px !important;
+                color: #1e40af;
+                font-size: 0.9rem;
+            }
+
+            tr.group-subtotal {
+                background: #fef3c7 !important;
+                font-weight: bold;
+                border-top: 1px solid #f59e0b !important;
+                border-bottom: 1px solid #f59e0b !important;
+            }
+
+            tr.group-subtotal td {
+                padding: 6px !important;
+                color: #92400e;
+                font-size: 0.9rem;
+            }
+
+            .badge {
+                font-size: 0.7rem;
+                padding: 0.35rem 0.6rem;
+                border-radius: 0.3rem;
+            }
+
+            .badge-success {
+                background-color: #D1FAE5;
+                color: #065F46;
+            }
+
+            .badge-danger {
+                background-color: #FEE2E2;
+                color: #991B1B;
+            }
+
+            .badge-info {
+                background-color: #DBEAFE;
+                color: #1E40AF;
+            }
+
+            .summary-stat {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .stat-card {
+                background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                padding: 1.5rem;
+                border-radius: 0.6rem;
+                text-align: center;
+            }
+
+            .stat-card h6 {
+                color: #6B7280;
+                font-size: 0.75rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                margin-bottom: 0.5rem;
+            }
+
+            .stat-card .value {
+                font-size: 1.75rem;
+                font-weight: 700;
+                color: var(--primary);
+            }
+
+            .loading {
+                display: none;
+                text-align: center;
+                padding: 2rem;
+            }
+
+            .loading.active {
+                display: block;
+            }
+
+            .spinner {
+                border: 3px solid #f3f3f3;
+                border-top: 3px solid var(--primary);
+                border-radius: 50%;
+                width: 30px;
+                height: 30px;
+                animation: spin 1s linear infinite;
+                margin: 0 auto 1rem;
+            }
+
+            @keyframes spin {
+                0% {
+                    transform: rotate(0deg);
+                }
+
+                100% {
+                    transform: rotate(360deg);
+                }
+            }
+
+            .alert-info {
+                background-color: #DBEAFE;
+                border: 1px solid #93c5fd;
+                color: #1E40AF;
+                border-radius: 0.5rem;
+                padding: 1rem;
+                margin-bottom: 1rem;
+            }
+
+            .tab-navigation {
+                display: flex;
+                gap: 1rem;
+                margin-bottom: 1.5rem;
+                border-bottom: 2px solid #E5E7EB;
+            }
+
+            .tab-btn {
+                padding: 0.75rem 1.5rem;
+                border: none;
+                background: transparent;
+                color: #6B7280;
+                font-weight: 600;
+                cursor: pointer;
+                border-bottom: 3px solid transparent;
+                transition: all 0.3s ease;
+            }
+
+            .tab-btn.active {
+                color: var(--primary);
+                border-bottom-color: var(--primary);
+            }
+
+            .tab-content {
+                display: none;
+            }
+
+            .tab-content.active {
+                display: block;
+            }
+
+            @media (max-width: 768px) {
+                .filter-section {
+                    padding: 1rem;
+                }
+
+                .report-section {
+                    padding: 1rem;
+                }
+
+                .summary-stat {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+
+        <!-- Header -->
+        <div class="header-section">
+            <h2><i class="fas fa-chart-bar"></i> Custom Stock Reports</h2>
+            <p>Generate Summary and Detailed Reports on Stock Transactions</p>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <h5><i class="fas fa-filter"></i> Filter Reports</h5>
+
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Institution</label>
+                    <select id="institution_id" class="form-select">
+                        <option value="">-- Select Institution --</option>
+                        <?php foreach ($institutions as $inst): ?>
+                            <option value="<?= $inst['id']; ?>"><?= htmlspecialchars($inst['college_name']); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Department</label>
+                    <select id="dept_id" class="form-select">
+                        <option value="">-- Select Department --</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="stockbook_type_id" class="form-label">Register Type</label>
+                    <select class="form-select" id="stockbook_type_id" onchange="handleRegisterTypeChange()">
+                        <option value="">-- All Register Types --</option>
+                        <?php foreach ($stockbook_types ?? [] as $type): ?>
+                            <option value="<?php echo htmlspecialchars($type['id']); ?>"
+                                data-code="<?php echo htmlspecialchars($type['code']); ?>">
+                                <?php echo htmlspecialchars($type['name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="status_master_id" class="form-label">Status</label>
+                    <select class="form-select" id="status_master_id">
+                        <option value="">-- All Status --</option>
+                        <?php foreach ($status_master ?? [] as $status): ?>
+                            <option value="<?php echo htmlspecialchars($status['id']); ?>">
+                                <?php echo htmlspecialchars($status['status_name']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">From Date</label>
+                    <input type="date" id="from_date" class="form-control">
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">To Date</label>
+                    <input type="date" id="to_date" class="form-control">
+                </div>
+
+                <div class="col-md-2 d-flex align-items-end">
+                    <button class="btn-apply w-100" onclick="applyFilters()">
+                        <i class="fas fa-search"></i> Apply Filters
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Stats -->
+        <div id="summary-stats" class="summary-stat" style="display:none;"></div>
+
+        <!-- Tab Navigation - Only show for non-asset registers -->
+        <div id="tab-navigation" class="tab-navigation" style="display:none;">
+            <button class="tab-btn active" onclick="switchTab('summary')">
+                <i class="fas fa-table"></i> Summary Report
+            </button>
+            <button class="tab-btn" onclick="switchTab('detailed')">
+                <i class="fas fa-list"></i> Detailed Report
+            </button>
+        </div>
+
+        <!-- Summary Report -->
+        <div id="summary-tab" class="tab-content active">
+            <div class="report-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h5><i class="fas fa-chart-pie"></i> Summary Report - Group-wise Stock Count</h5>
+                    <button class="btn-export" onclick="exportSummaryPdf()">
+                        <i class="fas fa-file-pdf"></i> Export PDF
+                    </button>
+                </div>
+
+                <div class="alert-info">
+                    Shows total count of items received (Indent-based + Transfer), issued, deleted, and balance by item
+                    group.
+                </div>
+
+                <div class="loading" id="summary-loading">
+                    <div class="spinner"></div>
+                    <p>Loading data...</p>
+                </div>
+
+                <div class="datatable-wrapper">
+                    <table id="summary-table" class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width:50px">S.No</th>
+                                <th>Group/Item Name</th>
+                                <th style="text-align:center">Total Items</th>
+                                <th style="text-align:center">Indent Received</th>
+                                <th style="text-align:center">Transfer Received</th>
+                                <th style="text-align:center;font-weight:700">Total Received</th>
+                                <th style="text-align:center;color:#c62828">Total Issued</th>
+                                <th style="text-align:center;color:#d32f2f">Deleted</th>
+                                <th style="text-align:center;font-weight:700;background:#e8f5e9">Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Report / Asset Register -->
+        <div id="detailed-tab" class="tab-content">
+            <div class="report-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h5><i class="fas fa-list"></i> <span id="detailed-title">Detailed Report - Indent-wise Stock
+                            Details</span></h5>
+                    <button class="btn-export" onclick="exportDetailedPdf()">
+                        <i class="fas fa-file-pdf"></i> Export PDF
+                    </button>
+                </div>
+
+                <div class="alert-info" id="detailed-alert">
+                    Detailed view showing Indent numbers, Stock Book page numbers, Make/Model, and transaction counts
+                    for each item.
+                </div>
+
+                <div class="loading" id="detailed-loading">
+                    <div class="spinner"></div>
+                    <p>Loading data...</p>
+                </div>
+
+                <div class="datatable-wrapper">
+                    <table id="detailed-table" class="table table-hover">
+                        <thead id="detailed-thead">
+                            <tr>
+                                <th style="width:50px">S.No</th>
+                                <th>Group/Item</th>
+                                <th style="text-align:center">Indent No</th>
+                                <th style="text-align:center">Indent Date</th>
+                                <th style="text-align:center">SB Page</th>
+                                <th>Make/Model</th>
+                                <th style="text-align:center">Rcvd (I)</th>
+                                <th style="text-align:center">Rcvd (T)</th>
+                                <th style="text-align:center;font-weight:700">Total Rcvd</th>
+                                <th style="text-align:center;color:#c62828">Issued</th>
+                                <th style="text-align:center;color:#d32f2f">Deleted</th>
+                                <th style="text-align:center;font-weight:700;background:#e8f5e9">Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<?php include(VIEW_PATH . 'layouts/partials/footer.php'); ?>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+    const baseUrl = '<?= APP_URL; ?>';
+    let summaryTable = null;
+    let detailedTable = null;
+    let isAssetRegister = false;
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        // Cascade departments on institution change
+        document.getElementById('institution_id').addEventListener('change', function () {
+            loadDepartments(this.value);
+        });
+
+        // Initialize DataTables
+        initSummaryTable();
+        initDetailedTable();
+
+        // Load initial data
+        applyFilters();
+    });
+
+    // Handle Register Type Change
+    function handleRegisterTypeChange() {
+        const selectElement = document.getElementById('stockbook_type_id');
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        const registerCode = selectedOption.getAttribute('data-code');
+
+        isAssetRegister = (registerCode === 'ASSET');
+
+        // Show/hide tabs based on register type
+        const tabNav = document.getElementById('tab-navigation');
+        const summaryTab = document.getElementById('summary-tab');
+        const detailedTab = document.getElementById('detailed-tab');
+
+        if (isAssetRegister) {
+            tabNav.style.display = 'none';
+            summaryTab.style.display = 'none';
+            detailedTab.style.display = 'block';
+
+            // Update detailed tab header for asset register
+            document.getElementById('detailed-title').innerHTML = '<i class="fas fa-cube"></i> Asset Register - Indent-wise Asset Details';
+            document.getElementById('detailed-alert').innerHTML = 'Shows all assets from indents with intended count, issued count, and remaining count.';
+
+            // Update table header for asset register
+            updateTableHeaderForAsset();
+        } else {
+            tabNav.style.display = 'flex';
+            summaryTab.style.display = 'block';
+            detailedTab.style.display = 'block';
+
+            // Restore original detailed report header
+            document.getElementById('detailed-title').innerHTML = '<i class="fas fa-list"></i> Detailed Report - Indent-wise Stock Details';
+            document.getElementById('detailed-alert').innerHTML = 'Detailed view showing Indent numbers, Stock Book page numbers, Make/Model, and transaction counts for each item.';
+
+            // Restore original table header
+            updateTableHeaderForDetailed();
+        }
+
+        applyFilters();
+    }
+
+    // Update table header for asset register
+    function updateTableHeaderForAsset() {
+        const thead = document.getElementById('detailed-thead');
+        thead.innerHTML = `
+            <tr>
+                <th style="width:50px">S.No</th>
+                <th>Indent No</th>
+                <th>Indent Date</th>
+                <th>Item Name</th>
+                <th style="text-align:center">Make/Model</th>
+                <th style="text-align:center">Status</th>
+                <th style="text-align:center">Asset Count</th>
+                <th style="text-align:center;color:#c62828">Issued</th>
+                <th style="text-align:center;font-weight:700;background:#e8f5e9">Remaining</th>
+            </tr>
+        `;
+    }
+
+    // Restore table header for detailed report
+    function updateTableHeaderForDetailed() {
+        const thead = document.getElementById('detailed-thead');
+        thead.innerHTML = `
+            <tr>
+                <th style="width:50px">S.No</th>
+                <th>Group/Item</th>
+                <th style="text-align:center">Indent No</th>
+                <th style="text-align:center">Indent Date</th>
+                <th style="text-align:center">SB Page</th>
+                <th>Make/Model</th>
+                <th style="text-align:center">Rcvd (I)</th>
+                <th style="text-align:center">Rcvd (T)</th>
+                <th style="text-align:center;font-weight:700">Total Rcvd</th>
+                <th style="text-align:center;color:#c62828">Issued</th>
+                <th style="text-align:center;color:#d32f2f">Deleted</th>
+                <th style="text-align:center;font-weight:700;background:#e8f5e9">Balance</th>
+            </tr>
+        `;
+    }
+
+    // Load departments
+    function loadDepartments(instId) {
+        const deptSelect = document.getElementById('dept_id');
+        deptSelect.innerHTML = '<option value="">-- Select Department --</option>';
+
+        if (!instId) return;
+
+        fetch(baseUrl + 'custom/getDepartments?institution_id=' + instId)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.data.length) {
+                    data.data.forEach(dept => {
+                        deptSelect.innerHTML += '<option value="' + dept.id + '">' +
+                            htmlspecialchars(dept.department_name) + '</option>';
+                    });
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Initialize Summary Table
+    function initSummaryTable() {
+        summaryTable = new DataTable('#summary-table', {
+            processing: false,
+            searching: true,
+            ordering: true,
+            paging: true,
+            pageLength: 25,
+            language: {
+                emptyTable: "No data available",
+                zeroRecords: "No matching records found",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+            }
+        });
+    }
+
+    // Initialize Detailed Table
+    function initDetailedTable() {
+        detailedTable = new DataTable('#detailed-table', {
+            processing: false,
+            searching: true,
+            ordering: true,
+            paging: true,
+            pageLength: 50,
+            scrollX: true,
+            language: {
+                emptyTable: "No data available",
+                zeroRecords: "No matching records found",
+                info: "Showing _START_ to _END_ of _TOTAL_ entries",
+            }
+        });
+    }
+
+    // Apply Filters
+    function applyFilters() {
+        if (isAssetRegister) {
+            loadAssetRegisterReport();
+        } else {
+            loadSummaryReport();
+            loadDetailedReport();
+        }
+    }
+
+    // Load Summary Report
+    function loadSummaryReport() {
+        const params = buildFilterParams();
+        const loading = document.getElementById('summary-loading');
+
+        loading.classList.add('active');
+
+        fetch(baseUrl + 'custom/getSummaryData?' + params)
+            .then(response => response.json())
+            .then(data => {
+                loading.classList.remove('active');
+                if (data.success) {
+                    populateSummaryTable(data.data);
+                    updateSummaryStats(data.data);
+                }
+            })
+            .catch(error => {
+                loading.classList.remove('active');
+                console.error('Error:', error);
+            });
+    }
+
+    // Load Detailed Report
+    function loadDetailedReport() {
+        const params = buildFilterParams();
+        const loading = document.getElementById('detailed-loading');
+
+        loading.classList.add('active');
+
+        fetch(baseUrl + 'custom/getDetailedData?' + params)
+            .then(response => response.json())
+            .then(data => {
+                loading.classList.remove('active');
+                if (data.success) {
+                    populateDetailedTable(data.data);
+                }
+            })
+            .catch(error => {
+                loading.classList.remove('active');
+                console.error('Error:', error);
+            });
+    }
+
+    // Load Asset Register Report
+    function loadAssetRegisterReport() {
+        const params = buildFilterParams();
+        const loading = document.getElementById('detailed-loading');
+
+        loading.classList.add('active');
+
+        fetch(baseUrl + 'custom/getAssetRegisterData?' + params)
+            .then(response => response.json())
+            .then(data => {
+                loading.classList.remove('active');
+                if (data.success) {
+                    populateAssetTable(data.data);
+                }
+            })
+            .catch(error => {
+                loading.classList.remove('active');
+                console.error('Error:', error);
+            });
+    }
+
+    // Build Filter Parameters
+    function buildFilterParams() {
+        const instId = document.getElementById('institution_id').value || '';
+        const deptId = document.getElementById('dept_id').value || '';
+        const stockbookTypeId = document.getElementById('stockbook_type_id').value || '';
+        const statusId = document.getElementById('status_master_id').value || '';
+        const fromDate = document.getElementById('from_date').value || '';
+        const toDate = document.getElementById('to_date').value || '';
+
+        let params = '';
+        if (instId) params += 'institution_id=' + instId + '&';
+        if (deptId) params += 'dept_id=' + deptId + '&';
+        if (stockbookTypeId) params += 'stockbook_type_id=' + stockbookTypeId + '&';
+        if (statusId) params += 'status_master_id=' + statusId + '&';
+        if (fromDate) params += 'from=' + fromDate + '&';
+        if (toDate) params += 'to=' + toDate + '&';
+
+        return params.slice(0, -1);
+    }
+
+    // Populate Summary Table
+    function populateSummaryTable(data) {
+        summaryTable.clear();
+
+        data.forEach((row, index) => {
+            summaryTable.row.add([
+                index + 1,
+                row.group_name,
+                row.total_items,
+                row.indent_received,
+                row.transfer_received,
+                '<strong>' + row.total_received + '</strong>',
+                '<span style="color:#c62828">' + row.total_issued + '</span>',
+                '<span style="color:#d32f2f"><strong>' + row.total_deleted + '</strong></span>',
+                '<span style="background:#e8f5e9;padding:2px 6px;border-radius:3px;font-weight:bold">' + row.total_balance + '</span>'
+            ]);
+        });
+
+        summaryTable.draw();
+    }
+
+    // Populate Detailed Table
+    function populateDetailedTable(data) {
+        detailedTable.clear();
+        let currentGroupName = '';
+        let currentItemName = '';
+        let sno = 1;
+        let rowIndex = 0;
+
+        // Track group totals
+        let groupRecv = 0;
+        let groupIssued = 0;
+        let groupDeleted = 0;
+        let groupBalance = 0;
+
+        // Track item totals
+        let itemRecv = 0;
+        let itemIssued = 0;
+        let itemDeleted = 0;
+        let itemBalance = 0;
+
+        // Store row metadata for class assignment after draw
+        const rowClasses = {};
+
+        data.forEach((row, index) => {
+            const nextRow = index + 1 < data.length ? data[index + 1] : null;
+
+            // Add Group Header when group changes
+            if (currentGroupName !== row.group_name) {
+                currentGroupName = row.group_name;
+                currentItemName = ''; // Reset item when group changes
+
+                // Reset group totals
+                groupRecv = 0;
+                groupIssued = 0;
+                groupDeleted = 0;
+                groupBalance = 0;
+
+                // Add group header row
+                detailedTable.row.add([
+                    '<span style="font-weight:bold;color:#1f2937">📁 ' + htmlspecialchars(row.group_name || 'Ungrouped') + '</span>',
+                    '', '', '', '', '', '', '', '', '', '', ''
+                ]);
+                rowClasses[rowIndex] = 'group-header';
+                rowIndex++;
+            }
+
+            // Add Item Header when item changes (within group)
+            if (currentItemName !== row.item_name) {
+                currentItemName = row.item_name;
+
+                // Reset item totals
+                itemRecv = 0;
+                itemIssued = 0;
+                itemDeleted = 0;
+                itemBalance = 0;
+
+                // Add item subheader row
+                detailedTable.row.add([
+                    '<span style="font-weight:bold;color:#1565c0;margin-left:15px;">📦 ' + htmlspecialchars(row.item_name) + '</span>',
+                    '', '', '', '', '', '', '', '', '', '', ''
+                ]);
+                rowClasses[rowIndex] = 'item-group-header';
+                rowIndex++;
+
+                sno = 1; // Reset serial for each item
+            }
+
+            const makeModel = (row.make_name ? row.make_name : '') +
+                (row.model_name ? ' / ' + row.model_name : '');
+            const total_balance = row.balance || 0;
+
+            // Separate receipt types based on transaction_type
+            let rcvdIndent = 0;
+            let rcvdTransfer = 0;
+            let issuedQty = 0;
+
+            if (row.transaction_type === 'RECEIPT' && row.stock_entry_type === 'INDENT_BASED') {
+                rcvdIndent = row.receipt_qty || 0;
+            } else if (row.transaction_type === 'TRANSFER') {
+                rcvdTransfer = row.receipt_qty || 0;
+            } else if (row.transaction_type === 'ISSUE') {
+                issuedQty = row.issue_qty || 0;
+            }
+
+            const totalRcvd = rcvdIndent + rcvdTransfer;
+
+            // Add data row
+            detailedTable.row.add([
+                sno++,
+                (row.item_name ? '<strong>' + htmlspecialchars(row.item_name) + '</strong><br><small style="color:#666">' + (row.item_description || 'N/A') + '</small>' : 'N/A'),
+                row.indent_no || 'N/A',
+                'N/A',
+                'N/A',
+                makeModel || 'N/A',
+                rcvdIndent,
+                rcvdTransfer,
+                '<strong>' + totalRcvd + '</strong>',
+                '<span style="color:#c62828">' + issuedQty + '</span>',
+                '<span style="color:#d32f2f">' + (row.deleted_quantity || 0) + '</span>',
+                '<span style="background:#e8f5e9;padding:2px 6px;border-radius:3px;font-weight:bold">' + parseInt(total_balance) + '</span>'
+            ]);
+            rowIndex++;
+
+            // Add to item totals
+            itemRecv += totalRcvd;
+            itemIssued += issuedQty;
+            itemDeleted += (row.deleted_quantity || 0);
+            itemBalance += parseInt(total_balance);
+
+            // Add to group totals
+            groupRecv += totalRcvd;
+            groupIssued += issuedQty;
+            groupDeleted += (row.deleted_quantity || 0);
+            groupBalance += parseInt(total_balance);
+
+            // Check if next row is different item - if so, add item subtotal
+            if (nextRow === null || nextRow.item_name !== row.item_name) {
+                // Add Item Subtotal row
+                detailedTable.row.add([
+                    '<span style="font-weight:bold;color:#1e40af">Item Subtotal</span>',
+                    '<span style="font-weight:bold;color:#1e40af">' + htmlspecialchars(currentItemName) + '</span>',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '<span style="background:#dbeafe;font-weight:bold;color:#1e40af">' + itemRecv + '</span>',
+                    '<span style="background:#dbeafe;font-weight:bold;color:#1e40af">' + itemIssued + '</span>',
+                    '<span style="background:#dbeafe;font-weight:bold;color:#1e40af">' + itemDeleted + '</span>',
+                    '<span style="background:#bfdbfe;font-weight:bold;color:#1e40af">' + itemBalance + '</span>'
+                ]);
+                rowClasses[rowIndex] = 'item-subtotal';
+                rowIndex++;
+            }
+
+            // Check if next row is different group - if so, add group subtotal
+            if (nextRow === null || nextRow.group_name !== row.group_name) {
+                // Add Group Subtotal row
+                detailedTable.row.add([
+                    '<span style="font-weight:bold;color:#92400e">Subtotal</span>',
+                    '<span style="font-weight:bold;color:#92400e">' + htmlspecialchars(currentGroupName || 'Ungrouped') + '</span>',
+                    '',
+                    '',
+                    '',
+                    '',
+                    '<span style="background:#fef3c7;font-weight:bold">' + groupRecv + '</span>',
+                    '<span style="background:#fef3c7;font-weight:bold;color:#c62828">' + groupIssued + '</span>',
+                    '<span style="background:#fef3c7;font-weight:bold;color:#d32f2f">' + groupDeleted + '</span>',
+                    '<span style="background:#fcd34d;font-weight:bold">' + groupBalance + '</span>'
+                ]);
+                rowClasses[rowIndex] = 'group-subtotal';
+                rowIndex++;
+            }
+        });
+
+        detailedTable.draw();
+
+        // Apply classes after draw
+        Object.keys(rowClasses).forEach(idx => {
+            const rows = detailedTable.rows().nodes();
+            if (rows[idx]) {
+                $(rows[idx]).addClass(rowClasses[idx]);
+            }
+        });
+    }
+
+    // Populate Asset Table
+    function populateAssetTable(data) {
+        detailedTable.clear();
+
+        data.forEach((row, index) => {
+            const makeModel = (row.make_name ? row.make_name : '') +
+                (row.model_name ? ' / ' + row.model_name : '');
+
+            detailedTable.row.add([
+                index + 1,
+                row.indent_no || 'N/A',
+                row.indent_date || 'N/A',
+                (row.item_name ? '<strong>' + htmlspecialchars(row.item_name) + '</strong><br><small style="color:#666">' + (row.item_description || 'N/A') + '</small>' : 'N/A'),
+                makeModel || 'N/A',
+                row.status_name || 'N/A',
+                '<strong>' + (row.asset_count || 0) + '</strong>',
+                '<span style="color:#c62828"><strong>' + (row.issued_count || 0) + '</strong></span>',
+                '<span style="background:#e8f5e9;padding:2px 6px;border-radius:3px;font-weight:bold">' + (row.remaining_count || 0) + '</span>'
+            ]);
+        });
+
+        detailedTable.draw();
+    }
+
+    // Update Summary Stats
+    function updateSummaryStats(data) {
+        let totalItems = 0;
+        let totalRecv = 0;
+        let totalIssued = 0;
+        let totalDeleted = 0;
+        let totalBalance = 0;
+
+        data.forEach(row => {
+            totalItems += parseInt(row.total_items);
+            totalRecv += parseInt(row.total_received);
+            totalIssued += parseInt(row.total_issued);
+            totalDeleted += parseInt(row.total_deleted);
+            totalBalance += parseInt(row.total_balance);
+        });
+
+        const statsHtml = `
+            <div class="stat-card">
+                <h6>Total Item Groups</h6>
+                <div class="value">${data.length}</div>
+            </div>
+            <div class="stat-card">
+                <h6>Total Items</h6>
+                <div class="value">${totalItems}</div>
+            </div>
+            <div class="stat-card">
+                <h6>Total Received</h6>
+                <div class="value" style="color:#10B981">${totalRecv}</div>
+            </div>
+            <div class="stat-card">
+                <h6>Total Issued</h6>
+                <div class="value" style="color:#EF4444">${totalIssued}</div>
+            </div>
+            <div class="stat-card">
+                <h6>Deleted</h6>
+                <div class="value" style="color:#F59E0B">${totalDeleted}</div>
+            </div>
+            <div class="stat-card">
+                <h6>Current Balance</h6>
+                <div class="value" style="color:#4F46E5">${totalBalance}</div>
+            </div>
+        `;
+
+        document.getElementById('summary-stats').innerHTML = statsHtml;
+        document.getElementById('summary-stats').style.display = 'grid';
+    }
+
+    // Export Summary PDF
+    function exportSummaryPdf() {
+        const params = buildFilterParams();
+        window.open(baseUrl + 'custom/exportSummaryPdf?' + params, '_blank');
+    }
+
+    // Export Detailed PDF
+    function exportDetailedPdf() {
+        const params = buildFilterParams();
+        window.open(baseUrl + 'custom/exportDetailedPdf?' + params, '_blank');
+    }
+
+    // Switch Tab
+    function switchTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+
+        // Show selected tab
+        document.getElementById(tabName + '-tab').classList.add('active');
+        event.target.classList.add('active');
+    }
+
+    // HTML Escape
+    function htmlspecialchars(str) {
+        if (!str) return '';
+        const div = document.createElement('div');
+        div.textContent = str;
+        return div.innerHTML;
+    }
+</script>
