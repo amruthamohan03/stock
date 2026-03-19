@@ -39,6 +39,284 @@ class StockController extends Controller
 
         $this->viewWithLayout('stock/stock', $data);
     }
+        // ========================================================================
+    // BULK LOCATION UPDATE - NEW FEATURE
+    // ========================================================================
+ 
+    /**
+     * Display bulk location update page
+     */
+    public function bulkLocationUpdate()
+    {
+        try {
+            // Get all locations
+            $locations = $this->db->selectData('issued_to_master_t', '*', ['display' => 'Y']);
+ 
+            // Get all stock items with their current locations
+            $query = "SELECT 
+                        sb.id,
+                        sb.item_id,
+                        sb.location,
+                        sb.location_id,
+                        sb.current_balance,
+                        im.item_name,
+                        im.item_code,
+                        igm.group_name,
+                        itm.make_name,
+                        itm.model_name
+                    FROM stock_book_t sb
+                    LEFT JOIN item_master_t im ON sb.item_id = im.id
+                    LEFT JOIN group_item_name_master_t igm ON im.item_group_id = igm.id
+                    LEFT JOIN item_make_model_t itm ON im.id = itm.item_id
+                    WHERE sb.display = 'Y'
+                    ORDER BY igm.group_name ASC, im.item_name ASC";
+ 
+            $stockItems = $this->db->customQuery($query);
+ 
+            $data = [
+                'title' => 'Bulk Location Update',
+                'locations' => $locations,
+                'stockItems' => $stockItems
+            ];
+ 
+            $this->viewWithLayout('stock/stock_bulk_location_update', $data);
+ 
+        } catch (Exception $e) {
+            $this->setErrorMessage('Error: ' . $e->getMessage());
+            $this->index();
+        }
+    }
+ 
+    /**
+     * Get stock items as JSON for AJAX
+     */
+    public function getStockItemsJson()
+    {
+        header('Content-Type: application/json');
+ 
+        try {
+            $group_id = isset($_GET['group_id']) ? (int)$_GET['group_id'] : 0;
+ 
+            $query = "SELECT 
+                        sb.id,
+                        sb.item_id,
+                        sb.location,
+                        sb.location_id,
+                        sb.current_balance,
+                        im.item_name,
+                        im.item_code,
+                        igm.group_name
+                    FROM stock_book_t sb
+                    LEFT JOIN item_master_t im ON sb.item_id = im.id
+                    LEFT JOIN group_item_name_master_t igm ON im.item_group_id = igm.id
+                    WHERE sb.display = 'Y'";
+ 
+            if ($group_id > 0) {
+                $query .= " AND im.item_group_id = $group_id";
+            }
+ 
+            $query .= " ORDER BY im.item_name ASC";
+ 
+            $stockItems = $this->db->customQuery($query);
+ 
+            echo json_encode([
+                'success' => true,
+                'data' => $stockItems
+            ]);
+ 
+        } catch (Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ]);
+        }
+        exit;
+    }
+ 
+    /**
+     * Perform bulk location update
+     */
+    public function performBulkLocationUpdate()
+    {
+        header('Content-Type: application/json');
+ 
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['success' => false, 'message' => 'Invalid request method']);
+            exit;
+        }
+ 
+        try {
+            $this->db->beginTransaction();
+ 
+            $selectedItems = isset($_POST['selected_items']) ? $_POST['selected_items'] : [];
+            $newLocation = isset($_POST['new_location']) ? (int)$_POST['new_location'] : 0;
+            $reason = isset($_POST['reason']) ? htmlspecialchars(trim($_POST['reason'])) : '';
+ 
+            // Validation
+            if (empty($selectedItems) || !is_array($selectedItems)) {
+                throw new Exception('Please select at least one item');
+            }
+ 
+            if ($newLocation <= 0) {
+                throw new Exception('Please select a valid location');
+            }
+ 
+            // Get location details
+            $locationData = $this->db->selectData('issued_to_master_t', '*', ['id' => $newLocation]);
+            if (empty($locationData)) {
+                throw new Exception('Invalid location selected');
+            }
+ 
+            $newLocationName = $locationData[0]['location_name'];
+            $userId = $_SESSION['user_id'] ?? 1;
+            $updateCount = 0;
+            $errors = [];
+ 
+            // Update each selected item
+            foreach ($selectedItems as $stockBookId) {
+                try {
+                    $stockBookId = (int)$stockBookId;
+ 
+                    if ($stockBookId <= 0) {
+                        continue;
+                    }
+ 
+                    // Get current stock book details
+                    $stockBook = $this->db->selectData('stock_book_t', '*', ['id' => $stockBookId]);
+ 
+                    if (empty($stockBook)) {
+                        $errors[] = "Stock Book ID $stockBookId not found";
+                        continue;
+                    }
+ 
+                    $oldLocation = $stockBook[0]['location'];
+                    $oldLocationId = $stockBook[0]['location_id'];
+ 
+                    // Prepare old and new values for logging
+                    $oldValues = [
+                        'location' => $oldLocation,
+                        'location_id' => $oldLocationId
+                    ];
+ 
+                    $newValues = [
+                        'location' => $newLocationName,
+                        'location_id' => $newLocation
+                    ];
+ 
+                    // Update stock book
+                    $this->db->updateData('stock_book_t', [
+                        'location' => $newLocationName,
+                        'location_id' => $newLocation,
+                        'updated_by' => $userId,
+                        'updated_at' => date('Y-m-d H:i:s')
+                    ], ['id' => $stockBookId]);
+ 
+                    // Create audit log
+                    $this->createLocationUpdateLog(
+                        $stockBookId,
+                        $oldValues,
+                        $newValues,
+                        $userId,
+                        $reason
+                    );
+ 
+                    $updateCount++;
+ 
+                } catch (Exception $e) {
+                    $errors[] = "Error updating item $stockBookId: " . $e->getMessage();
+                }
+            }
+ 
+            $this->db->commit();
+ 
+            $message = $updateCount . ' item(s) location updated successfully';
+            if (!empty($errors)) {
+                $message .= '. Errors: ' . implode('; ', $errors);
+            }
+ 
+            echo json_encode([
+                'success' => true,
+                'message' => $message,
+                'updated_count' => $updateCount,
+                'error_count' => count($errors)
+            ]);
+ 
+        } catch (Exception $e) {
+            $this->db->rollback();
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ]);
+        }
+        exit;
+    }
+ 
+    /**
+     * Create location update log
+     */
+    private function createLocationUpdateLog($stockBookId, $oldValues, $newValues, $userId, $reason = null)
+    {
+        try {
+            $logData = [
+                'stock_book_id' => $stockBookId,
+                'action' => 'LOCATION_UPDATED',
+                'old_values' => json_encode($oldValues),
+                'new_values' => json_encode($newValues),
+                'action_by' => $userId,
+                'action_reason' => $reason,
+                'action_at' => date('Y-m-d H:i:s')
+            ];
+ 
+            // Check if table exists, otherwise create it
+            $this->db->insertData('stock_location_update_log_t', $logData);
+            return true;
+ 
+        } catch (Exception $e) {
+            // Log table might not exist, continue without logging
+            return false;
+        }
+    }
+ 
+    /**
+     * Get bulk update history
+     */
+    public function getBulkUpdateHistory()
+    {
+        header('Content-Type: application/json');
+ 
+        try {
+            $query = "SELECT 
+                        slul.id,
+                        slul.stock_book_id,
+                        slul.old_values,
+                        slul.new_values,
+                        slul.action_reason,
+                        slul.action_by,
+                        slul.action_at,
+                        im.item_name,
+                        u.name as updated_by_name
+                    FROM stock_location_update_log_t slul
+                    LEFT JOIN stock_book_t sb ON slul.stock_book_id = sb.id
+                    LEFT JOIN item_master_t im ON sb.item_id = im.id
+                    LEFT JOIN users_t u ON slul.action_by = u.id
+                    ORDER BY slul.action_at DESC
+                    LIMIT 100";
+ 
+            $history = $this->db->customQuery($query);
+ 
+            echo json_encode([
+                'success' => true,
+                'data' => $history
+            ]);
+ 
+        } catch (Exception $e) {
+            echo json_encode([
+                'success' => false,
+                'message' => 'Error: ' . $e->getMessage()
+            ]);
+        }
+        exit;
+    }
     public function saveIndentEntry()
     { 
         header('Content-Type: application/json');
