@@ -535,3 +535,11 @@ Stack trace:
 [22-Feb-2026 11:58:05 Africa/Lubumbashi] PHP   1. {main}() C:\wamp64\www\stock\public\index.php:0
 [22-Feb-2026 11:58:05 Africa/Lubumbashi] PHP   2. App->__construct() C:\wamp64\www\stock\public\index.php:57
 [22-Feb-2026 11:58:05 Africa/Lubumbashi] PHP   3. ItemController->crudData($action = 'updation') C:\wamp64\www\stock\app\core\App.php:70
+[19-Mar-2026 06:55:08 Africa/Lubumbashi] Database customQuery error: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'stock_db.item_make_model_t' doesn't exist
+[19-Mar-2026 06:55:08 Africa/Lubumbashi] PHP Fatal error:  Uncaught Error: Call to undefined method StockController::setErrorMessage() in C:\wamp64\www\stock\app\controllers\stock\StockController.php:85
+Stack trace:
+#0 C:\wamp64\www\stock\app\core\App.php(72): StockController->bulkLocationUpdate()
+#1 C:\wamp64\www\stock\public\index.php(57): App->__construct()
+#2 {main}
+  thrown in C:\wamp64\www\stock\app\controllers\stock\StockController.php on line 85
+[07-Jul-2026 03:33:43 Africa/Lubumbashi] SessionManager: login — supadmin (ID:1)

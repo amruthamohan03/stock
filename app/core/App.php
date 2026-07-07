@@ -39,6 +39,7 @@ class App {
             'dashboardCard'         => 'masters/',
             'live'                  => 'report/',
             'custom'                => 'report/',
+            'kfcform13'             => 'submissions/'
 
         ];
 
